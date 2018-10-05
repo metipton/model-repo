@@ -1,0 +1,29 @@
+.CategorySelectors {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    text-transform: capitalize;
+    font-weight: 200;
+    user-select: none;
+    pointer-events: none;
+    color: #ddd;
+    opacity: .8;
+    list-style-type: none;
+    border-radius: 10px;
+    height: 600px;
+}
+
+.List {
+    flex: 1;
+    justify-content: space-between;
+    vertical-align: top;
+    padding: 0;
+    margin-top: 0 ;
+
+}
+
+.CategorySelectors div  :hover,
+.CategorySelectors div  :active,
+.CategorySelectors div  .active {
+    background-color: #FFA500;
+}

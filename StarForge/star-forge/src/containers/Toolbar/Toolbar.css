@@ -1,0 +1,64 @@
+.Toolbar {
+    color: white;
+    height: 32px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #C0C0C0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 90;
+    overflow: hidden;
+}
+
+.Toggle {
+    display: flex;
+    justify-content: space-between;
+}
+
+.Toolbar nav {
+    height: 100%;
+}
+
+.Logo {
+    height: 80%;
+}
+
+.Toolbar span {
+    color : white;
+    opacity: 1.0;
+}
+
+.Toolbar span:hover,
+.Toolbar span:active,
+.Toolbar span.active {
+    color: white;
+    text-decoration: underline;
+}
+
+.Login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toolbarItem{
+    font-size: 16px;
+    vertical-align: center;
+    cursor: pointer;
+}
+
+.toolbarItem :hover,
+.toolbarItem :active,
+.toolbarItem .active,
+.toolbarItem :hover,
+.toolbarItem :active,
+.toolbarItem .active,{
+    color: #FFA500 ;
+    text-decoration: underline;
+    cursor: pointer;
+}

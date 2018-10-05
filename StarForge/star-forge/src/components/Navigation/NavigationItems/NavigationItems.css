@@ -1,0 +1,12 @@
+.NavigationItems {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.NavigationItem {
+    margin-bottom: 5px;
+}

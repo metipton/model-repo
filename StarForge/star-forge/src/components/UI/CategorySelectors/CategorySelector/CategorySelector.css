@@ -1,0 +1,56 @@
+.CategorySelector {
+    width: 130px;
+    height: 50px;
+    background: #888888;
+    margin: 5px, 5px, 5px, 5px;
+    vertical-align: middle;
+    border-style: solid;
+    border-radius: 10px;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.CategorySelector span {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 15px;
+    margin-right: 10px;
+    color: white;
+    float: right;
+    vertical-align: middle;
+}
+
+.CategorySelector img {
+    margin-left: 5px;
+    margin-top: 12px;
+    float:left;
+}
+
+.CategorySelectorSelected {
+    width: 130px;
+    height: 50px;
+    background: #888888;
+    margin: 5px, 5px, 5px, 5px;
+    vertical-align: middle;
+    border-style: solid;
+    border-radius: 10px;
+    cursor: pointer;
+    pointer-events: auto;
+    background-color: #FFA500;
+}
+
+.CategorySelectorSelected span {
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 15px;
+    margin-right: 10px;
+    color: white;
+    float: right;
+    vertical-align: middle;
+}
+
+.CategorySelectorSelected img {
+    margin-left: 5px;
+    margin-top: 12px;
+    float:left;
+}

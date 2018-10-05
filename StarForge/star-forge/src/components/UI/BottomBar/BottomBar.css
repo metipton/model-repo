@@ -1,0 +1,16 @@
+.BottomBar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: right;
+    padding: 0 20px;
+    box-sizing: border-box;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.Checkout {
+    margin-left: auto;
+    margin-right: 0;
+}

@@ -1,0 +1,43 @@
+.Container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background: #888888;
+    overflow: auto;
+    width: 30%;
+    height: 400px;
+    padding-left: 7%;
+    padding-right: 7%;
+}
+
+.Image {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    height: 150px;
+    width: 75px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.Image img {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    height: 150px;
+    width: 75px;
+}
+
+.Image img:hover {
+    background-color: #4c4e51;
+    border: solid 2px;
+    border-color: #FFA500;
+}
+
+.ImageSelected img {
+    background-color: #4c4e51;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    height: 150px;
+    width: 75px;
+    border: solid 2px;
+    border-color: #FFA500;
+}

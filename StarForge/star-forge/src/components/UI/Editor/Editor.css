@@ -1,0 +1,19 @@
+.Editor {
+    position: relative;
+    top: 20px;
+    width: 100%;
+    left: 60%;
+    height: 1000px;
+    color: #ddd;
+    line-height: 1.5;
+    margin: 0;
+    display: flex;
+}
+
+.FirstColumn {
+    margin-right: 5px;
+}
+
+.SecondColumn {
+    flex: 1;
+}

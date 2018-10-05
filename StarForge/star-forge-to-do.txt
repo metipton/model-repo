@@ -1,0 +1,53 @@
+3d modeling
+   Include all the state in the model builder
+   Import JSON object. 
+   See what info you get from parsing
+   Attempt to merge two items in correct spot
+
+Model Builder
+   Get a shadow for the model
+   Make sure JSON loader works
+   have a cache part of state and current part of state
+   Load two different models and render into the scene based on clicking
+
+Navigation
+   Add social media component to side drawer
+
+Shopping Cart
+   Link shopping cart to the shopping cart icon in toolbar
+   Add checkout button with price in lower right
+   Add checkout process to model builder -> OrderSummary -> Shipping -> Payment Details -> Preview -> Confirmation
+
+UI
+   Editor
+	Make race always two column with male and female side
+	Make two handed/sided things always two column with a selector between them
+	Material - Card w/ buttons and images - Retextures the model
+	Have the material selection update the price on the add to cart button
+	Abstract out the gridList component
+	Make second click unselect the selected item
+	add a clear button to the bar
+   
+    Bottom toolbar - checkout button, save character, my charcters, screenshot, new char
+    Create social media component
+    Add better fonts for everything
+
+Auth
+   Add password recovery
+   Update the database rules code
+   Add key handler to login page
+   Add recaptcha once site is live
+   Add error message to Login/register for failed login
+
+
+Graphics
+-New layout
+-New color scheme
+-New fonts 
+
+Known bugs
+	Social auth buttons disappear after logging in then logging out (consider giving it a key somehow)
+	Need to make the editor example to file entire viewport dynamically
+	fix the selection/state setting for accordion items
+
+	
