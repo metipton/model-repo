@@ -44,7 +44,8 @@ class ModelBuilder extends Component {
             Shoulders: '',
             Chest: '',
             Gloves: '',
-            Feet: '',
+            LeftFoot: '',
+            RightFoot: '',
             LegsWearable: '',
             RightHand: '',
             LeftHand: '',
@@ -120,6 +121,13 @@ class ModelBuilder extends Component {
             Pet: null,
             Pose: null,
         },
+        feetLink: {
+            linked: true,
+            shoes: {
+                left: false,
+                right: false
+            }
+        },
         loading: true
     }
 
@@ -131,7 +139,7 @@ class ModelBuilder extends Component {
      this.stop = this.stop.bind(this)
      this.animate = this.animate.bind(this)
      this.setObjectStateHandler = this.setObjectStateHandler.bind(this)
-     this.loadObjectFromCache = this.loadObjectFromCache.bind(this);
+     this.loadModelFromCache = this.loadModelFromCache.bind(this);
     }
 
     componentDidMount() {
@@ -152,6 +160,14 @@ class ModelBuilder extends Component {
         this.subclips = {};
         this.actions = {};
         this.clock = new THREE.Clock();
+        this.bones = [];
+        this.bonesPositInit = {};
+        this.bonesPositCurrent = {};
+        this.bonesQuatInit = {};
+        this.bonesQuatCurrent = {};
+        this.currentMesh;
+        this.skeleton;
+
 
 
         const width = this.mount.clientWidth;
@@ -167,7 +183,7 @@ class ModelBuilder extends Component {
         //offset view so model shifts to left side of the screen
         camera.setViewOffset(width * 1.3, height * 1.3, width * .3, height * .1, width, height );
 
-        camera.position.z = 5
+        camera.position.z = 5;
 
 
         const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -177,7 +193,7 @@ class ModelBuilder extends Component {
         controls.enabled = true;
         controls.enablePan = false;
         controls.minDistance = 3.0;
-        controls.maxDistance = 5;
+        controls.maxDistance = 10;
         // How far you can orbit vertically, upper and lower limits.
         // Range is 0 to Math.PI radians.
         controls.minPolarAngle = 0; // radians
@@ -297,7 +313,7 @@ class ModelBuilder extends Component {
        });
    }
 
-   async updateObjectHandler(category, selection, fromInit, setObjectStateHandler) {
+   async updateObjectHandler(category, selection, fromInit) {
 
        const alreadyInCache = this.isObjectInCache(category, selection);
 
@@ -306,7 +322,7 @@ class ModelBuilder extends Component {
 
                const downloadedFile = await this.downloadObjectFromStorage(category, selection);
                //await this.downloadBinFromStorage(category, selection);
-               await setObjectStateHandler(category, selection, downloadedFile, true, fromInit);
+               await this.setObjectStateHandler(category, selection, downloadedFile, true, fromInit);
 
            } catch (error) {
                console.log(error);
@@ -314,7 +330,7 @@ class ModelBuilder extends Component {
         } else {
             try {
 
-                await setObjectStateHandler(category, selection, this.state.cache[category][selection], false, fromInit);
+                await this.setObjectStateHandler(category, selection, this.state.cache[category][selection], false, fromInit);
 
             } catch (error) {
                 console.log(error);
@@ -342,25 +358,6 @@ class ModelBuilder extends Component {
        });
    }
 
-   downloadBinFromStorage = ( category, selection ) => {
-       return new Promise( ( resolve, reject ) => {
-
-           firebase.storage().ref( '/Models/' + category + '/' + selection + '.bin' )
-               .getDownloadURL()
-               .then( url => {
-                   var xhr = new XMLHttpRequest();
-                   xhr.responseType = 'blob';
-                   xhr.onload = function( event ) {
-                       resolve( xhr.response );
-                   };
-                   xhr.open( 'GET', url );
-                   xhr.send();
-               })
-               .catch(error => {
-                   reject(error);
-               })
-       });
-   }
 
     async setObjectStateHandler (category, selection, downloadedFile, fromDownload, fromInit) {
         return new Promise(async (resolve, reject) => {
@@ -408,20 +405,22 @@ class ModelBuilder extends Component {
                         })
                     }
                 } else {
-                    this.removeObjectFromScene(selection);
-                    this.setState({
-                        ...this.state,
-                        currentName: {
-                            ...this.state.currentName,
-                            [category] : ''
-                        },
-                        currentObject: {
-                            ...this.state.currentObject,
-                            [category]: null
-                        }
-                    }, update => {
-                        resolve();
-                    })
+                    if(category !== 'Race') {
+                        this.removeObjectFromScene(category, selection);
+                        this.setState({
+                            ...this.state,
+                            currentName: {
+                                ...this.state.currentName,
+                                [category] : ''
+                            },
+                            currentObject: {
+                                ...this.state.currentObject,
+                                [category]: null
+                            }
+                        }, update => {
+                            resolve();
+                        })
+                    }
                 }
             } catch (error) {
                 reject(error);
@@ -435,17 +434,24 @@ class ModelBuilder extends Component {
 
                if( selection && this.state.currentObject[category] !== null ){
                    try {
-                       const object = await this.loadModelFromCache(  this.state.currentObject[ category ] );
+                       const object = await this.loadModelFromCache(category,  this.state.currentObject[ category ] );
                        //object.scale.set( .013, .013, .013 );
 
-                       if( prevName !== '' ){
-                           this.removeObjectFromScene( prevName );
+
+                       if( prevName !== '\'\'' ){
+                           console.log(prevName);
+                           this.removeObjectFromScene( category, prevName );
                        }
 
                        object.name = selection;
 
-                       object.position.y = -1;
-                       this.scene.add( object );
+                       //object.position.y = -1;
+                       if(category !== 'Race'){
+                          this.parentObjectToBone(category, object)
+                       } else{
+                         this.scene.add( object );
+                       }
+
                    } catch ( error ) {
                        console.log( error );
                    }
@@ -457,61 +463,51 @@ class ModelBuilder extends Component {
        }})
    }
 
-   loadObjectFromCache = (url) => {
-       return new Promise((resolve, reject) => {
-           this.loader.load(
-               url,
-               (object) => {
-                   //object.mixer = new THREE.AnimationMixer( object );
-                   // mixers.push( object.mixer );
-                   //var action = object.mixer.clipAction( object.animations[ 0 ] );
-                   //action.play();
-                   this.convertMeshToSkinnedMesh(object);
-                   object.castShadow = true;
-                   resolve(object);
-               },
-                null,
-               (error) => {
-                   reject(error);
-               }
-           )
-       });
-    }
 
-    loadModelFromCache = (url) => {
+    loadModelFromCache = (category, url) => {
         return new Promise((resolve, reject) => {
             this.gltfLoader.load(
                 url,
                 (object) => {
+                    console.log(object);
                     object.scene.name = "modelScene";
 
-     				var helper = new THREE.SkeletonHelper(object.scene);
-     				this.scene.add(helper);
+     				// var helper = new THREE.SkeletonHelper(object.scene.children[0]);
+     				// this.scene.add(helper);
+                    console.log(this.scene);
+                    if( category === 'Race' ){
 
-     				this.mixer = new THREE.AnimationMixer(object.scene);
-     				var allAction = this.mixer.clipAction( object.animations[ 0 ] );
+         				this.mixer = new THREE.AnimationMixer(object.scene);
+         				var allAction = this.mixer.clipAction( object.animations[ 0 ] );
 
-                     for( let i = 0; i < object.animations[0].tracks[0].times.length; i++) {
-                         let poseNum = "pose" + ( i + 1 );
-                         this.subclips = {
-                             ...this.subclips,
-                             [poseNum]: THREE.AnimationUtils.subclip( allAction._clip, poseNum, i, i + 1  )
-                         };
+                         for( let i = 0; i < object.animations[0].tracks[0].times.length; i++) {
+                             let poseNum = "pose" + ( i + 1 );
+                             this.subclips = {
+                                 ...this.subclips,
+                                 [poseNum]: THREE.AnimationUtils.subclip( allAction._clip, poseNum, i, i + 1  )
+                             };
 
-                     }
+                         }
+                         this.bones = [];
+                         this.bonesQuatInit = {};
+                         this.bonesPositInit = {};
+                         this.flattenBones(object.scene.children[0].children[1], this.bones);
+                         console.log(this.bones);
+                         this.setBoneInitialPositandRot(object.scene.children[0].children[1]);
+                         this.setBoneCurrentPositandRot(object.scene.children[0].children[1]);
 
-                     console.log(this.subclips);
 
-                     for( let clip in this.subclips ) {
-                        this.mixer.clipAction( this.subclips[clip]);
-     					this.actions[clip] = this.mixer.clipAction( this.subclips[clip]);
-     				}
+                         for( let clip in this.subclips ) {
+                            this.mixer.clipAction( this.subclips[clip]);
+         					this.actions[clip] = this.mixer.clipAction( this.subclips[clip]);
+         				}
 
-
-                    //set the pose to current selected pose if not select, else set to pose 1
-                    this.setPoseByName(this.state.currentName['Pose']);
-                    console.log(this.state);
-                    this.animate();
+                        this.skeleton = object.scene.children[0].children[0].skeleton;
+                        console.log(this.skeleton);
+                        //set the pose to current selected pose if not select, else set to pose 1
+                        this.setPoseByName(this.state.currentName['Pose']);
+                        this.animate();
+                    }
                     resolve(object.scene);
                 },
                  null,
@@ -524,10 +520,19 @@ class ModelBuilder extends Component {
 
 
      setPoseByName = (pose) => {
-         console.log(this.actions[pose]);
          if (this.actions[pose]) {
              this.mixer.stopAllAction();
+             var finished = false;
+             // this.mixer.addEventListener('finished', (e) => {
+             //     if(this.bones[0] !== null && this.bones[0] !== undefined){
+             //
+             //        this.setBoneCurrentPosit(this.bones[0]);
+             //        console.log(this.bonesPositCurrent);
+             //    }
+             // });
              this.actions[pose].clampWhenFinished = true;
+             this.actions[pose].setLoop(this.THREE.LoopOnce);
+             //this.actions[pose].loop(THREE.LoopOnce);
              this.actions[pose].play();
          }
      }
@@ -547,6 +552,38 @@ class ModelBuilder extends Component {
          });
      }
 
+     setFeetHandler = (category, selection, feet) => {
+         if(this.state.feetLink.linked){
+             this.setState(prevState => ({
+                 ...this.state,
+                        feetLink: {
+                            ...this.state.feetLink,
+                            shoes: {
+                                left: !prevState.feetLink.shoes.left,
+                                right: !prevState.feetLink.shoes.right
+                            }
+                        }
+             }), () => {
+                 this.updateObjectHandler("LeftFoot", selection, false );
+                 this.updateObjectHandler("RightFoot", selection, false);
+             })
+         } else {
+             this.updateObjectHandler(category, selection, false);
+         }
+     }
+
+     // setFeetLinkHandler = () => {
+     //     if(this.state.footLink[linked]) {
+     //         this.setState(prevState => {
+     //             ...this.state,
+     //             feetLink: {
+     //                 ...this.state.feetLink,
+     //                 linked: false
+     //             }
+     //         })
+     //     } else if(this,s)
+     // }
+
     isObjectInCache = (category, selection) => {
         const cacheCategory = this.state.cache[category];
         let inCache = false;
@@ -560,34 +597,148 @@ class ModelBuilder extends Component {
         return inCache;
     }
 
-   removeObjectFromScene = (objectName) => {
+   removeObjectFromScene = (category, objectName) => {
+       if(category !== 'Race'){
+           var bone = this.getBoneByCategory(category);
+           for(let i = 0; i < bone.children.length; i++) {
+               if(bone.children[i].name == category){
+                   bone.remove(bone.children[i]);
+               }
+           }
+       }
        var selectedObject = this.scene.getObjectByName(objectName);
        this.scene.remove(selectedObject);
    }
 
 
-   convertMeshToSkinnedMesh = (object) => {
-       if( object === null || object === undefined) {
+
+   flattenBones = ( rootBone, bones) => {
+       if( rootBone == null || rootBone == undefined) {
            return;
        }
-       let counter = 0;
-       object.traverse( function ( child ) {
-           if( child.material ) {
-               child.material = new THREE.MeshStandardMaterial( { color: 0xC0C0C0 } );
-
-           }
-           if ( child.isMesh ) {
-               object[counter] = new THREE.SkinnedMesh(child, new THREE.MeshStandardMaterial( { color: 0xC0C0C0 } ));
-               child.castShadow = true;
-               child.receiveShadow = true;
-           }
-           counter++;
-       });
-
-       for(let i = 0, count = object.children.length; i < count; i++) {
-           this.convertMeshToSkinnedMesh(object.children[i]);
+       this.bones.push(rootBone);
+       let count = rootBone.children.length;
+       for(let i = 0; i < count; i++ ) {
+           this.flattenBones(rootBone.children[i], this.bones);
        }
    }
+
+   transAndRotObjectOnImport = (category, object) => {
+        let bone = this.getBoneByCategory(category);
+        let name = bone.name;
+        let parent = bone.parent;
+        object.name = category;
+        bone.add(object);
+    }
+
+
+   setBoneInitialPositandRot = ( rootBone) => {
+       if( rootBone == null || rootBone == undefined) {
+           return;
+       }
+       var name = rootBone.name;
+       this.bonesPositInit = {
+           ...this.bonesPositInit,
+           [name]: rootBone.getWorldPosition(new THREE.Vector3())
+       }
+       this.bonesQuatInit = {
+           ...this.bonesQuatInit,
+           [name]: rootBone.getWorldQuaternion(new THREE.Quaternion()).clone()
+       }
+       let count = rootBone.children.length;
+       for(let i = 0; i < count; i++ ) {
+           this.setBoneInitialPositandRot(rootBone.children[i]);
+       }
+   }
+
+   setBoneCurrentPositandRot = ( rootBone) => {
+       if( rootBone == null || rootBone == undefined) {
+           return;
+       }
+       var name = rootBone.name;
+       this.bonesPositCurrent = {
+           ...this.bonesPositCurrent,
+           [name]: rootBone.getWorldPosition(new THREE.Vector3())
+       }
+       this.bonesQuatCurrent = {
+           ...this.bonesQuatCurrent,
+           [name]: rootBone.getWorldQuaternion(new THREE.Quaternion()).clone()
+       }
+
+       let count = rootBone.children.length;
+       for(let i = 0; i < count; i++ ) {
+           this.setBoneCurrentPositandRot(rootBone.children[i]);
+       }
+   }
+
+   getBoneByCategory = (category) => {
+       switch(category) {
+            case 'Beard':
+                var bone = this.getBoneByName("rigcurrent_jaw_master");
+                return bone;
+                break;
+            case 'Gloves':
+                var bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
+                return bone;
+                break;
+            case 'Headwear':
+                var bone = this.getBoneByName("rigcurrent_DEF-spine006");
+                return bone;
+                break;
+            default:
+                return;
+            }
+   }
+
+   parentObjectToBone(category, object) {
+
+
+       let bone = this.getBoneByCategory(category);
+       object.name = category;
+       //imported heirachy scene->object3D->skinnedmesh
+       let child = object.children[0].children[0];
+       console.log(bone.matrixWorld);
+       child.skeleton = this.skeleton;
+
+       child.bind(child.skeleton, bone.matrixWorld);
+       THREE.SceneUtils.attach(child, child.parent, this.scene);
+       //bone.add(child);
+       //bone.add(object);
+       //THREE.SceneUtils.attach(child, child.parent, bone);
+       child.name = category;
+       // for(let i = object.children[0].children.length - 1; i >=0; i--) {
+       //     if(!object.children[0].children[i].isSkinnedMesh){
+       //         object.children[0].remove(object.children[0].children[i]);
+       //     }
+       // }
+       //
+       //object.position.set(0, 0, 0);
+       //this.transAndRotObjectOnImport(category, object);
+       console.log(child);
+       console.log(object);
+   }
+
+   getBoneByName = (name) =>
+   {
+       for(let i = 0; i < this.bones.length; i++){
+           if( this.bones[i].name === name){
+               return this.bones[i];
+           }
+       }
+       return null;
+   }
+
+   getRotQuat = (bone) => {
+
+       //rotation quat = q2 * q1^-1
+       let initQuat = this.bonesQuatInit[bone.name].clone();
+       initQuat.inverse().normalize();
+       let currentQuat = this.bonesQuatCurrent[bone.name].clone();
+       currentQuat.normalize();
+       let rotationQuat = currentQuat.multiply(initQuat).normalize();
+       return rotationQuat;
+   }
+
 
    render() {
      return (
@@ -597,7 +748,7 @@ class ModelBuilder extends Component {
              ref={(mount) => { this.mount = mount }}/>
          <Editor
              state={this.state}
-             updateObject={(category, selection, setObjectStateHandler, fromInit) => this.updateObjectHandler(category, selection, false, this.setObjectStateHandler)}
+             updateObject={(category, selection, setObjectStateHandler, fromInit) => this.updateObjectHandler(category, selection, false)}
              updatePose={(pose) => this.setPoseHandler(pose)} />
          <BottomBar />
        </Aux>

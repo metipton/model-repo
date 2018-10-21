@@ -15,11 +15,11 @@ const tileData = [
   },
   {
     img: image2,
-    name: "image2",
+    name: "beard2",
   },
   {
     img: image3,
-    name: "image3",
+    name: "beard3",
   },
   {
     img: image4,

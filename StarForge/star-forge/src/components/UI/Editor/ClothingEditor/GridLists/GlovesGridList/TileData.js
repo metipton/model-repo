@@ -11,11 +11,11 @@ import image8 from './images/img8.jpg';
 const tileData = [
   {
     img: image1,
-    name: "image1",
+    name: "glove1",
   },
   {
     img: image2,
-    name: "image2",
+    name: "glove2",
   },
   {
     img: image3,
