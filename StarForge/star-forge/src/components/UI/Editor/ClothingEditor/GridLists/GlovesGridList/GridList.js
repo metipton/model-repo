@@ -3,28 +3,40 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
-import tileData from './TileData';
+import {tileDataLeft, tileDataRight} from './TileData';
+import lock from './images/locks/lock_24px.png';
+import unlock from './images/locks/unlock_24px.png';
 
 const styles = theme => ({
   root: {
     position: 'relative',
     left: 0,
     top: 0,
-    display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-around',
     overflow: 'auto',
     backgroundColor: theme.palette.background.paper,
   },
+  container: {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#ddd',
+      height: 200,
+      width: '100%',
+  },
   gridList: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: '70px',
-    paddingRight: '70px',
-    backgroundColor: '#ddd',
+    boxSizing: 'border-box',
+    display: 'block',
+    // flexWrap: 'wrap',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
+    // paddingLeft: '70px',
+    // paddingRight: '70px',
+    // backgroundColor: '#ddd',
     height: 200,
     width: '100%',
   },
@@ -32,8 +44,8 @@ const styles = theme => ({
     width: '100%',
   },
   gridListTile: {
-      height: 'auto',
-      width: 'auto',
+      height: '120px',
+      width: '120px',
       margin: '3px',
       padding: '3px',
       '&:hover': {
@@ -51,27 +63,15 @@ const styles = theme => ({
       height: '100%',
       width: '100%'
   },
+  lock: {
+      opacity: '.4',
+      '&:hover': {
+          opacity: '.9'
+      }
+  }
 });
 
 
-/**
- * The example data is structured as follows:
- *
- * import image from 'path/to/image.jpg';
- * [etc...]
- *
- * const tileData = [
- *   {
- *     img: image,
- *     title: 'Image',
- *     author: 'author',
- *     cols: 2,
- *   },
- *   {
- *     [etc...]
- *   },
- * ];
- */
 class ImageGridList extends Component {
 
 
@@ -84,15 +84,23 @@ class ImageGridList extends Component {
         const {classes} = this.props;
         return (
         <div className={classes.root}>
-          <GridList cellHeight={150} className={classes.gridList} cols={3}>
-            {tileData.map(tile => (
-              <GridListTile
-                  className={(this.props.state.currentName.Gloves === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
-                  key={tile.img}
-                  cols={tile.cols || 1}
-                  onClick={() => this.clickHandler('Gloves', tile.name, tile.name)}>
-                <img className={classes.image}  src={tile.img} alt={tile.title} />
-              </GridListTile>
+          <GridList cellHeight={150} className={classes.gridList} cols={1}>
+            {tileDataLeft.map((tile, index) => (
+                <div className={classes.container} key = {index}>
+                  <GridListTile
+                      className={(this.props.state.currentName.Gloves === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      cols={tile.cols || 1}
+                      onClick={() => this.clickHandler('Gloves', tile.name, tile.name)}>
+                    <img className={classes.image}  src={tile.img} alt={tile.title} />
+                  </GridListTile>
+                  <img className={classes.lock} src={lock} />
+                  <GridListTile
+                      className={(this.props.state.currentName.Gloves === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      cols={tileDataRight[index].cols || 1}
+                      onClick={() => this.clickHandler('Gloves', tileDataRight[index].name, tileDataRight[index].name)}>
+                    <img className={classes.image}  src={tileDataRight[index].img} alt={tileDataRight[index].title} />
+                  </GridListTile>
+             </div>
             ))}
           </GridList>
         </div>

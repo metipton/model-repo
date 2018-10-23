@@ -43,6 +43,8 @@ class ModelBuilder extends Component {
             Headwear: '',
             Shoulders: '',
             Chest: '',
+            LeftGlove: '',
+            RightGlove: '',
             Gloves: '',
             LeftFoot: '',
             RightFoot: '',
@@ -76,6 +78,8 @@ class ModelBuilder extends Component {
             Headwear: {},
             Shoulders: {},
             Chest: {},
+            LeftGlove: {},
+            RightGlove: {},
             Gloves: {},
             Feet: {},
             LegsWearable: {},
@@ -107,6 +111,8 @@ class ModelBuilder extends Component {
             Headwear: null,
             Shoulders: null,
             Chest: null,
+            LeftGlove: null,
+            RightGlove: null,
             Gloves: null,
             Feet: null,
             LegsWearable: null,
@@ -121,11 +127,20 @@ class ModelBuilder extends Component {
             Pet: null,
             Pose: null,
         },
-        feetLink: {
-            linked: true,
-            shoes: {
-                left: false,
-                right: false
+        links: {
+            feet: {
+                linked: true,
+                shoes: {
+                    LeftFoot: false,
+                    RightFoot: false
+                }
+            },
+            gloves: {
+                linked: true,
+                gloves: {
+                    LeftGlove: false,
+                    RightGlove: false
+                }
             }
         },
         loading: true
@@ -193,7 +208,9 @@ class ModelBuilder extends Component {
         controls.enabled = true;
         controls.enablePan = false;
         controls.minDistance = 3.0;
-        controls.maxDistance = 10;
+        controls.maxDistance = 5;
+        controls.target = new THREE.Vector3(0, 1, 0);
+        controls.update();
         // How far you can orbit vertically, upper and lower limits.
         // Range is 0 to Math.PI radians.
         controls.minPolarAngle = 0; // radians
@@ -552,37 +569,97 @@ class ModelBuilder extends Component {
          });
      }
 
-     setFeetHandler = (category, selection, feet) => {
-         if(this.state.feetLink.linked){
+     setFeetHandler = (category, selection) => {
+         if(this.state.links.feet.linked){
              this.setState(prevState => ({
                  ...this.state,
-                        feetLink: {
-                            ...this.state.feetLink,
-                            shoes: {
-                                left: !prevState.feetLink.shoes.left,
-                                right: !prevState.feetLink.shoes.right
-                            }
+                 links: {
+                    ...this.state.links,
+                    feet: {
+                        linked: true,
+                        feet: {
+                            LeftFoot: !prevState.links.feet.shoes.LeftFoot,
+                            RightFoot: !prevState.links.feet.shoes.RightFoot
                         }
+                    }
+                }
              }), () => {
                  this.updateObjectHandler("LeftFoot", selection, false );
                  this.updateObjectHandler("RightFoot", selection, false);
              })
          } else {
-             this.updateObjectHandler(category, selection, false);
+             this.setState(prevState => ({
+                 ...this.state,
+                 links: {
+                     ...this.state.links,
+                     feet: {
+                         linked: false,
+                         shoes: {
+                             ...this.state.links.feet.shoes,
+                             [category]: !prevState.links.feet.shoes[category]
+                         }
+                     }
+                 }
+             }), () => {
+                this.updateObjectHandler(category, selection, false);
+             })
          }
      }
 
-     // setFeetLinkHandler = () => {
-     //     if(this.state.footLink[linked]) {
-     //         this.setState(prevState => {
-     //             ...this.state,
-     //             feetLink: {
-     //                 ...this.state.feetLink,
-     //                 linked: false
-     //             }
-     //         })
-     //     } else if(this,s)
-     // }
+     setGloveHandler = (category, selection) => {
+         if(this.state.links.gloves.linked){
+             this.setState(prevState => ({
+                 ...this.state,
+                 links: {
+                    ...this.state.links,
+                    gloves: {
+                        linked: true,
+                        gloves: {
+                            LeftGlove: !prevState.links.gloves.gloves.LeftGlove,
+                            RightGlove: !prevState.links.gloves.gloves.RightGlove
+                        }
+                    }
+                }
+             }), () => {
+                 this.updateObjectHandler("LeftGlove", selection, false );
+                 this.updateObjectHandler("RightGlove", selection, false);
+             })
+         } else {
+             this.setState(prevState => ({
+                 ...this.state,
+                 links: {
+                     ...this.state.links,
+                     gloves: {
+                         linked: false,
+                         gloves: {
+                             ...this.state.links.gloves.gloves,
+                             [category]: !prevState.links.gloves.gloves[category]
+                         }
+                     }
+                 }
+             }), () => {
+                this.updateObjectHandler(category, selection, false);
+             })
+         }
+     }
+
+     setFeetLinkHandler = (selection) => {
+         if(this.state.links.feet.linked ||
+             (!this.state.links.feet.linked && !this.state.links.feet.LeftFoot && !this.state.links.feet.RightFoot)) {
+             this.setState(prevState => ({
+                 ...this.state,
+                 links: {
+                     ...this.state.links,
+                     feet: {
+                         ...this.state.links.feet,
+                         linked: !prevState.links.feet.linked
+                     }
+                 }
+             }))
+         } else if (true) {
+
+         }
+     }
 
     isObjectInCache = (category, selection) => {
         const cacheCategory = this.state.cache[category];
@@ -601,19 +678,20 @@ class ModelBuilder extends Component {
        if(category !== 'Race'){
            var bone = this.getBoneByCategory(category);
            for(let i = 0; i < bone.children.length; i++) {
-               if(bone.children[i].name == category){
+               if(bone.children[i].name === category){
                    bone.remove(bone.children[i]);
                }
            }
        }
        var selectedObject = this.scene.getObjectByName(objectName);
+       console.log(selectedObject);
        this.scene.remove(selectedObject);
    }
 
 
 
    flattenBones = ( rootBone, bones) => {
-       if( rootBone == null || rootBone == undefined) {
+       if( rootBone === null || rootBone === undefined) {
            return;
        }
        this.bones.push(rootBone);
@@ -623,17 +701,16 @@ class ModelBuilder extends Component {
        }
    }
 
-   transAndRotObjectOnImport = (category, object) => {
-        let bone = this.getBoneByCategory(category);
-        let name = bone.name;
-        let parent = bone.parent;
-        object.name = category;
-        bone.add(object);
-    }
+   // transAndRotObjectOnImport = (category, object) => {
+   //      let bone = this.getBoneByCategory(category);
+   //      let parent = bone.parent;
+   //      object.name = category;
+   //      bone.add(object);
+   //  }
 
 
    setBoneInitialPositandRot = ( rootBone) => {
-       if( rootBone == null || rootBone == undefined) {
+       if( rootBone === null || rootBone === undefined) {
            return;
        }
        var name = rootBone.name;
@@ -652,7 +729,7 @@ class ModelBuilder extends Component {
    }
 
    setBoneCurrentPositandRot = ( rootBone) => {
-       if( rootBone == null || rootBone == undefined) {
+       if( rootBone === null || rootBone === undefined) {
            return;
        }
        var name = rootBone.name;
@@ -672,17 +749,18 @@ class ModelBuilder extends Component {
    }
 
    getBoneByCategory = (category) => {
+       var bone;
        switch(category) {
             case 'Beard':
-                var bone = this.getBoneByName("rigcurrent_jaw_master");
+                bone = this.getBoneByName("rigcurrent_jaw_master");
                 return bone;
                 break;
             case 'Gloves':
-                var bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
+                bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
                 return bone;
                 break;
             case 'Headwear':
-                var bone = this.getBoneByName("rigcurrent_DEF-spine006");
+                bone = this.getBoneByName("rigcurrent_head");
                 return bone;
                 break;
             default:
