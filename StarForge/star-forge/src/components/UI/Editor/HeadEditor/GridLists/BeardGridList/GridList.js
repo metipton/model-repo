@@ -10,21 +10,33 @@ const styles = theme => ({
     position: 'relative',
     left: 0,
     top: 0,
-    display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-around',
     overflow: 'auto',
     backgroundColor: theme.palette.background.paper,
   },
+  container: {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#ddd',
+      height: 200,
+      width: '100%',
+  },
   gridList: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
+    boxSizing: 'border-box',
+    display: 'block',
     justifyContent: 'space-between',
-    paddingLeft: '70px',
-    paddingRight: '70px',
-    backgroundColor: '#ddd',
+    textAlign: 'center',
+    // flexWrap: 'wrap',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
+    // paddingLeft: '70px',
+    // paddingRight: '70px',
+    // backgroundColor: '#ddd',
     height: 200,
     width: '100%',
   },
@@ -32,8 +44,9 @@ const styles = theme => ({
     width: '100%',
   },
   gridListTile: {
-      height: 'auto',
-      width: 'auto',
+      display: 'inline-block',
+      height: '100px',
+      width: '100px',
       margin: '3px',
       padding: '3px',
       '&:hover': {
@@ -42,15 +55,23 @@ const styles = theme => ({
       },
   },
   gridListTileSelected: {
+      height: 'auto',
+      width: 'auto',
       margin: '3px',
       padding: '3px',
       border: 'solid 2px',
       borderColor: '#FFA500',
   },
   image: {
-      height: '100%',
-      width: '100%'
+      height: '100px',
+      width: '100px'
   },
+  lock: {
+      opacity: '.4',
+      '&:hover': {
+          opacity: '.9'
+      }
+  }
 });
 
 
@@ -84,7 +105,7 @@ class ImageGridList extends Component {
         const {classes} = this.props;
         return (
         <div className={classes.root}>
-          <GridList cellHeight={150} className={classes.gridList} cols={3}>
+          <GridList cellHeight={120} className={classes.gridList} cols={5}>
             {tileData.map(tile => (
               <GridListTile
                   className={(this.props.state.currentName.Beard === tile.name) ? classes.gridListTileSelected : classes.gridListTile}

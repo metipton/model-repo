@@ -46,11 +46,11 @@ class ModelBuilder extends Component {
             LeftGlove: '',
             RightGlove: '',
             Gloves: '',
-            LeftFoot: '',
-            RightFoot: '',
+            FootLeft: '',
+            FootRight: '',
             LegsWearable: '',
-            RightHand: '',
-            LeftHand: '',
+            HandRight: '',
+            HandLeft: '',
             Back: '',
             Mask: '',
             UpperFace: '',
@@ -82,9 +82,11 @@ class ModelBuilder extends Component {
             RightGlove: {},
             Gloves: {},
             Feet: {},
+            FootLeft: {},
+            FootRight: {},
             LegsWearable: {},
-            RightHand: {},
-            LeftHand: {},
+            HandRight: {},
+            HandLeft: {},
             Back: {},
             Mask: {},
             UpperFace: {},
@@ -115,9 +117,11 @@ class ModelBuilder extends Component {
             RightGlove: null,
             Gloves: null,
             Feet: null,
+            FootLeft: null,
+            FootRight: null,
             LegsWearable: null,
-            RightHand: null,
-            LeftHand: null,
+            HandRight: null,
+            HandLeft: null,
             Back: null,
             Mask: null,
             UpperFace: null,
@@ -131,8 +135,8 @@ class ModelBuilder extends Component {
             feet: {
                 linked: true,
                 shoes: {
-                    LeftFoot: false,
-                    RightFoot: false
+                    FootLeft: false,
+                    FootRight: false
                 }
             },
             gloves: {
@@ -198,7 +202,7 @@ class ModelBuilder extends Component {
         //offset view so model shifts to left side of the screen
         camera.setViewOffset(width * 1.3, height * 1.3, width * .3, height * .1, width, height );
 
-        camera.position.z = 5;
+        camera.position.z = 9;
 
 
         const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -578,14 +582,14 @@ class ModelBuilder extends Component {
                     feet: {
                         linked: true,
                         feet: {
-                            LeftFoot: !prevState.links.feet.shoes.LeftFoot,
-                            RightFoot: !prevState.links.feet.shoes.RightFoot
+                            FootLeft: !prevState.links.feet.shoes.FootLeft,
+                            FootRight: !prevState.links.feet.shoes.FootRight
                         }
                     }
                 }
              }), () => {
-                 this.updateObjectHandler("LeftFoot", selection, false );
-                 this.updateObjectHandler("RightFoot", selection, false);
+                 this.updateObjectHandler("FootLeft", selection, false );
+                 this.updateObjectHandler("FootRight", selection, false);
              })
          } else {
              this.setState(prevState => ({
@@ -643,9 +647,9 @@ class ModelBuilder extends Component {
          }
      }
 
-     setFeetLinkHandler = (selection) => {
+     setFeetLinkHandler = (index) => {
          if(this.state.links.feet.linked ||
-             (!this.state.links.feet.linked && !this.state.links.feet.LeftFoot && !this.state.links.feet.RightFoot)) {
+             (!this.state.links.feet.linked && !this.state.links.feet.FootLeft && !this.state.links.feet.FootRight)) {
              this.setState(prevState => ({
                  ...this.state,
                  links: {
@@ -656,8 +660,28 @@ class ModelBuilder extends Component {
                      }
                  }
              }))
-         } else if (true) {
-
+         } else {
+             this.setState(prevState => ({
+                 ...this.state,
+                 links: {
+                     ...this.state.links,
+                     feet: {
+                         linked: true,
+                         shoes: {
+                             FootLeft: true,
+                             FootRight: true
+                         }
+                     }
+                 }
+             }), () => {
+                 let num = index + 1;
+                 let selection = "foot" + num.toString();
+                 if( this.state.currentName.FootLeft === selection) {
+                     this.updateObjectHandler("FootRight", selection, false)
+                 } else {
+                     this.updateObjectHandler("FootLeft", selection, false)
+                 }
+             })
          }
      }
 
@@ -755,6 +779,18 @@ class ModelBuilder extends Component {
                 bone = this.getBoneByName("rigcurrent_jaw_master");
                 return bone;
                 break;
+            case 'Chest':
+                bone = this.getBoneByName("rigcurrent_chest");
+                return bone;
+                break;
+            case 'FootLeft':
+                bone = this.getBoneByName("rigcurrent_head");
+                return bone;
+                break;
+            case 'FootRight':
+                bone = this.getBoneByName("rigcurrent_head");
+                return bone;
+                break;
             case 'Gloves':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
                 return bone;
@@ -770,30 +806,15 @@ class ModelBuilder extends Component {
 
    parentObjectToBone(category, object) {
 
-
        let bone = this.getBoneByCategory(category);
        object.name = category;
        //imported heirachy scene->object3D->skinnedmesh
        let child = object.children[0].children[0];
-       console.log(bone.matrixWorld);
        child.skeleton = this.skeleton;
 
        child.bind(child.skeleton, bone.matrixWorld);
        THREE.SceneUtils.attach(child, child.parent, this.scene);
-       //bone.add(child);
-       //bone.add(object);
-       //THREE.SceneUtils.attach(child, child.parent, bone);
        child.name = category;
-       // for(let i = object.children[0].children.length - 1; i >=0; i--) {
-       //     if(!object.children[0].children[i].isSkinnedMesh){
-       //         object.children[0].remove(object.children[0].children[i]);
-       //     }
-       // }
-       //
-       //object.position.set(0, 0, 0);
-       //this.transAndRotObjectOnImport(category, object);
-       console.log(child);
-       console.log(object);
    }
 
    getBoneByName = (name) =>

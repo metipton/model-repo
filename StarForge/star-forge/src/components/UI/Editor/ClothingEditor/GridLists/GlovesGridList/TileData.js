@@ -19,27 +19,27 @@ export const tileDataLeft = [
   },
   {
     img: image3,
-    name: "image3",
+    name: "glove3",
   },
   {
     img: image4,
-    name: "image4",
+    name: "glove4",
   },
   {
     img: image5,
-    name: "image5",
+    name: "glove5",
   },
   {
     img: image6,
-    name: "image6",
+    name: "glove6",
   },
   {
     img:  image7,
-    name: "image7",
+    name: "glove7",
   },
   {
     img: image8,
-    name: "image8",
+    name: "glove8",
   }
 ];
 
@@ -54,27 +54,27 @@ export const tileDataRight = [
   },
   {
     img: image3,
-    name: "image3",
+    name: "glove3",
   },
   {
     img: image4,
-    name: "image4",
+    name: "glove4",
   },
   {
     img: image5,
-    name: "image5",
+    name: "glove5",
   },
   {
     img: image6,
-    name: "image6",
+    name: "glove6",
   },
   {
     img:  image7,
-    name: "image7",
+    name: "glove7",
   },
   {
     img: image8,
-    name: "image8",
+    name: "glove8",
   }
 ];
 

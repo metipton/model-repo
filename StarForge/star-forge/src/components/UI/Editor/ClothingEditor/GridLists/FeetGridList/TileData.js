@@ -8,39 +8,72 @@ import image7 from './images/img7.jpg';
 import image8 from './images/img8.jpg';
 
 
-const tileData = [
+export const tileDataLeft = [
   {
     img: image1,
-    name: "Feet1",
+    name: "foot1",
   },
   {
     img: image2,
-    name: "image2",
+    name: "foot2",
   },
   {
     img: image3,
-    name: "image3",
+    name: "foot3",
   },
   {
     img: image4,
-    name: "image4",
+    name: "foot4",
   },
   {
     img: image5,
-    name: "image5",
+    name: "foot5",
   },
   {
     img: image6,
-    name: "image6",
+    name: "foot6",
   },
   {
     img:  image7,
-    name: "image7",
+    name: "foot7",
   },
   {
     img: image8,
-    name: "image8",
+    name: "foot8",
   }
 ];
 
-export default tileData;
+export const tileDataRight = [
+  {
+    img: image1,
+    name: "foot1",
+  },
+  {
+    img: image2,
+    name: "foot2",
+  },
+  {
+    img: image3,
+    name: "foot3",
+  },
+  {
+    img: image4,
+    name: "foot4",
+  },
+  {
+    img: image5,
+    name: "foot5",
+  },
+  {
+    img: image6,
+    name: "foot6",
+  },
+  {
+    img:  image7,
+    name: "foot7",
+  },
+  {
+    img: image8,
+    name: "foot8",
+  }
+];

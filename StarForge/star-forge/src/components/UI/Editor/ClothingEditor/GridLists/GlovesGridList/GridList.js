@@ -4,8 +4,8 @@ import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import {tileDataLeft, tileDataRight} from './TileData';
-import lock from './images/locks/lock_24px.png';
-import unlock from './images/locks/unlock_24px.png';
+import lock from '../locks/lock_24px.png';
+import unlock from '../locks/unlock_24px.png';
 
 const styles = theme => ({
   root: {
@@ -44,8 +44,8 @@ const styles = theme => ({
     width: '100%',
   },
   gridListTile: {
-      height: '120px',
-      width: '120px',
+      height: '100px',
+      width: '100px',
       margin: '3px',
       padding: '3px',
       '&:hover': {
@@ -54,6 +54,8 @@ const styles = theme => ({
       },
   },
   gridListTileSelected: {
+      height: '100px',
+      width: '100px',
       margin: '3px',
       padding: '3px',
       border: 'solid 2px',
@@ -82,9 +84,18 @@ class ImageGridList extends Component {
 
     render() {
         const {classes} = this.props;
+        let linker = (
+            <img
+                className={classes.lock}
+                src={lock}
+                />);
+        if(!this.props.state.links.gloves.linked) {
+            linker = (<img className={classes.lock} src={unlock} />)
+        }
+
         return (
         <div className={classes.root}>
-          <GridList cellHeight={150} className={classes.gridList} cols={1}>
+          <GridList cellHeight={120} className={classes.gridList} cols={1}>
             {tileDataLeft.map((tile, index) => (
                 <div className={classes.container} key = {index}>
                   <GridListTile
@@ -93,7 +104,9 @@ class ImageGridList extends Component {
                       onClick={() => this.clickHandler('Gloves', tile.name, tile.name)}>
                     <img className={classes.image}  src={tile.img} alt={tile.title} />
                   </GridListTile>
-                  <img className={classes.lock} src={lock} />
+
+                  {linker}
+
                   <GridListTile
                       className={(this.props.state.currentName.Gloves === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tileDataRight[index].cols || 1}
