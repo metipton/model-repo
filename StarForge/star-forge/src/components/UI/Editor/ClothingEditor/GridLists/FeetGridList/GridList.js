@@ -95,8 +95,8 @@ const styles = theme => ({
 class ImageGridList extends Component {
 
 
-    clickHandler = (category, selection, panel) => {
-        this.props.updateSelection(category, selection);
+    clickHandler = (category, selection) => {
+        this.props.updateFeet(category, selection);
     };
 
 
@@ -110,14 +110,14 @@ class ImageGridList extends Component {
                   <GridListTile
                       className={(this.props.state.currentName.Feet === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tile.cols || 1}
-                      onClick={() => this.clickHandler('Feet', tile.name, tile.name)}>
+                      onClick={() => this.clickHandler('FootLeft', tile.name)}>
                     <img className={classes.image}  src={tile.img} alt={tile.title} />
                   </GridListTile>
                   <img className={classes.lock} src={lock} />
                   <GridListTile
                       className={(this.props.state.currentName.Feet === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tileDataRight[index].cols || 1}
-                      onClick={() => this.clickHandler('Gloves', tileDataRight[index].name, tileDataRight[index].name)}>
+                      onClick={() => this.clickHandler('FootRight', tileDataRight[index].name)}>
                     <img className={classes.image}  src={tileDataRight[index].img} alt={tileDataRight[index].title} />
                   </GridListTile>
               </div>

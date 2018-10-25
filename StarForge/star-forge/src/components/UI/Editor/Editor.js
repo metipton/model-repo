@@ -26,56 +26,74 @@ class categorySelectors extends Component{
             case 'Genre':
                 secondaryPanel = (
                     <div className={classes.SecondColumn}>
-                        <GenreEditor state={this.props.state} updateObject={this.props.updateObject}/>
+                        <GenreEditor
+                            state={this.props.state}
+                            updateObject={this.props.updateObject}/>
                     </div>
                 );
                 break;
             case 'Race':
                 secondaryPanel = (
                     <div className={classes.SecondColumn}>
-                        <RaceEditor state={this.props.state} updateSelection={this.props.updateObject}/>
+                        <RaceEditor
+                            state={this.props.state}
+                            updateSelection={this.props.updateObject}/>
                     </div>
                 );
                 break;
             case 'Head':
                 secondaryPanel = (
                     <div className={classes.SecondColumn}>
-                        <HeadEditor state={this.props.state} updateSelection={this.props.updateObject}/>
+                        <HeadEditor
+                            state={this.props.state}
+                            updateSelection={this.props.updateObject}/>
                     </div>
                 );
                 break;
             case 'Body':
                 secondaryPanel = (
                     <div className={classes.SecondColumn}>
-                        <BodyEditor state={this.props.state} updateSelection={this.props.updateObject}/>
+                        <BodyEditor
+                            state={this.props.state}
+                            updateSelection={this.props.updateObject}/>
                     </div>
                 );
                 break;
             case 'Clothing':
                 secondaryPanel = (
                     <div className={classes.SecondColumn}>
-                            <ClothingEditor state={this.props.state} updateSelection={this.props.updateObject}/>
+                            <ClothingEditor
+                                state={this.props.state}
+                                updateSelection={this.props.updateObject}
+                                feetLink={this.props.setFeetLink}
+                                updateFeet={this.props.updateFeet}/>
                     </div>
                 );
                 break;
             case 'Items':
                 secondaryPanel = (
                     <div className={classes.SecondColumn}>
-                            <ItemEditor state={this.props.state} updateSelection={this.props.updateObject}/>
+                            <ItemEditor
+                                state={this.props.state}
+                                updateSelection={this.props.updateObject}/>
                     </div>
                 );
                 break;
             case 'Base':
                 secondaryPanel = (
                     <div className={classes.SecondColumn}>
-                            <BaseEditor state={this.props.state} updateSelection={this.props.updateObject}/>
+                            <BaseEditor
+                                state={this.props.state}
+                                updateSelection={this.props.updateObject}/>
                     </div>
                 );
                 break;
             case 'Pose':
                 secondaryPanel = (
                     <div className={classes.SecondColumn}>
-                            <PoseEditor state={this.props.state} updateSelection={this.props.updatePose}/>
+                            <PoseEditor
+                                state={this.props.state}
+                                updateSelection={this.props.updatePose}/>
                     </div>
                 );
                 break;

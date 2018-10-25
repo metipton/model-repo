@@ -784,11 +784,11 @@ class ModelBuilder extends Component {
                 return bone;
                 break;
             case 'FootLeft':
-                bone = this.getBoneByName("rigcurrent_head");
+                bone = this.getBoneByName("rigcurrent_foot_ikL");
                 return bone;
                 break;
             case 'FootRight':
-                bone = this.getBoneByName("rigcurrent_head");
+                bone = this.getBoneByName("rigcurrent_foot_ikR");
                 return bone;
                 break;
             case 'Gloves':
@@ -797,6 +797,10 @@ class ModelBuilder extends Component {
                 break;
             case 'Headwear':
                 bone = this.getBoneByName("rigcurrent_head");
+                return bone;
+                break;
+            case 'LegsWearable':
+                bone = this.getBoneByName("rigcurrent_torso");
                 return bone;
                 break;
             default:
@@ -848,6 +852,9 @@ class ModelBuilder extends Component {
          <Editor
              state={this.state}
              updateObject={(category, selection, setObjectStateHandler, fromInit) => this.updateObjectHandler(category, selection, false)}
+             setFeetLink={(index) => this.setFeetLinkHandler(index)}
+             updateFeet={(category, selection) => this.setFeetHandler(category, selection)}
+             updateFeetObject
              updatePose={(pose) => this.setPoseHandler(pose)} />
          <BottomBar />
        </Aux>

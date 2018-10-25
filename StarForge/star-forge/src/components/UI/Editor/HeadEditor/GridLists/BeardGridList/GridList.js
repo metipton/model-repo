@@ -55,8 +55,9 @@ const styles = theme => ({
       },
   },
   gridListTileSelected: {
-      height: 'auto',
-      width: 'auto',
+      display: 'inline-block',
+      height: '100px',
+      width: '100px',
       margin: '3px',
       padding: '3px',
       border: 'solid 2px',

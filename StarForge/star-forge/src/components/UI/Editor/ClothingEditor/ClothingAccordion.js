@@ -175,7 +175,12 @@ class ClothingAccordion extends Component {
                   Feet
                 </Typography>
               </ExpansionPanelSummary>
-                  <FeetGridList state={this.props.state} updateSelection={this.props.updateSelection}/>
+                  <FeetGridList
+                      state={this.props.state}
+                      updateSelection={this.props.updateSelection}
+                      feetLink={this.props.setFeetLink}
+                      updateFeet={this.props.updateFeet}
+                      />
             </ExpansionPanel>
         </div>
       </div>
