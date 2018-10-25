@@ -11,69 +11,69 @@ import image8 from './images/img8.jpg';
 export const tileDataLeft = [
   {
     img: image1,
-    name: "foot1",
+    name: "Foot1",
   },
   {
     img: image2,
-    name: "foot2",
+    name: "Foot2",
   },
   {
     img: image3,
-    name: "foot3",
+    name: "Foot3",
   },
   {
     img: image4,
-    name: "foot4",
+    name: "Foot4",
   },
   {
     img: image5,
-    name: "foot5",
+    name: "Foot5",
   },
   {
     img: image6,
-    name: "foot6",
+    name: "Foot6",
   },
   {
     img:  image7,
-    name: "foot7",
+    name: "Foot7",
   },
   {
     img: image8,
-    name: "foot8",
+    name: "Foot8",
   }
 ];
 
 export const tileDataRight = [
   {
     img: image1,
-    name: "foot1",
+    name: "Foot1",
   },
   {
     img: image2,
-    name: "foot2",
+    name: "Foot2",
   },
   {
     img: image3,
-    name: "foot3",
+    name: "Foot3",
   },
   {
     img: image4,
-    name: "foot4",
+    name: "Foot4",
   },
   {
     img: image5,
-    name: "foot5",
+    name: "Foot5",
   },
   {
     img: image6,
-    name: "foot6",
+    name: "Foot6",
   },
   {
     img:  image7,
-    name: "foot7",
+    name: "Foot7",
   },
   {
     img: image8,
-    name: "foot8",
+    name: "Foot8",
   }
 ];

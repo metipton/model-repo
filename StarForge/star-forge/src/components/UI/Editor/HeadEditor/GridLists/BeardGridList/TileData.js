@@ -11,15 +11,15 @@ import image8 from './images/img8.jpg';
 const tileData = [
   {
     img: image1,
-    name: "beard1",
+    name: "Beard1",
   },
   {
     img: image2,
-    name: "beard2",
+    name: "Beard2",
   },
   {
     img: image3,
-    name: "beard3",
+    name: "Beard3",
   },
   {
     img: image4,

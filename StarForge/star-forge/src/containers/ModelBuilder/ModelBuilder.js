@@ -502,17 +502,18 @@ class ModelBuilder extends Component {
          				var allAction = this.mixer.clipAction( object.animations[ 0 ] );
 
                          for( let i = 0; i < object.animations[0].tracks[0].times.length; i++) {
-                             let poseNum = "pose" + ( i + 1 );
+                             let poseNum = "Pose" + ( i + 1 );
                              this.subclips = {
                                  ...this.subclips,
                                  [poseNum]: THREE.AnimationUtils.subclip( allAction._clip, poseNum, i, i + 1  )
                              };
 
                          }
-                         this.bones = [];
+                         this.skeleton = object.scene.children[0].children[0].skeleton;
+                         this.bones = this.skeleton.bones;
                          this.bonesQuatInit = {};
                          this.bonesPositInit = {};
-                         this.flattenBones(object.scene.children[0].children[1], this.bones);
+                         //this.flattenBones(object.scene.children[0].children[1], this.bones);
                          console.log(this.bones);
                          this.setBoneInitialPositandRot(object.scene.children[0].children[1]);
                          this.setBoneCurrentPositandRot(object.scene.children[0].children[1]);
@@ -523,7 +524,7 @@ class ModelBuilder extends Component {
          					this.actions[clip] = this.mixer.clipAction( this.subclips[clip]);
          				}
 
-                        this.skeleton = object.scene.children[0].children[0].skeleton;
+
                         console.log(this.skeleton);
                         //set the pose to current selected pose if not select, else set to pose 1
                         this.setPoseByName(this.state.currentName['Pose']);
@@ -810,7 +811,9 @@ class ModelBuilder extends Component {
 
    parentObjectToBone(category, object) {
 
+       console.log(category);
        let bone = this.getBoneByCategory(category);
+       console.log(bone)
        object.name = category;
        //imported heirachy scene->object3D->skinnedmesh
        let child = object.children[0].children[0];

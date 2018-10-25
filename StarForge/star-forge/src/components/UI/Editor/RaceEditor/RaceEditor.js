@@ -22,44 +22,44 @@ class RaceEditor extends Component {
         return (
             <div className={classes.Container}>
                 <div
-                    className={(this.props.state.currentName.Race === 'race1') ? classes.ImageSelected : classes.Image}
-                    onClick={() => this.clickHandler('Race', 'race1')}>
-                    <img className={classes.ImageActual} src={image1} alt="race_1" />
+                    className={(this.props.state.currentName.Race === 'Race1') ? classes.ImageSelected : classes.Image}
+                    onClick={() => this.clickHandler('Race', 'Race1')}>
+                    <img className={classes.ImageActual} src={image1} alt="Race_1" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Race === 'race2') ? classes.ImageSelected : classes.Image}
-                    onClick={() => this.clickHandler('Race', 'race2')}>
-                    <img className={classes.ImageActual} src={image2} alt="race_2" />
+                    className={(this.props.state.currentName.Race === 'Race2') ? classes.ImageSelected : classes.Image}
+                    onClick={() => this.clickHandler('Race', 'Race2')}>
+                    <img className={classes.ImageActual} src={image2} alt="Race_2" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Race === 'race3') ? classes.ImageSelected : classes.Image}
-                    onClick={() => this.clickHandler('Race', 'race3')}>
-                    <img className={classes.ImageActual} src={image3} alt="race_3" />
+                    className={(this.props.state.currentName.Race === 'Race3') ? classes.ImageSelected : classes.Image}
+                    onClick={() => this.clickHandler('Race', 'Race3')}>
+                    <img className={classes.ImageActual} src={image3} alt="Race_3" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Race === 'soldier1') ? classes.ImageSelected : classes.Image}
-                    onClick={() => this.clickHandler('Race', 'soldier1')}>
-                    <img className={classes.ImageActual} src={image4} alt="race_4" />
+                    className={(this.props.state.currentName.Race === 'Race4') ? classes.ImageSelected : classes.Image}
+                    onClick={() => this.clickHandler('Race', 'Race4')}>
+                    <img className={classes.ImageActual} src={image4} alt="Race_4" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Race === 'race5') ? classes.ImageSelected : classes.Image}
-                    onClick={() => this.clickHandler('Race', 'race5')}>
-                    <img className={classes.ImageActual} src={image5} alt="race_5" />
+                    className={(this.props.state.currentName.Race === 'Race5') ? classes.ImageSelected : classes.Image}
+                    onClick={() => this.clickHandler('Race', 'Race5')}>
+                    <img className={classes.ImageActual} src={image5} alt="Race_5" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Race === 'race6') ? classes.ImageSelected : classes.Image}
-                    onClick={() => this.clickHandler('Race', 'race6')}>
-                    <img className={classes.ImageActual} src={image6} alt="race_6" />
+                    className={(this.props.state.currentName.Race === 'Race6') ? classes.ImageSelected : classes.Image}
+                    onClick={() => this.clickHandler('Race', 'Race6')}>
+                    <img className={classes.ImageActual} src={image6} alt="Race_6" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Race === 'race7') ? classes.ImageSelected : classes.Image}
-                    onClick={() => this.clickHandler('Race', 'race7')}>
-                    <img className={classes.ImageActual} src={image7} alt="race_7" />
+                    className={(this.props.state.currentName.Race === 'Race7') ? classes.ImageSelected : classes.Image}
+                    onClick={() => this.clickHandler('Race', 'Race7')}>
+                    <img className={classes.ImageActual} src={image7} alt="Race_7" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Race === 'race8') ? classes.ImageSelected : classes.Image}
-                    onClick={() => this.clickHandler('Race', 'race8', )}>
-                    <img className={classes.ImageActual} src={image8} alt="race_8" />
+                    className={(this.props.state.currentName.Race === 'Race8') ? classes.ImageSelected : classes.Image}
+                    onClick={() => this.clickHandler('Race', 'Race8', )}>
+                    <img className={classes.ImageActual} src={image8} alt="Race_8" />
                 </div>
             </div>
         );
