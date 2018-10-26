@@ -383,7 +383,7 @@ class ModelBuilder extends Component {
     async setObjectStateHandler (category, selection, downloadedFile, fromDownload, fromInit) {
         return new Promise(async (resolve, reject) => {
             try{
-                var prevName = this.state.currentName[category];
+                var prevName = category;
                 //if clicking already selected object
                 if(this.state.currentName[category] !== selection || fromInit) {
                     if(fromDownload){
@@ -427,7 +427,7 @@ class ModelBuilder extends Component {
                     }
                 } else {
                     if(category !== 'Race') {
-                        this.removeObjectFromScene(category, selection);
+                        this.removeObjectFromScene(category);
                         this.setState({
                             ...this.state,
                             currentName: {
@@ -460,11 +460,10 @@ class ModelBuilder extends Component {
 
 
                        if( prevName !== '\'\'' ){
-                           console.log(prevName);
-                           this.removeObjectFromScene( category, prevName );
+                           this.removeObjectFromScene( prevName );
                        }
 
-                       object.name = selection;
+                       object.name = category;
 
                        //object.position.y = -1;
                        if(category !== 'Race'){
@@ -648,7 +647,7 @@ class ModelBuilder extends Component {
 
      setFeetLinkHandler = (index) => {
          if(this.state.links.feet.linked ||
-             (!this.state.links.feet.linked && !this.state.links.feet.FootLeft && !this.state.links.feet.FootRight)) {
+             (!this.state.links.feet.linked && (this.state.links.feet.shoes.FootLeft === this.state.links.feet.shoes.FootRight))) {
              this.setState(prevState => ({
                  ...this.state,
                  links: {
@@ -677,7 +676,8 @@ class ModelBuilder extends Component {
              }), () => {
                  console.log(this.state);
                  let num = index + 1;
-                 let selection = "foot" + num.toString();
+                 let selection = "Foot" + num.toString();
+                 console.log(selection);
                  if( this.state.currentName.FootLeft === selection) {
                      this.updateObjectHandler("FootRight", selection, false)
                  } else {
@@ -700,16 +700,8 @@ class ModelBuilder extends Component {
         return inCache;
     }
 
-   removeObjectFromScene = (category, objectName) => {
-       if(category !== 'Race'){
-           var bone = this.getBoneByCategory(category);
-           for(let i = 0; i < bone.children.length; i++) {
-               if(bone.children[i].name === category){
-                   bone.remove(bone.children[i]);
-               }
-           }
-       }
-       var selectedObject = this.scene.getObjectByName(objectName);
+   removeObjectFromScene = (category) => {
+       var selectedObject = this.scene.getObjectByName(category);
        this.scene.remove(selectedObject);
        console.log("removed: " + category);
        console.log(this.state);
@@ -822,7 +814,7 @@ class ModelBuilder extends Component {
 
        child.bind(child.skeleton, bone.matrixWorld);
        THREE.SceneUtils.attach(child, child.parent, this.scene);
-       child.name = selection;
+       child.name = category;
    }
 
    getBoneByName = (name) =>
