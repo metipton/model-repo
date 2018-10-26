@@ -289,8 +289,8 @@ class ModelBuilder extends Component {
        if (this.mixer != null && this.mixer !== undefined) {
            this.mixer.update(delta);
        };
-
      this.renderScene()
+
      //this.frameId = window.requestAnimationFrame(this.animate)
    }
 
@@ -432,7 +432,7 @@ class ModelBuilder extends Component {
                             ...this.state,
                             currentName: {
                                 ...this.state.currentName,
-                                [category] : ''
+                                [category] : "\'\'"
                             },
                             currentObject: {
                                 ...this.state.currentObject,
@@ -468,15 +468,15 @@ class ModelBuilder extends Component {
 
                        //object.position.y = -1;
                        if(category !== 'Race'){
-                          this.parentObjectToBone(category, object)
+                          this.parentObjectToBone(category, selection, object)
                        } else{
                          this.scene.add( object );
                        }
-
                    } catch ( error ) {
                        console.log( error );
                    }
                };
+
                this.renderScene();
                resolve();
        } catch ( error ) {
@@ -490,8 +490,6 @@ class ModelBuilder extends Component {
             this.gltfLoader.load(
                 url,
                 (object) => {
-                    console.log(object);
-                    object.scene.name = "modelScene";
 
      				// var helper = new THREE.SkeletonHelper(object.scene.children[0]);
      				// this.scene.add(helper);
@@ -582,14 +580,14 @@ class ModelBuilder extends Component {
                     ...this.state.links,
                     feet: {
                         linked: true,
-                        feet: {
+                        shoes: {
                             FootLeft: !prevState.links.feet.shoes.FootLeft,
                             FootRight: !prevState.links.feet.shoes.FootRight
                         }
                     }
                 }
-             }), () => {
-                 this.updateObjectHandler("FootLeft", selection, false );
+            }), async () => {
+                await this.updateObjectHandler("FootLeft", selection, false );
                  this.updateObjectHandler("FootRight", selection, false);
              })
          } else {
@@ -660,7 +658,9 @@ class ModelBuilder extends Component {
                          linked: !prevState.links.feet.linked
                      }
                  }
-             }))
+             }), () => {
+                 console.log(this.state);
+             })
          } else {
              this.setState(prevState => ({
                  ...this.state,
@@ -675,6 +675,7 @@ class ModelBuilder extends Component {
                      }
                  }
              }), () => {
+                 console.log(this.state);
                  let num = index + 1;
                  let selection = "foot" + num.toString();
                  if( this.state.currentName.FootLeft === selection) {
@@ -709,8 +710,9 @@ class ModelBuilder extends Component {
            }
        }
        var selectedObject = this.scene.getObjectByName(objectName);
-       console.log(selectedObject);
        this.scene.remove(selectedObject);
+       console.log("removed: " + category);
+       console.log(this.state);
    }
 
 
@@ -809,19 +811,18 @@ class ModelBuilder extends Component {
             }
    }
 
-   parentObjectToBone(category, object) {
+   parentObjectToBone(category, selection, object) {
 
        console.log(category);
        let bone = this.getBoneByCategory(category);
        console.log(bone)
-       object.name = category;
        //imported heirachy scene->object3D->skinnedmesh
        let child = object.children[0].children[0];
        child.skeleton = this.skeleton;
 
        child.bind(child.skeleton, bone.matrixWorld);
        THREE.SceneUtils.attach(child, child.parent, this.scene);
-       child.name = category;
+       child.name = selection;
    }
 
    getBoneByName = (name) =>
@@ -857,7 +858,6 @@ class ModelBuilder extends Component {
              updateObject={(category, selection, setObjectStateHandler, fromInit) => this.updateObjectHandler(category, selection, false)}
              setFeetLink={(index) => this.setFeetLinkHandler(index)}
              updateFeet={(category, selection) => this.setFeetHandler(category, selection)}
-             updateFeetObject
              updatePose={(pose) => this.setPoseHandler(pose)} />
          <BottomBar />
        </Aux>

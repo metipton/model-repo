@@ -65,7 +65,7 @@ class categorySelectors extends Component{
                             <ClothingEditor
                                 state={this.props.state}
                                 updateSelection={this.props.updateObject}
-                                feetLink={this.props.setFeetLink}
+                                setFeetLink={this.props.setFeetLink}
                                 updateFeet={this.props.updateFeet}/>
                     </div>
                 );
