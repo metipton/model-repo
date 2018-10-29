@@ -127,7 +127,12 @@ class ClothingAccordion extends Component {
                   Gloves
                 </Typography>
               </ExpansionPanelSummary>
-                  <GlovesGridList state={this.props.state} updateSelection={this.props.updateSelection}/>
+                  <GlovesGridList
+                      state={this.props.state}
+                      updateSelection={this.props.updateSelection}
+                      gloveLink={this.props.setGloveLink}
+                      updateGlove={this.props.updateGlove}
+                      />
             </ExpansionPanel>
         </div>
 
@@ -177,7 +182,6 @@ class ClothingAccordion extends Component {
               </ExpansionPanelSummary>
                   <FeetGridList
                       state={this.props.state}
-                      updateSelection={this.props.updateSelection}
                       feetLink={this.props.setFeetLink}
                       updateFeet={this.props.updateFeet}
                       />

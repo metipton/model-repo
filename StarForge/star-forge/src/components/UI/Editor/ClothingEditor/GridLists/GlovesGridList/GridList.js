@@ -77,40 +77,40 @@ const styles = theme => ({
 class ImageGridList extends Component {
 
 
-    clickHandler = (category, selection, panel) => {
-        this.props.updateSelection(category, selection);
+    clickHandler = (category, selection) => {
+        this.props.updateGlove(category, selection);
     };
 
 
     render() {
         const {classes} = this.props;
-        let linker = (
-            <img
-                className={classes.lock}
-                src={lock}
-                />);
-        if(!this.props.state.links.gloves.linked) {
-            linker = (<img className={classes.lock} src={unlock} />)
-        }
 
         return (
         <div className={classes.root}>
           <GridList cellHeight={120} className={classes.gridList} cols={1}>
-            {tileDataLeft.map((tile, index) => (
+            {tileDataRight.map((tile, index) => (
                 <div className={classes.container} key = {index}>
                   <GridListTile
-                      className={(this.props.state.currentName.Gloves === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      className={(this.props.state.currentName.GloveRight === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tile.cols || 1}
-                      onClick={() => this.clickHandler('Gloves', tile.name, tile.name)}>
+                      onClick={() => this.clickHandler('GloveRight', tile.name)}>
                     <img className={classes.image}  src={tile.img} alt={tile.title} />
                   </GridListTile>
 
-                  {linker}
+                  {this.props.state.links.gloves.linked ?
+                      <img
+                          className={classes.lock}
+                          src={lock}
+                          onClick={() => this.props.gloveLink(index)}/> :
+                      <img
+                          className={classes.lock}
+                          src={unlock}
+                          onClick={() => this.props.gloveLink(index)}/>}
 
                   <GridListTile
-                      className={(this.props.state.currentName.Gloves === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      className={(this.props.state.currentName.GloveLeft === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tileDataRight[index].cols || 1}
-                      onClick={() => this.clickHandler('Gloves', tileDataRight[index].name, tileDataRight[index].name)}>
+                      onClick={() => this.clickHandler('GloveLeft', tileDataRight[index].name)}>
                     <img className={classes.image}  src={tileDataRight[index].img} alt={tileDataRight[index].title} />
                   </GridListTile>
              </div>

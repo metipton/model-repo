@@ -66,7 +66,9 @@ class categorySelectors extends Component{
                                 state={this.props.state}
                                 updateSelection={this.props.updateObject}
                                 setFeetLink={this.props.setFeetLink}
-                                updateFeet={this.props.updateFeet}/>
+                                updateFeet={this.props.updateFeet}
+                                setGloveLink={this.props.setGloveLink}
+                                updateGlove={this.props.updateGlove}/>
                     </div>
                 );
                 break;

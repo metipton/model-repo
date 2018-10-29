@@ -43,8 +43,8 @@ class ModelBuilder extends Component {
             Headwear: '',
             Shoulders: '',
             Chest: '',
-            LeftGlove: '',
-            RightGlove: '',
+            GloveLeft: '',
+            GloveRight: '',
             Gloves: '',
             FootLeft: '',
             FootRight: '',
@@ -78,8 +78,8 @@ class ModelBuilder extends Component {
             Headwear: {},
             Shoulders: {},
             Chest: {},
-            LeftGlove: {},
-            RightGlove: {},
+            GloveLeft: {},
+            GloveRight: {},
             Gloves: {},
             Feet: {},
             FootLeft: {},
@@ -113,8 +113,8 @@ class ModelBuilder extends Component {
             Headwear: null,
             Shoulders: null,
             Chest: null,
-            LeftGlove: null,
-            RightGlove: null,
+            GloveLeft: null,
+            GloveRight: null,
             Gloves: null,
             Feet: null,
             FootLeft: null,
@@ -142,8 +142,8 @@ class ModelBuilder extends Component {
             gloves: {
                 linked: true,
                 gloves: {
-                    LeftGlove: false,
-                    RightGlove: false
+                    GloveLeft: false,
+                    GloveRight: false
                 }
             }
         },
@@ -193,6 +193,7 @@ class ModelBuilder extends Component {
         const height = this.mount.clientHeight;
         const scene = new THREE.Scene();
         this.scene = scene;
+
         const camera = new THREE.PerspectiveCamera(
           75,
           width / height,
@@ -202,16 +203,19 @@ class ModelBuilder extends Component {
         //offset view so model shifts to left side of the screen
         camera.setViewOffset(width * 1.3, height * 1.3, width * .3, height * .1, width, height );
 
-        camera.position.z = 9;
+        camera.position.z = 3.5;
+        camera.position.y = 2;
 
 
         const renderer = new THREE.WebGLRenderer({ antialias: true })
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
         //enable orbit controls
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enabled = true;
         controls.enablePan = false;
-        controls.minDistance = 3.0;
+        controls.minDistance = 3;
         controls.maxDistance = 5;
         controls.target = new THREE.Vector3(0, 1, 0);
         controls.update();
@@ -234,18 +238,36 @@ class ModelBuilder extends Component {
         var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
         light.position.set( 0, 200, 0 );
         scene.add( light );
-        light = new THREE.DirectionalLight( 0xffffff );
-        light.position.set( 0, 200, 100 );
+        var light = new THREE.PointLight( 0xffffff );
+        light.position.set( 0, 20, 20 );
+        light.intensity = 1;
         light.castShadow = true;
-        light.shadow.camera.top = 180;
+        light.shadow.camera.top = 200;
         light.shadow.camera.bottom = -100;
-        light.shadow.camera.left = -120;
-        light.shadow.camera.right = 120;
-        scene.add( light );
+        light.shadow.camera.left = -100;
+        light.shadow.camera.right = 100;
+        //
+        //
+        //
+        // //
+        // scene.add( light );
+        // var helper = new THREE.CameraHelper( light.shadow.camera );
+        // scene.add( helper );
+
+
+        // var ambientLight = new THREE.AmbientLight(0xFFFFFF, .2);
+        // scene.add( ambientLight );
+        //
+        // var light = new THREE.PointLight(0xFFFFFF, 0.8, 18);
+        // light.position.set(-3, 6, -3);
+        // light.castShadow = true;
+        // light.shadow.camera.near = 0.1;
+        // light.shadow.camera.far = 25;
+        // scene.add( light );
 
 
        //add the skybox
-       var geometry = new THREE.CubeGeometry(100, 100, 100);
+       var geometry = new THREE.CubeGeometry(70, 70, 70);
        var cubeMaterials = [
            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load(px), side: THREE.DoubleSide}),
            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load(nx), side: THREE.DoubleSide}),
@@ -256,8 +278,20 @@ class ModelBuilder extends Component {
        ];
        var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
        var cube = new THREE.Mesh(geometry, cubeMaterial);
+
        cube.receiveShadow = true;
        scene.add(cube);
+
+       //make the ground
+       var groundGeo = new THREE.CircleGeometry(10,50);
+       var groundMat = new THREE.MeshBasicMaterial( {color: 0xD8D7Df, side: THREE.DoubleSide});
+       var ground = new THREE.Mesh(groundGeo, groundMat);
+       ground.receiveShadow = true;
+       ground.castShadow = true;
+       ground.rotation.x = Math.PI / 2;
+       ground.name = "ground";
+       scene.add(ground);
+
 
        renderer.setClearColor('#000000')
        renderer.setSize(width, height)
@@ -506,14 +540,13 @@ class ModelBuilder extends Component {
                              };
 
                          }
+                         object.scene.children[0].children[0].castShadow = true;
                          this.skeleton = object.scene.children[0].children[0].skeleton;
                          this.bones = this.skeleton.bones;
                          this.bonesQuatInit = {};
                          this.bonesPositInit = {};
                          //this.flattenBones(object.scene.children[0].children[1], this.bones);
                          console.log(this.bones);
-                         this.setBoneInitialPositandRot(object.scene.children[0].children[1]);
-                         this.setBoneCurrentPositandRot(object.scene.children[0].children[1]);
 
 
                          for( let clip in this.subclips ) {
@@ -617,14 +650,14 @@ class ModelBuilder extends Component {
                     gloves: {
                         linked: true,
                         gloves: {
-                            LeftGlove: !prevState.links.gloves.gloves.LeftGlove,
-                            RightGlove: !prevState.links.gloves.gloves.RightGlove
+                            GloveLeft: !prevState.links.gloves.gloves.GloveLeft,
+                            GloveRight: !prevState.links.gloves.gloves.GloveRight
                         }
                     }
                 }
-             }), () => {
-                 this.updateObjectHandler("LeftGlove", selection, false );
-                 this.updateObjectHandler("RightGlove", selection, false);
+            }), async () => {
+                 await this.updateObjectHandler("GloveLeft", selection, false );
+                 this.updateObjectHandler("GloveRight", selection, false);
              })
          } else {
              this.setState(prevState => ({
@@ -641,6 +674,48 @@ class ModelBuilder extends Component {
                  }
              }), () => {
                 this.updateObjectHandler(category, selection, false);
+             })
+         }
+     }
+
+     setGloveLinkHandler = (index) => {
+         if(this.state.links.gloves.linked ||
+             (!this.state.links.gloves.linked && (this.state.links.gloves.gloves.GloveLeft === this.state.links.gloves.gloves.GloveRight))) {
+             this.setState(prevState => ({
+                 ...this.state,
+                 links: {
+                     ...this.state.links,
+                     gloves: {
+                         ...this.state.links.gloves,
+                         linked: !prevState.links.gloves.linked
+                     }
+                 }
+             }), () => {
+                 console.log(this.state);
+             })
+         } else {
+             this.setState(prevState => ({
+                 ...this.state,
+                 links: {
+                     ...this.state.links,
+                     gloves: {
+                         linked: true,
+                         gloves: {
+                             GloveLeft: true,
+                             GloveRight: true
+                         }
+                     }
+                 }
+             }), () => {
+                 console.log(this.state);
+                 let num = index + 1;
+                 let selection = "Glove" + num.toString();
+                 console.log(selection);
+                 if( this.state.currentName.GloveLeft === selection) {
+                     this.updateObjectHandler("GloveRight", selection, false)
+                 } else {
+                     this.updateObjectHandler("GloveLeft", selection, false)
+                 }
              })
          }
      }
@@ -728,44 +803,44 @@ class ModelBuilder extends Component {
    //  }
 
 
-   setBoneInitialPositandRot = ( rootBone) => {
-       if( rootBone === null || rootBone === undefined) {
-           return;
-       }
-       var name = rootBone.name;
-       this.bonesPositInit = {
-           ...this.bonesPositInit,
-           [name]: rootBone.getWorldPosition(new THREE.Vector3())
-       }
-       this.bonesQuatInit = {
-           ...this.bonesQuatInit,
-           [name]: rootBone.getWorldQuaternion(new THREE.Quaternion()).clone()
-       }
-       let count = rootBone.children.length;
-       for(let i = 0; i < count; i++ ) {
-           this.setBoneInitialPositandRot(rootBone.children[i]);
-       }
-   }
-
-   setBoneCurrentPositandRot = ( rootBone) => {
-       if( rootBone === null || rootBone === undefined) {
-           return;
-       }
-       var name = rootBone.name;
-       this.bonesPositCurrent = {
-           ...this.bonesPositCurrent,
-           [name]: rootBone.getWorldPosition(new THREE.Vector3())
-       }
-       this.bonesQuatCurrent = {
-           ...this.bonesQuatCurrent,
-           [name]: rootBone.getWorldQuaternion(new THREE.Quaternion()).clone()
-       }
-
-       let count = rootBone.children.length;
-       for(let i = 0; i < count; i++ ) {
-           this.setBoneCurrentPositandRot(rootBone.children[i]);
-       }
-   }
+   // setBoneInitialPositandRot = ( rootBone) => {
+   //     if( rootBone === null || rootBone === undefined) {
+   //         return;
+   //     }
+   //     var name = rootBone.name;
+   //     this.bonesPositInit = {
+   //         ...this.bonesPositInit,
+   //         [name]: rootBone.getWorldPosition(new THREE.Vector3())
+   //     }
+   //     this.bonesQuatInit = {
+   //         ...this.bonesQuatInit,
+   //         [name]: rootBone.getWorldQuaternion(new THREE.Quaternion()).clone()
+   //     }
+   //     let count = rootBone.children.length;
+   //     for(let i = 0; i < count; i++ ) {
+   //         this.setBoneInitialPositandRot(rootBone.children[i]);
+   //     }
+   // }
+   //
+   // setBoneCurrentPositandRot = ( rootBone) => {
+   //     if( rootBone === null || rootBone === undefined) {
+   //         return;
+   //     }
+   //     var name = rootBone.name;
+   //     this.bonesPositCurrent = {
+   //         ...this.bonesPositCurrent,
+   //         [name]: rootBone.getWorldPosition(new THREE.Vector3())
+   //     }
+   //     this.bonesQuatCurrent = {
+   //         ...this.bonesQuatCurrent,
+   //         [name]: rootBone.getWorldQuaternion(new THREE.Quaternion()).clone()
+   //     }
+   //
+   //     let count = rootBone.children.length;
+   //     for(let i = 0; i < count; i++ ) {
+   //         this.setBoneCurrentPositandRot(rootBone.children[i]);
+   //     }
+   // }
 
    getBoneByCategory = (category) => {
        var bone;
@@ -786,10 +861,18 @@ class ModelBuilder extends Component {
                 bone = this.getBoneByName("rigcurrent_foot_ikR");
                 return bone;
                 break;
-            case 'Gloves':
+            case 'GloveLeft':
+                bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
+                return bone;
+                break;
+            case 'GloveRight':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
                 return bone;
                 break;
+            // case 'Gloves':
+            //     bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
+            //     return bone;
+            //     break;
             case 'Headwear':
                 bone = this.getBoneByName("rigcurrent_head");
                 return bone;
@@ -850,6 +933,8 @@ class ModelBuilder extends Component {
              updateObject={(category, selection, setObjectStateHandler, fromInit) => this.updateObjectHandler(category, selection, false)}
              setFeetLink={(index) => this.setFeetLinkHandler(index)}
              updateFeet={(category, selection) => this.setFeetHandler(category, selection)}
+             setGloveLink={(index) => this.setGloveLinkHandler(index)}
+             updateGlove={(category, selection) => this.setGloveHandler(category, selection)}
              updatePose={(pose) => this.setPoseHandler(pose)} />
          <BottomBar />
        </Aux>
