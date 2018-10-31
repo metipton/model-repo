@@ -854,11 +854,11 @@ class ModelBuilder extends Component {
                 return bone;
                 break;
             case 'FootLeft':
-                bone = this.getBoneByName("rigcurrent_foot_ikL");
+                bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootL");
                 return bone;
                 break;
             case 'FootRight':
-                bone = this.getBoneByName("rigcurrent_foot_ikR");
+                bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootR");
                 return bone;
                 break;
             case 'GloveLeft':
