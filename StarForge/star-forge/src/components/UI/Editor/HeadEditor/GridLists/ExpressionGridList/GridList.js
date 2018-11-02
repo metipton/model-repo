@@ -4,13 +4,13 @@ import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import tileData from './TileData';
+import Slider from '@material-ui/lab/Slider';
 
 const styles = theme => ({
   root: {
     position: 'relative',
     left: 0,
     top: 0,
-    display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -18,22 +18,26 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
   },
   gridList: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
+    boxSizing: 'border-box',
+    display: 'block',
     justifyContent: 'space-between',
-    paddingLeft: '70px',
-    paddingRight: '70px',
-    backgroundColor: '#ddd',
-    height: 200,
+    textAlign: 'center',
+    // flexWrap: 'wrap',
+    // alignItems: 'center',
+    // justifyContent: 'space-between',
+    // paddingLeft: '70px',
+    // paddingRight: '70px',
+    // backgroundColor: '#ddd',
+    height: 100,
     width: '100%',
   },
   subheader: {
     width: '100%',
   },
   gridListTile: {
-      height: 'auto',
-      width: 'auto',
+      display: 'inline-block',
+      height: '40px',
+      width: '40px',
       margin: '3px',
       padding: '3px',
       '&:hover': {
@@ -42,6 +46,9 @@ const styles = theme => ({
       },
   },
   gridListTileSelected: {
+      display: 'inline-block',
+      height: '100px',
+      width: '100px',
       margin: '3px',
       padding: '3px',
       border: 'solid 2px',
@@ -51,6 +58,24 @@ const styles = theme => ({
       height: '100%',
       width: '100%'
   },
+  lock: {
+      opacity: '.4',
+      '&:hover': {
+          opacity: '.9'
+      }
+  },
+  slider: {
+      margin: 'auto',
+      height: '30px',
+      width: '90%',
+
+  },
+  text: {
+      textAlign: 'center',
+      color: 'black',
+      fontWeight: 'bold',
+      fontSize: '.8rem',
+  }
 });
 
 
@@ -84,16 +109,69 @@ class ImageGridList extends Component {
         const {classes} = this.props;
         return (
         <div className={classes.root}>
-          <GridList cellHeight={150} className={classes.gridList} cols={3}>
-            {tileData.map(tile => (
-              <GridListTile
-                  key={tile.img}
-                  cols={tile.cols || 1}
-                  onClick={() => this.clickHandler('Expression', tile.name, tile.name)}>
-                <img className={classes.image}  src={tile.img} alt={tile.title} />
-              </GridListTile>
-            ))}
-          </GridList>
+            <div>
+              <GridList cellHeight={80} className={classes.gridList} cols={6}>
+                {tileData.map(tile => (
+                      <GridListTile
+                          className={(this.props.state.currentName.Expression === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                          key={tile.img}
+                          cols={tile.cols || 1}
+                          onClick={() => this.clickHandler('Expression', tile.name, tile.name)}>
+                        <img className={classes.image}  src={tile.img} alt={tile.title} />
+                      </GridListTile>
+                ))}
+              </GridList>
+          </div>
+          <div className={classes.text}>
+              <span className={classes.text} >Smile</span>
+          </div>
+
+          <div className={classes.slider}>
+            <Slider
+                min={0}
+                max={100}
+                disabled={true}/>
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>Cocky</span>
+          </div>
+
+          <div className={classes.slider}>
+            <Slider/>
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>Snarl</span>
+          </div>
+
+          <div className={classes.slider}>
+            <Slider />
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>Confused</span>
+          </div>
+
+          <div className={classes.slider}>
+            <Slider />
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>Embarassed</span>
+          </div>
+
+          <div className={classes.slider}>
+            <Slider />
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>Smile</span>
+          </div>
+
+          <div className={classes.slider}>
+            <Slider />
+          </div>
         </div>
         );
     }

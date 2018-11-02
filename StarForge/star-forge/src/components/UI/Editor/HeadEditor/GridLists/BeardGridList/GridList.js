@@ -5,6 +5,7 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import tileData from './TileData';
 
+
 const styles = theme => ({
   root: {
     position: 'relative',
@@ -106,7 +107,7 @@ class ImageGridList extends Component {
         const {classes} = this.props;
         return (
         <div className={classes.root}>
-          <GridList cellHeight={120} className={classes.gridList} cols={5}>
+          <GridList cellHeight={100} className={classes.gridList} cols={5}>
             {tileData.map(tile => (
               <GridListTile
                   className={(this.props.state.currentName.Beard === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
@@ -117,6 +118,7 @@ class ImageGridList extends Component {
               </GridListTile>
             ))}
           </GridList>
+
         </div>
         );
     }

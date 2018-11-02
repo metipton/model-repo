@@ -8,39 +8,72 @@ import image7 from './images/img7.jpg';
 import image8 from './images/img8.jpg';
 
 
-const tileData = [
+export const tileDataLeft = [
   {
     img: image1,
-    name: "Weapon1",
+    name: "Handheld1",
   },
   {
     img: image2,
-    name: "image2",
+    name: "Handheld2",
   },
   {
     img: image3,
-    name: "image3",
+    name: "Handheld3",
   },
   {
     img: image4,
-    name: "image4",
+    name: "Handheld4",
   },
   {
     img: image5,
-    name: "image5",
+    name: "Handheld5",
   },
   {
     img: image6,
-    name: "image6",
+    name: "Handheld6",
   },
   {
     img:  image7,
-    name: "image7",
+    name: "Handheld7",
   },
   {
     img: image8,
-    name: "image8",
+    name: "Handheld8",
   }
 ];
 
-export default tileData;
+export const tileDataRight = [
+  {
+    img: image1,
+    name: "Handheld1",
+  },
+  {
+    img: image2,
+    name: "Handheld2",
+  },
+  {
+    img: image3,
+    name: "Handheld3",
+  },
+  {
+    img: image4,
+    name: "Handheld4",
+  },
+  {
+    img: image5,
+    name: "Handheld5",
+  },
+  {
+    img: image6,
+    name: "Handheld6",
+  },
+  {
+    img:  image7,
+    name: "Handheld7",
+  },
+  {
+    img: image8,
+    name: "Handheld8",
+  }
+];

@@ -209,7 +209,8 @@ class ModelBuilder extends Component {
 
         const renderer = new THREE.WebGLRenderer({ antialias: true })
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.gammaOutput = true;
 
         //enable orbit controls
         const controls = new OrbitControls(camera, renderer.domElement);
@@ -234,36 +235,38 @@ class ModelBuilder extends Component {
                 camera.updateProjectionMatrix();
             });
 
-        //add the lighting to the scene
-        var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-        light.position.set( 0, 200, 0 );
-        scene.add( light );
-        var light = new THREE.PointLight( 0xffffff );
-        light.position.set( 0, 20, 20 );
-        light.intensity = 1;
-        light.castShadow = true;
-        light.shadow.camera.top = 200;
-        light.shadow.camera.bottom = -100;
-        light.shadow.camera.left = -100;
-        light.shadow.camera.right = 100;
-        //
-        //
-        //
-        // //
+        // //add the lighting to the scene
+        // var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+        // light.position.set( 0, 200, 0 );
         // scene.add( light );
-        // var helper = new THREE.CameraHelper( light.shadow.camera );
-        // scene.add( helper );
-
-
-        // var ambientLight = new THREE.AmbientLight(0xFFFFFF, .2);
-        // scene.add( ambientLight );
-        //
-        // var light = new THREE.PointLight(0xFFFFFF, 0.8, 18);
-        // light.position.set(-3, 6, -3);
+        // var light = new THREE.PointLight( 0xffffff );
+        // light.position.set( 0, 20, 20 );
+        // light.intensity = 1;
         // light.castShadow = true;
-        // light.shadow.camera.near = 0.1;
-        // light.shadow.camera.far = 25;
-        // scene.add( light );
+        // light.shadow.camera.top = 200;
+        // light.shadow.camera.bottom = -100;
+        // light.shadow.camera.left = -100;
+        // light.shadow.camera.right = 100;
+        //
+        var hemiLight = new THREE.HemisphereLight( 0x7c849b, 0xd7cbb1, 0.3);
+        hemiLight.position.set( 0, 10, 0 );
+        scene.add( hemiLight );
+
+        var shadowLight  = new THREE.SpotLight( 0xffffee, 0.3 );
+        shadowLight.position.set( 0, 8, 8 );
+        shadowLight.castShadow = true;
+        shadowLight.shadow.width = 512;
+        shadowLight.shadow.height = 512;
+        shadowLight.shadow.camera.top = 15;
+        shadowLight.shadow.camera.bottom = -15;
+        shadowLight.shadow.camera.left = -30;
+        shadowLight.shadow.camera.right = 30;
+        shadowLight.shadow.camera.far = 12;
+        shadowLight.shadow.bias = -0.025;
+        scene.add(shadowLight);
+
+        // var camhelper = THREE.CameraHelper(shadowLight.shadow.camera);
+        // scene.add(camhelper);
 
 
        //add the skybox
@@ -283,12 +286,14 @@ class ModelBuilder extends Component {
        scene.add(cube);
 
        //make the ground
-       var groundGeo = new THREE.CircleGeometry(10,50);
-       var groundMat = new THREE.MeshBasicMaterial( {color: 0xD8D7Df, side: THREE.DoubleSide});
-       var ground = new THREE.Mesh(groundGeo, groundMat);
+       var ground = new THREE.Mesh(
+       new THREE.CircleBufferGeometry( 10, 50 ),
+       new THREE.ShadowMaterial( { color: 0x000000, opacity: 0.15, depthWrite: false }
+       ) );
+
        ground.receiveShadow = true;
-       ground.castShadow = true;
        ground.rotation.x = Math.PI / 2;
+      ground.renderOrder = 1;
        ground.name = "ground";
        scene.add(ground);
 
@@ -490,6 +495,7 @@ class ModelBuilder extends Component {
                if( selection && this.state.currentObject[category] !== null ){
                    try {
                        const object = await this.loadModelFromCache(category,  this.state.currentObject[ category ] );
+                       console.log(object);
                        //object.scale.set( .013, .013, .013 );
 
 
@@ -504,6 +510,7 @@ class ModelBuilder extends Component {
                           this.parentObjectToBone(category, selection, object)
                        } else{
                          this.scene.add( object );
+                         console.log(this.scene);
                        }
                    } catch ( error ) {
                        console.log( error );
@@ -523,10 +530,9 @@ class ModelBuilder extends Component {
             this.gltfLoader.load(
                 url,
                 (object) => {
-
+                    console.log(object);
      				// var helper = new THREE.SkeletonHelper(object.scene.children[0]);
      				// this.scene.add(helper);
-                    console.log(this.scene);
                     if( category === 'Race' ){
 
          				this.mixer = new THREE.AnimationMixer(object.scene);
@@ -846,11 +852,11 @@ class ModelBuilder extends Component {
        var bone;
        switch(category) {
             case 'Beard':
-                bone = this.getBoneByName("rigcurrent_jaw_master");
+                bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
                 break;
             case 'Chest':
-                bone = this.getBoneByName("rigcurrent_chest");
+                bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
                 break;
             case 'FootLeft':
@@ -869,16 +875,20 @@ class ModelBuilder extends Component {
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
                 return bone;
                 break;
-            // case 'Gloves':
-            //     bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
-            //     return bone;
-            //     break;
+            case 'HandLeft':
+                bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
+                return bone;
+                break;
+            case 'HandRight':
+                bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
+                return bone;
+                break;
             case 'Headwear':
-                bone = this.getBoneByName("rigcurrent_head");
+                bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
                 break;
             case 'LegsWearable':
-                bone = this.getBoneByName("rigcurrent_torso");
+                bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootL");
                 return bone;
                 break;
             default:
@@ -886,11 +896,13 @@ class ModelBuilder extends Component {
             }
    }
 
+
+
    parentObjectToBone(category, selection, object) {
 
-       console.log(category);
+       console.log(object);
        let bone = this.getBoneByCategory(category);
-       console.log(bone)
+
        //imported heirachy scene->object3D->skinnedmesh
        let child = object.children[0].children[0];
        child.skeleton = this.skeleton;
