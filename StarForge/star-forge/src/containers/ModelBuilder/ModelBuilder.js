@@ -248,22 +248,28 @@ class ModelBuilder extends Component {
         // light.shadow.camera.left = -100;
         // light.shadow.camera.right = 100;
         //
-        var hemiLight = new THREE.HemisphereLight( 0x7c849b, 0xd7cbb1, 0.3);
-        hemiLight.position.set( 0, 10, 0 );
+        var hemiLight = new THREE.HemisphereLight( 0x111111, 0x111111, 0.7 );
+        hemiLight.color.setHSL( 0.6, 1, 0.6 );
+        hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+        hemiLight.position.set( 0, 50, 0 );
         scene.add( hemiLight );
 
-        var shadowLight  = new THREE.SpotLight( 0xffffee, 0.3 );
-        shadowLight.position.set( 0, 8, 8 );
-        shadowLight.castShadow = true;
-        shadowLight.shadow.width = 512;
-        shadowLight.shadow.height = 512;
-        shadowLight.shadow.camera.top = 15;
-        shadowLight.shadow.camera.bottom = -15;
-        shadowLight.shadow.camera.left = -30;
-        shadowLight.shadow.camera.right = 30;
-        shadowLight.shadow.camera.far = 12;
-        shadowLight.shadow.bias = -0.025;
-        scene.add(shadowLight);
+        //
+        var dirLight = new THREE.DirectionalLight( 0x111111, 1 );
+        dirLight.color.setHSL( 0.1, 1, 0.95 );
+        dirLight.position.set( -.25, 1.75, 1 );
+        dirLight.position.multiplyScalar( 30 );
+        scene.add( dirLight );
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 8192;
+        dirLight.shadow.mapSize.height = 8192;
+        var d = 50;
+        dirLight.shadow.camera.left = - d;
+        dirLight.shadow.camera.right = d;
+        dirLight.shadow.camera.top = d;
+        dirLight.shadow.camera.bottom = - d;
+        dirLight.shadow.camera.far = 3500;
+        dirLight.shadow.bias = - 0.0001;
 
         // var camhelper = THREE.CameraHelper(shadowLight.shadow.camera);
         // scene.add(camhelper);
@@ -286,17 +292,17 @@ class ModelBuilder extends Component {
        scene.add(cube);
 
        //make the ground
-       var ground = new THREE.Mesh(
-       new THREE.CircleBufferGeometry( 10, 50 ),
-       new THREE.ShadowMaterial( { color: 0x000000, opacity: 0.15, depthWrite: false }
-       ) );
-
+       var groundGeo = new THREE.PlaneBufferGeometry( 20, 20 );
+       var groundMat = new THREE.MeshPhongMaterial( { color: 0xcecdd6, side: THREE.DoubleSide } );
+       groundMat.transparent = true;
+       groundMat.opacity = 0.1;
+       var ground = new THREE.Mesh( groundGeo, groundMat );
        ground.receiveShadow = true;
        ground.rotation.x = Math.PI / 2;
-      ground.renderOrder = 1;
+       ground.renderOrder = 1;
        ground.name = "ground";
        scene.add(ground);
-
+       ground.position.y = 0;
 
        renderer.setClearColor('#000000')
        renderer.setSize(width, height)
