@@ -11,23 +11,23 @@ import image8 from './images/img8.jpg';
 const tileData = [
   {
     img: image1,
-    name: "base1",
+    name: "Base1",
   },
   {
     img: image2,
-    name: "base2",
+    name: "Base2",
   },
   {
     img: image3,
-    name: "base3",
+    name: "Base3",
   },
   {
     img: image4,
-    name: "base4",
+    name: "Base4",
   },
   {
     img: image5,
-    name: "base5",
+    name: "Base5",
   },
   {
     img: image6,

@@ -195,15 +195,15 @@ class ModelBuilder extends Component {
         this.scene = scene;
 
         const camera = new THREE.PerspectiveCamera(
-          75,
+          50,
           width / height,
           0.1,
           1000
         )
         //offset view so model shifts to left side of the screen
         camera.setViewOffset(width * 1.3, height * 1.3, width * .3, height * .1, width, height );
-
-        camera.position.z = 3.5;
+        camera.frustrumCulled = false;
+        camera.position.z = 5;
         camera.position.y = 2;
 
 
@@ -216,8 +216,8 @@ class ModelBuilder extends Component {
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enabled = true;
         controls.enablePan = false;
-        controls.minDistance = 3;
-        controls.maxDistance = 5;
+        controls.minDistance = 4;
+        controls.maxDistance = 6.5;
         controls.target = new THREE.Vector3(0, 1, 0);
         controls.update();
         // How far you can orbit vertically, upper and lower limits.
@@ -263,13 +263,14 @@ class ModelBuilder extends Component {
         dirLight.castShadow = true;
         dirLight.shadow.mapSize.width = 8192;
         dirLight.shadow.mapSize.height = 8192;
-        var d = 50;
-        dirLight.shadow.camera.left = - d;
-        dirLight.shadow.camera.right = d;
-        dirLight.shadow.camera.top = d;
-        dirLight.shadow.camera.bottom = - d;
-        dirLight.shadow.camera.far = 3500;
-        dirLight.shadow.bias = - 0.0001;
+        //var d = 50;
+        dirLight.shadow.camera = new THREE.OrthographicCamera( -100, 100, 100, -100, 0.1, 1000 );
+        // dirLight.shadow.camera.left = - d;
+        // dirLight.shadow.camera.right = d;
+        // dirLight.shadow.camera.top = d;
+        // dirLight.shadow.camera.bottom = - d;
+        // dirLight.shadow.camera.far = 3500;
+        // dirLight.shadow.bias = - 0.0001;
 
         // var camhelper = THREE.CameraHelper(shadowLight.shadow.camera);
         // scene.add(camhelper);
@@ -329,7 +330,6 @@ class ModelBuilder extends Component {
 
    animate = () => {
        requestAnimationFrame( this.animate );
-
        var delta = this.clock.getDelta();
        if (this.mixer != null && this.mixer !== undefined) {
            this.mixer.update(delta);
@@ -501,9 +501,6 @@ class ModelBuilder extends Component {
                if( selection && this.state.currentObject[category] !== null ){
                    try {
                        const object = await this.loadModelFromCache(category,  this.state.currentObject[ category ] );
-                       console.log(object);
-                       //object.scale.set( .013, .013, .013 );
-
 
                        if( prevName !== '\'\'' ){
                            this.removeObjectFromScene( prevName );
@@ -513,10 +510,9 @@ class ModelBuilder extends Component {
 
                        //object.position.y = -1;
                        if(category !== 'Race'){
-                          this.parentObjectToBone(category, selection, object)
+                          this.setupObjectImport(category, selection, object)
                        } else{
                          this.scene.add( object );
-                         console.log(this.scene);
                        }
                    } catch ( error ) {
                        console.log( error );
@@ -536,7 +532,6 @@ class ModelBuilder extends Component {
             this.gltfLoader.load(
                 url,
                 (object) => {
-                    console.log(object);
      				// var helper = new THREE.SkeletonHelper(object.scene.children[0]);
      				// this.scene.add(helper);
                     if( category === 'Race' ){
@@ -553,6 +548,7 @@ class ModelBuilder extends Component {
 
                          }
                          object.scene.children[0].children[0].castShadow = true;
+                         object.scene.children[0].children[0].morphTargetInfluences[0] = 1;
                          this.skeleton = object.scene.children[0].children[0].skeleton;
                          this.bones = this.skeleton.bones;
                          this.bonesQuatInit = {};
@@ -703,7 +699,6 @@ class ModelBuilder extends Component {
                      }
                  }
              }), () => {
-                 console.log(this.state);
              })
          } else {
              this.setState(prevState => ({
@@ -719,10 +714,8 @@ class ModelBuilder extends Component {
                      }
                  }
              }), () => {
-                 console.log(this.state);
                  let num = index + 1;
                  let selection = "Glove" + num.toString();
-                 console.log(selection);
                  if( this.state.currentName.GloveLeft === selection) {
                      this.updateObjectHandler("GloveRight", selection, false)
                  } else {
@@ -745,7 +738,6 @@ class ModelBuilder extends Component {
                      }
                  }
              }), () => {
-                 console.log(this.state);
              })
          } else {
              this.setState(prevState => ({
@@ -761,10 +753,8 @@ class ModelBuilder extends Component {
                      }
                  }
              }), () => {
-                 console.log(this.state);
                  let num = index + 1;
                  let selection = "Foot" + num.toString();
-                 console.log(selection);
                  if( this.state.currentName.FootLeft === selection) {
                      this.updateObjectHandler("FootRight", selection, false)
                  } else {
@@ -790,8 +780,6 @@ class ModelBuilder extends Component {
    removeObjectFromScene = (category) => {
        var selectedObject = this.scene.getObjectByName(category);
        this.scene.remove(selectedObject);
-       console.log("removed: " + category);
-       console.log(this.state);
    }
 
 
@@ -857,6 +845,10 @@ class ModelBuilder extends Component {
    getBoneByCategory = (category) => {
        var bone;
        switch(category) {
+            case 'Base':
+                bone = this.getBoneByName("rigcurrent_base");
+                return bone;
+            break;
             case 'Beard':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
@@ -904,16 +896,20 @@ class ModelBuilder extends Component {
 
 
 
-   parentObjectToBone(category, selection, object) {
-
-       console.log(object);
-       let bone = this.getBoneByCategory(category);
-
+   setupObjectImport(category, selection, object) {
+        let child = object.children[0].children[0];
+        let bone = this.getBoneByCategory(category);
+        child.frustumCulled = false;
+        child.castShadow = true;
        //imported heirachy scene->object3D->skinnedmesh
-       let child = object.children[0].children[0];
-       child.skeleton = this.skeleton;
+        try {
+            child.skeleton = this.skeleton;
+            child.bind(child.skeleton, bone.matrixWorld);
+        } catch (error){
 
-       child.bind(child.skeleton, bone.matrixWorld);
+        }
+
+
        THREE.SceneUtils.attach(child, child.parent, this.scene);
        child.name = category;
    }
