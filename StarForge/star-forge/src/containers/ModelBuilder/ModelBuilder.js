@@ -180,19 +180,21 @@ class ModelBuilder extends Component {
         this.actions = {};
         this.clock = new THREE.Clock();
         this.bones = [];
-        this.bonesPositInit = {};
-        this.bonesPositCurrent = {};
-        this.bonesQuatInit = {};
-        this.bonesQuatCurrent = {};
         this.currentMesh;
         this.skeleton;
+        this.activeObjects = [];
+        this.armatureLoaded = false;
 
 
 
         const width = this.mount.clientWidth;
         const height = this.mount.clientHeight;
         const scene = new THREE.Scene();
+        const objectHolder = new THREE.Object3D();
         this.scene = scene;
+        this.objectHolder = objectHolder;
+        this.objectHolder.name = "Object Holder";
+        this.scene.add(this.objectHolder);
 
         const camera = new THREE.PerspectiveCamera(
           50,
@@ -501,7 +503,6 @@ class ModelBuilder extends Component {
                if( selection && this.state.currentObject[category] !== null ){
                    try {
                        const object = await this.loadModelFromCache(category,  this.state.currentObject[ category ] );
-
                        if( prevName !== '\'\'' ){
                            this.removeObjectFromScene( prevName );
                        }
@@ -509,10 +510,15 @@ class ModelBuilder extends Component {
                        object.name = category;
 
                        //object.position.y = -1;
-                       if(category !== 'Race'){
-                          this.setupObjectImport(category, selection, object)
-                       } else{
-                         this.scene.add( object );
+                       if(category === 'Race' && !this.armatureLoaded){
+                            this.scene.add( object );
+                            let model = object.children[0].children[0];
+                            model.name = category;
+                            THREE.SceneUtils.attach(model, model.parent, this.objectHolder);
+                            this.armatureLoaded = true;
+                            console.log(this.scene);
+                       } else {
+                        this.setupObjectImport(category, selection, object)
                        }
                    } catch ( error ) {
                        console.log( error );
@@ -531,10 +537,10 @@ class ModelBuilder extends Component {
         return new Promise((resolve, reject) => {
             this.gltfLoader.load(
                 url,
-                (object) => {
+                async (object) => {
      				// var helper = new THREE.SkeletonHelper(object.scene.children[0]);
      				// this.scene.add(helper);
-                    if( category === 'Race' ){
+                    if( category === 'Race' && !this.armatureLoaded ){
 
          				this.mixer = new THREE.AnimationMixer(object.scene);
          				var allAction = this.mixer.clipAction( object.animations[ 0 ] );
@@ -551,22 +557,17 @@ class ModelBuilder extends Component {
                          object.scene.children[0].children[0].morphTargetInfluences[0] = 1;
                          this.skeleton = object.scene.children[0].children[0].skeleton;
                          this.bones = this.skeleton.bones;
-                         this.bonesQuatInit = {};
-                         this.bonesPositInit = {};
-                         //this.flattenBones(object.scene.children[0].children[1], this.bones);
-                         console.log(this.bones);
-
 
                          for( let clip in this.subclips ) {
                             this.mixer.clipAction( this.subclips[clip]);
          					this.actions[clip] = this.mixer.clipAction( this.subclips[clip]);
          				}
 
-
-                        console.log(this.skeleton);
+                        
                         //set the pose to current selected pose if not select, else set to pose 1
                         this.setPoseByName(this.state.currentName['Pose']);
                         this.animate();
+                        
                     }
                     resolve(object.scene);
                 },
@@ -778,69 +779,15 @@ class ModelBuilder extends Component {
     }
 
    removeObjectFromScene = (category) => {
-       var selectedObject = this.scene.getObjectByName(category);
-       this.scene.remove(selectedObject);
-   }
-
-
-
-   flattenBones = ( rootBone, bones) => {
-       if( rootBone === null || rootBone === undefined) {
-           return;
+       var selectedObject = this.objectHolder.getObjectByName(category);
+       this.objectHolder.remove(selectedObject);
+       for(let i = this.activeObjects.length - 1; i >= 0; i--){
+        if(this.activeObjects[i].category === category){
+            this.activeObjects.splice(i, 1);
+        }
        }
-       this.bones.push(rootBone);
-       let count = rootBone.children.length;
-       for(let i = 0; i < count; i++ ) {
-           this.flattenBones(rootBone.children[i], this.bones);
-       }
+       console.log(this.activeObjects);
    }
-
-   // transAndRotObjectOnImport = (category, object) => {
-   //      let bone = this.getBoneByCategory(category);
-   //      let parent = bone.parent;
-   //      object.name = category;
-   //      bone.add(object);
-   //  }
-
-
-   // setBoneInitialPositandRot = ( rootBone) => {
-   //     if( rootBone === null || rootBone === undefined) {
-   //         return;
-   //     }
-   //     var name = rootBone.name;
-   //     this.bonesPositInit = {
-   //         ...this.bonesPositInit,
-   //         [name]: rootBone.getWorldPosition(new THREE.Vector3())
-   //     }
-   //     this.bonesQuatInit = {
-   //         ...this.bonesQuatInit,
-   //         [name]: rootBone.getWorldQuaternion(new THREE.Quaternion()).clone()
-   //     }
-   //     let count = rootBone.children.length;
-   //     for(let i = 0; i < count; i++ ) {
-   //         this.setBoneInitialPositandRot(rootBone.children[i]);
-   //     }
-   // }
-   //
-   // setBoneCurrentPositandRot = ( rootBone) => {
-   //     if( rootBone === null || rootBone === undefined) {
-   //         return;
-   //     }
-   //     var name = rootBone.name;
-   //     this.bonesPositCurrent = {
-   //         ...this.bonesPositCurrent,
-   //         [name]: rootBone.getWorldPosition(new THREE.Vector3())
-   //     }
-   //     this.bonesQuatCurrent = {
-   //         ...this.bonesQuatCurrent,
-   //         [name]: rootBone.getWorldQuaternion(new THREE.Quaternion()).clone()
-   //     }
-   //
-   //     let count = rootBone.children.length;
-   //     for(let i = 0; i < count; i++ ) {
-   //         this.setBoneCurrentPositandRot(rootBone.children[i]);
-   //     }
-   // }
 
    getBoneByCategory = (category) => {
        var bone;
@@ -894,23 +841,38 @@ class ModelBuilder extends Component {
             }
    }
 
+   transferObjectsToNewModel( ) {
+        for(let i = this.activeObjects.length - 1; i >= 0; i--){
+            let obj = this.scene.getObjectByName(this.activeObjects[i]);
+            if( obj.category !== 'Race'){
+                let bone = this.getBoneByCategory(obj.category);
+                obj.skeleton = this.skeleton;
+                obj.bind(obj.skeleton, bone.matrixWorld);
+            }
+        }
+   }
+
 
 
    setupObjectImport(category, selection, object) {
         let child = object.children[0].children[0];
         let bone = this.getBoneByCategory(category);
+        child.name = category;
         child.frustumCulled = false;
         child.castShadow = true;
+        child.category = category;
+        child.selection = selection;
+        this.activeObjects.push(child.name);
+        console.log(child);
        //imported heirachy scene->object3D->skinnedmesh
         try {
             child.skeleton = this.skeleton;
             child.bind(child.skeleton, bone.matrixWorld);
         } catch (error){
-
         }
 
 
-       THREE.SceneUtils.attach(child, child.parent, this.scene);
+       THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
        child.name = category;
    }
 
@@ -923,18 +885,6 @@ class ModelBuilder extends Component {
        }
        return null;
    }
-
-   getRotQuat = (bone) => {
-
-       //rotation quat = q2 * q1^-1
-       let initQuat = this.bonesQuatInit[bone.name].clone();
-       initQuat.inverse().normalize();
-       let currentQuat = this.bonesQuatCurrent[bone.name].clone();
-       currentQuat.normalize();
-       let rotationQuat = currentQuat.multiply(initQuat).normalize();
-       return rotationQuat;
-   }
-
 
    render() {
      return (
