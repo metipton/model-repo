@@ -46,7 +46,9 @@ class categorySelectors extends Component{
                     <div className={classes.SecondColumn}>
                         <HeadEditor
                             state={this.props.state}
-                            updateSelection={this.props.updateObject}/>
+                            updateSelection={this.props.updateObject}
+                            updateExpression ={this.props.updateExpression}
+                            morphPercents={this.props.morphPercents}/>
                     </div>
                 );
                 break;
@@ -55,7 +57,9 @@ class categorySelectors extends Component{
                     <div className={classes.SecondColumn}>
                         <BodyEditor
                             state={this.props.state}
-                            updateSelection={this.props.updateObject}/>
+                            updateSelection={this.props.updateObject}
+                            updateBodyTarget={this.props.updateBodyTarget}
+                            morphPercents={this.props.morphPercents}/>
                     </div>
                 );
                 break;

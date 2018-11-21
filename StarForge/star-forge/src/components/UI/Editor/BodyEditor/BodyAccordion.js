@@ -11,6 +11,7 @@ import TorsoGridList from './GridLists/TorsoGridList/GridList';
 import LegsGridList from './GridLists/LegsGridList/GridList';
 import TailGridList from './GridLists/TailGridList/GridList';
 import BackGridList from './GridLists/BackGridList/GridList';
+import MeasurementsEditor from './GridLists/MeasurementsEditor/GridList';
 
 
 class BodyAccordion extends Component {
@@ -75,7 +76,9 @@ class BodyAccordion extends Component {
                   Measurements
                 </Typography>
               </ExpansionPanelSummary>
-                <p>Measurement Scrollers </p>
+                <MeasurementsEditor
+                    updateBodyTarget={this.props.updateBodyTarget}
+                    morphPercents={this.props.morphPercents}/>
             </ExpansionPanel>
         </div>
 

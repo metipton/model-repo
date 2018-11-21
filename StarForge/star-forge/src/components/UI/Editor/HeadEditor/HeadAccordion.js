@@ -64,7 +64,11 @@ class HeadAccordion extends Component {
                   Expression
                 </Typography>
               </ExpansionPanelSummary>
-                  <ExpressionGridList state={this.props.state} updateSelection={this.props.updateSelection}/>
+                  <ExpressionGridList 
+                      state={this.props.state} 
+                      updateSelection={this.props.updateSelection}
+                      updateExpression={this.props.updateExpression}
+                      morphPercents={this.props.morphPercents}/>
             </ExpansionPanel>
         </div>
 

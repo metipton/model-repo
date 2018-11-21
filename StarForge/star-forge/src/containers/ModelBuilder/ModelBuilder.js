@@ -19,7 +19,7 @@ import ny from './skybox/scifi-ny.jpg';
 import pz from './skybox/scifi-pz.jpg';
 import nz from './skybox/scifi-nz.jpg';
 
-var FBXLoader = require('three-fbx-loader');
+
 
 
 class ModelBuilder extends Component {
@@ -171,9 +171,137 @@ class ModelBuilder extends Component {
      this.mount.removeChild(this.renderer.domElement)
     }
 
+    
+    updateExpressionPercent = (trait, newPercent) => {
+        // let expCounter = 0;
+        // let sum = 0;
+        let expressions = this.morphTargets.expression;
+        
+        expressions[trait].percent = newPercent;
+
+        // for( let exp in expressions){
+        //     sum += expressions[exp].percent;
+        //     expCounter++;
+        // }
+        // console.log(sum);
+        // if( sum > 150 ) {
+        //     let diffSpread = (sum - 150) / (expCounter - 1);
+        //     for( let exp in expressions){
+        //         if( exp !== trait) {
+        //             if(expressions[exp].percent - diffSpread > 0){
+        //                 expressions[exp].percent -= diffSpread;
+        //             } else {
+        //                 expressions[exp].percent = 0;
+        //             }
+        //         }
+        //     }
+        // }
+        console.log(this.morphTargets);
+    }
+
+    updateBodyPercent = (trait, newPercent) => {
+
+        let bodyTargets = this.morphTargets.body;
+        
+        bodyTargets[trait].percent = newPercent;
+
+        // for( let part in bodyTargets){
+        //     sum += expressions[exp].percent;
+        //     expCounter++;
+        // }
+        this.updateBodyMorphs(trait, newPercent);
+    }
+
+    updateBodyMorphs = (trait, percent) => {
+        var convPercent = percent / 100;
+        var objList = this.morphables.body[trait];
+        for(var obj in objList){
+            objList[obj].morphTargetInfluences[0] = convPercent;
+        }
+    }
+
+    addObjectToMorphables = (category, object) => {
+       switch(category) {
+            case 'Base':
+                return;
+            break;
+            case 'Beard':
+
+                return;
+            case 'Chest':
+
+                return;
+            case 'FootLeft':
+
+                return ;
+            case 'FootRight':
+
+                return;
+            case 'GloveLeft':
+
+                return;
+            case 'GloveRight':
+
+                return;
+            case 'HandLeft':
+
+                return;
+            case 'HandRight':
+
+                return;
+            case 'Headwear':
+
+                return;
+            case 'LegsWearable':
+
+                return;
+            case 'Race':
+                console.log(object);
+                this.morphables = {
+                    ...this.morphables.expression,
+                    body: {
+                        Height: {
+                            ...this.morphables.body.Height,
+                            Race: object
+                        },
+                        Weight: {
+                            ...this.morphables.body.Weight,
+                            Race: object
+                        },
+                        Build: {
+                            ...this.morphables.body.Build,
+                            Race: object
+                        },
+                        Muscularity: {
+                            ...this.morphables.body.Muscularity,
+                            Race: object
+                        },
+                        Bust: {
+                            ...this.morphables.body.Bust,
+                            Race: object
+                        },
+                        Waist: {                            
+                            ...this.morphables.body.Waist,
+                            Race: object
+                        },
+                        Curves: {                            
+                            ...this.morphables.body.Curves,
+                            Race: object
+                        },
+                        Booty: {                            
+                            ...this.morphables.body.Booty,
+                            Race: object} 
+                    }
+                }
+                console.log(this.morphables);
+                return;
+            default:
+                return;
+            }
+    }
+
     init = () => {
         this.THREE = THREE;
-        this.loader = new FBXLoader();
         this.gltfLoader = new GLTFLoader();
         this.mixer;
         this.subclips = {};
@@ -184,7 +312,49 @@ class ModelBuilder extends Component {
         this.skeleton;
         this.activeObjects = [];
         this.armatureLoaded = false;
+        this.morphTargets = {
+            body: {
+               Height: {
+                   percent: 20
+                },
+               Weight: {percent: 0},
+               Build: {percent: 0},
+               Muscularity: {percent: 0},
+               Bust: {percent: 0},
+               Waist: {percent: 0},
+               Curves: {percent: 0},
+               Booty: {percent: 0} 
+            },
+            expression: {
+                Smile: {percent: 20},
+                Cocky: {percent: 0},
+                Snarl: {percent: 0},
+                Confused: {percent: 0},
+                Embarrassed: {percent: 0}
+            }
+        }
 
+        this.morphables = {
+            body: {
+               Height: {
+                   
+                },
+               Weight: {},
+               Build: {},
+               Muscularity: {},
+               Bust: {},
+               Waist: {},
+               Curves: {},
+               Booty: {} 
+            },
+            expression: {
+                Smile: {},
+                Cocky: {},
+                Snarl: {},
+                Confused: {},
+                Embarrassed: {}
+            }
+        }
 
 
         const width = this.mount.clientWidth;
@@ -305,7 +475,7 @@ class ModelBuilder extends Component {
        ground.renderOrder = 1;
        ground.name = "ground";
        scene.add(ground);
-       ground.position.y = 0;
+       ground.position.y = -.1;
 
        renderer.setClearColor('#000000')
        renderer.setSize(width, height)
@@ -352,6 +522,24 @@ class ModelBuilder extends Component {
      }
    }
 
+   setInitialStateFromDatabase = () => {
+    return new Promise( ( resolve, reject ) => {
+
+        axios.get( '/Initial.json' )
+        .then( response => {
+            this.setState( {
+                ...this.state,
+                currentName : response.data
+            })
+        }).then ( () => {
+            resolve();
+        })
+        .catch( error => {
+            reject( error );
+        });
+    });
+}
+
    async loadInitialModelAndObjects () {
        await this.setInitialStateFromDatabase();
        const results = Object.keys(this.state.currentName).map(async( i ) => {
@@ -363,23 +551,7 @@ class ModelBuilder extends Component {
        //Promise.all(results).then(() => this.applyPose());
    }
 
-   setInitialStateFromDatabase = () => {
-       return new Promise( ( resolve, reject ) => {
-
-           axios.get( '/Initial.json' )
-           .then( response => {
-               this.setState( {
-                   ...this.state,
-                   currentName : response.data
-               })
-           }).then ( () => {
-               resolve();
-           })
-           .catch( error => {
-               reject( error );
-           });
-       });
-   }
+ 
 
    async updateObjectHandler(category, selection, fromInit) {
 
@@ -503,7 +675,7 @@ class ModelBuilder extends Component {
                if( selection && this.state.currentObject[category] !== null ){
                    try {
                        const object = await this.loadModelFromCache(category,  this.state.currentObject[ category ] );
-                       if( prevName !== '\'\'' ){
+                       if( prevName !== "''" ){
                            this.removeObjectFromScene( prevName );
                        }
 
@@ -515,6 +687,9 @@ class ModelBuilder extends Component {
                             let model = object.children[0].children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, model.parent, this.objectHolder);
+                            console.log(category);
+                            console.log(model);
+                            this.addObjectToMorphables(category, model);
                             this.armatureLoaded = true;
                             console.log(this.scene);
                        } else {
@@ -554,7 +729,7 @@ class ModelBuilder extends Component {
 
                          }
                          object.scene.children[0].children[0].castShadow = true;
-                         object.scene.children[0].children[0].morphTargetInfluences[0] = 1;
+                         object.scene.children[0].children[0].morphTargetInfluences[0] = 0;
                          this.skeleton = object.scene.children[0].children[0].skeleton;
                          this.bones = this.skeleton.bones;
 
@@ -795,47 +970,36 @@ class ModelBuilder extends Component {
             case 'Base':
                 bone = this.getBoneByName("rigcurrent_base");
                 return bone;
-            break;
             case 'Beard':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
-                break;
             case 'Chest':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
-                break;
             case 'FootLeft':
                 bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootL");
                 return bone;
-                break;
             case 'FootRight':
                 bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootR");
                 return bone;
-                break;
             case 'GloveLeft':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
-                break;
             case 'GloveRight':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
                 return bone;
-                break;
             case 'HandLeft':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
-                break;
             case 'HandRight':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
                 return bone;
-                break;
             case 'Headwear':
                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
                 return bone;
-                break;
             case 'LegsWearable':
                 bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootL");
                 return bone;
-                break;
             default:
                 return;
             }
@@ -863,17 +1027,18 @@ class ModelBuilder extends Component {
         child.category = category;
         child.selection = selection;
         this.activeObjects.push(child.name);
-        console.log(child);
        //imported heirachy scene->object3D->skinnedmesh
         try {
             child.skeleton = this.skeleton;
             child.bind(child.skeleton, bone.matrixWorld);
         } catch (error){
         }
-
+        
 
        THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
        child.name = category;
+       console.log(category);
+       this.addObjectToMorphables(category, child);
    }
 
    getBoneByName = (name) =>
@@ -887,6 +1052,7 @@ class ModelBuilder extends Component {
    }
 
    render() {
+     let morphTargetsProp = this.morphTargets;
      return (
         <Aux className={classes.ModelBuilder}>
            <div
@@ -899,7 +1065,10 @@ class ModelBuilder extends Component {
              updateFeet={(category, selection) => this.setFeetHandler(category, selection)}
              setGloveLink={(index) => this.setGloveLinkHandler(index)}
              updateGlove={(category, selection) => this.setGloveHandler(category, selection)}
-             updatePose={(pose) => this.setPoseHandler(pose)} />
+             updatePose={(pose) => this.setPoseHandler(pose)} 
+             updateExpression={(trait, newPercent) => this.updateExpressionPercent(trait, newPercent)}
+             updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
+             morphPercents={morphTargetsProp}/>
          <BottomBar />
        </Aux>
      )

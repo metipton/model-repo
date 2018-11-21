@@ -1,4 +1,4 @@
-import image1 from './images/img1.png';
+import image1 from './images/Chest1.png';
 import image2 from './images/img2.png';
 import image3 from './images/img3.png';
 import image4 from './images/img4.png';

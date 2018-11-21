@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import tileData from './TileData';
-import Slider from '@material-ui/lab/Slider';
+import Slider from '../../../../SliderExpression/Slider';
 
 const styles = theme => ({
   root: {
@@ -106,6 +106,12 @@ class ImageGridList extends Component {
 
 
     render() {
+        let smile = 'Smile';
+        let cocky = 'Cocky';
+        let snarl = 'Snarl';
+        let confused = 'Confused';
+        let embarrassed = 'Embarrassed';
+
         const {classes} = this.props;
         return (
         <div className={classes.root}>
@@ -123,55 +129,65 @@ class ImageGridList extends Component {
               </GridList>
           </div>
           <div className={classes.text}>
-              <span className={classes.text} >Smile</span>
+              <span className={classes.text} >{smile}</span>
+          </div>
+
+          <div className={classes.slider}>
+            <Slider 
+              name = {smile}
+              startVal={20} 
+              morphPercents={this.props.morphPercents}
+              updateExpression={this.props.updateExpression}/>
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>{cocky}</span>
+          </div>
+
+          <div className={classes.slider}>
+              <Slider 
+                name={cocky}
+                startVal={0} 
+                morphPercents={this.props.morphPercents}
+                updateExpression={this.props.updateExpression}/>
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>{snarl}</span>
+          </div>
+
+          <div className={classes.slider}>
+             <Slider 
+                startVal={0} 
+                name={snarl}
+                morphPercents={this.props.morphPercents}
+                updateExpression={this.props.updateExpression}/>
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>{confused}</span>
+          </div>
+
+          <div className={classes.slider}>
+            <Slider 
+              name={confused}
+              startVal={0}
+              morphPercents={this.props.morphPercents}
+              updateExpression={this.props.updateExpression} />
+          </div>
+
+          <div className={classes.text}>
+              <span className={classes.text}>{embarrassed}</span>
           </div>
 
           <div className={classes.slider}>
             <Slider
-                min={0}
-                max={100}
-                disabled={true}/>
+              name={embarrassed} 
+              startVal={0}
+              morphPercents={this.props.morphPercents}
+              updateExpression={this.props.updateExpression} /> 
           </div>
 
-          <div className={classes.text}>
-              <span className={classes.text}>Cocky</span>
-          </div>
-
-          <div className={classes.slider}>
-            <Slider/>
-          </div>
-
-          <div className={classes.text}>
-              <span className={classes.text}>Snarl</span>
-          </div>
-
-          <div className={classes.slider}>
-            <Slider />
-          </div>
-
-          <div className={classes.text}>
-              <span className={classes.text}>Confused</span>
-          </div>
-
-          <div className={classes.slider}>
-            <Slider />
-          </div>
-
-          <div className={classes.text}>
-              <span className={classes.text}>Embarassed</span>
-          </div>
-
-          <div className={classes.slider}>
-            <Slider />
-          </div>
-
-          <div className={classes.text}>
-              <span className={classes.text}>Smile</span>
-          </div>
-
-          <div className={classes.slider}>
-            <Slider />
-          </div>
         </div>
         );
     }
