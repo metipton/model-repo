@@ -231,120 +231,6 @@ class ModelBuilder extends Component {
         }
     }
 
-    addObjectToMorphables = (category, object) => {
-       switch(category) {
-            case 'Base':
-
-                return;
-            case 'Beard':
-
-                return;
-            case 'Chest':
-                this.morphables = {
-                    ...this.morphables.expression,
-                    body: {
-                        Height: {
-                            ...this.morphables.body.Height,
-                            Race: object
-                        },
-                        Weight: {
-                            ...this.morphables.body.Weight,
-                            Race: object
-                        },
-                        Build: {
-                            ...this.morphables.body.Build,
-                            Race: object
-                        },
-                        Muscularity: {
-                            ...this.morphables.body.Muscularity,
-                            Race: object
-                        },
-                        Bust: {
-                            ...this.morphables.body.Bust,
-                            Race: object
-                        },
-                        Waist: {                            
-                            ...this.morphables.body.Waist,
-                            Race: object
-                        },
-                        Curves: {                            
-                            ...this.morphables.body.Curves,
-                            Race: object
-                        },
-                        Booty: {                            
-                            ...this.morphables.body.Booty,
-                            Race: object} 
-                    }
-                }
-                return;
-            case 'FootLeft':
-
-                return ;
-            case 'FootRight':
-
-                return;
-            case 'GloveLeft':
-
-                return;
-            case 'GloveRight':
-
-                return;
-            case 'HandLeft':
-
-                return;
-            case 'HandRight':
-
-                return;
-            case 'Headwear':
-
-                return;
-            case 'LegsWearable':
-
-                return;
-            case 'Race':
-                console.log(object);
-                this.morphables = {
-                    ...this.morphables.expression,
-                    body: {
-                        Height: {
-                            ...this.morphables.body.Height,
-                            Race: object
-                        },
-                        Weight: {
-                            ...this.morphables.body.Weight,
-                            Race: object
-                        },
-                        Build: {
-                            ...this.morphables.body.Build,
-                            Race: object
-                        },
-                        Muscularity: {
-                            ...this.morphables.body.Muscularity,
-                            Race: object
-                        },
-                        Bust: {
-                            ...this.morphables.body.Bust,
-                            Race: object
-                        },
-                        Waist: {                            
-                            ...this.morphables.body.Waist,
-                            Race: object
-                        },
-                        Curves: {                            
-                            ...this.morphables.body.Curves,
-                            Race: object
-                        },
-                        Booty: {                            
-                            ...this.morphables.body.Booty,
-                            Race: object} 
-                    }
-                }
-                return;
-            default:
-                return;
-            }
-    }
-
     init = () => {
         this.THREE = THREE;
         this.gltfLoader = new GLTFLoader();
@@ -587,7 +473,7 @@ class ModelBuilder extends Component {
 
    async loadInitialModelAndObjects () {
        await this.setInitialStateFromDatabase();
-       const results = Object.keys(this.state.currentName).map(async( i ) => {
+       Object.keys(this.state.currentName).map(async( i ) => {
            if(this.state.currentName[i] !== "''" && i !== 'Pose') {
               await this.updateObjectHandler(i, this.state.currentName[i], true, this.setObjectStateHandler);
           }
@@ -732,7 +618,6 @@ class ModelBuilder extends Component {
                             let model = object.children[0].children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, model.parent, this.objectHolder);
-                            this.addObjectToMorphables(category, model);
                             this.armatureLoaded = true;
                        } else {
                         this.setupObjectImport(category, selection, object)
@@ -800,7 +685,7 @@ class ModelBuilder extends Component {
      setPoseByName = (pose) => {
          if (this.actions[pose]) {
              this.mixer.stopAllAction();
-             var finished = false;
+             //var finished = false;
              // this.mixer.addEventListener('finished', (e) => {
              //     if(this.bones[0] !== null && this.bones[0] !== undefined){
              //
@@ -1077,7 +962,6 @@ class ModelBuilder extends Component {
         
        THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
        child.name = category;
-       this.addObjectToMorphables(category, child);
    }
 
    getBoneByName = (name) =>
