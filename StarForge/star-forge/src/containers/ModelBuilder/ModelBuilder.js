@@ -173,11 +173,11 @@ class ModelBuilder extends Component {
 
     
     updateExpressionPercent = (trait, newPercent) => {
-        let expCounter = 0;
-        let sum = 0;
+        // let expCounter = 0;
+        // let sum = 0;
         let expressions = this.morphTargets.expression;
         expressions[trait].percent = newPercent;
-
+        this.updateMorphTargets( trait, newPercent);
         // for( let exp in expressions){
         //     sum += expressions[exp].percent;
         //     expCounter++;
@@ -198,16 +198,29 @@ class ModelBuilder extends Component {
     }
 
     updateBodyPercent = (trait, newPercent) => {
-
-        let bodyTargets = this.morphTargets.body;
-        
+        let bodyTargets = this.morphTargets.body; 
         bodyTargets[trait].percent = newPercent;
+        this.updateMorphTargets(trait, newPercent);
+    }
 
-        // for( let part in bodyTargets){
-        //     sum += expressions[exp].percent;
-        //     expCounter++;
-        // }
-        this.updateBodyMorphs(trait, newPercent);
+    updateMorphTargets = (trait, newPercent) => {
+        var objects = this.scene.getObjectByName("Object Holder");
+        for(let i = 0; i < objects.children.length; i++) {
+            let dictionary = null;
+            let influences = null;
+            if(objects.children[i].morphTargetDictionary 
+                && objects.children[i].morphTargetInfluences){
+                dictionary = objects.children[i].morphTargetDictionary;
+                influences = objects.children[i].morphTargetInfluences;
+            } else {
+                continue;
+            }
+            for(var morph in dictionary){
+                if( morph === trait){
+                    influences[dictionary[morph]] = (newPercent / 100);
+                }
+            }
+        }
     }
 
     updateBodyMorphs = (trait, percent) => {
@@ -221,8 +234,8 @@ class ModelBuilder extends Component {
     addObjectToMorphables = (category, object) => {
        switch(category) {
             case 'Base':
+
                 return;
-            break;
             case 'Beard':
 
                 return;
@@ -326,7 +339,6 @@ class ModelBuilder extends Component {
                             Race: object} 
                     }
                 }
-                console.log(this.morphables);
                 return;
             default:
                 return;
@@ -336,13 +348,13 @@ class ModelBuilder extends Component {
     init = () => {
         this.THREE = THREE;
         this.gltfLoader = new GLTFLoader();
-        this.mixer;
+        this.mixer = null;
         this.subclips = {};
         this.actions = {};
         this.clock = new THREE.Clock();
         this.bones = [];
-        this.currentMesh;
-        this.skeleton;
+        this.currentMesh = null;
+        this.skeleton = null;
         this.activeObjects = [];
         this.armatureLoaded = false;
         this.morphTargets = {
@@ -684,7 +696,7 @@ class ModelBuilder extends Component {
                             ...this.state,
                             currentName: {
                                 ...this.state.currentName,
-                                [category] : "\'\'"
+                                [category] : "''"
                             },
                             currentObject: {
                                 ...this.state.currentObject,
@@ -991,7 +1003,6 @@ class ModelBuilder extends Component {
             this.activeObjects.splice(i, 1);
         }
        }
-       console.log(this.activeObjects);
    }
 
    getBoneByCategory = (category) => {
@@ -1064,10 +1075,8 @@ class ModelBuilder extends Component {
         } catch (error){
         }
         
-
        THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
        child.name = category;
-       console.log(category);
        this.addObjectToMorphables(category, child);
    }
 

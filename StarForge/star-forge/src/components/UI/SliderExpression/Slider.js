@@ -20,10 +20,8 @@ export default class SliderComp extends Component {
   render() {
     let percent;
     if(this.props.morphPercents !== undefined){
-      console.log("hiya");
       percent = this.props.morphPercents.expression[this.props.name]['percent'];
     } else {
-      console.log("hi");
       percent = this.state;
     }
     //this.props.expressionPercents.expression[this.props.name];
