@@ -173,10 +173,9 @@ class ModelBuilder extends Component {
 
     
     updateExpressionPercent = (trait, newPercent) => {
-        // let expCounter = 0;
-        // let sum = 0;
+        let expCounter = 0;
+        let sum = 0;
         let expressions = this.morphTargets.expression;
-        
         expressions[trait].percent = newPercent;
 
         // for( let exp in expressions){
@@ -196,7 +195,6 @@ class ModelBuilder extends Component {
         //         }
         //     }
         // }
-        console.log(this.morphTargets);
     }
 
     updateBodyPercent = (trait, newPercent) => {
@@ -229,7 +227,42 @@ class ModelBuilder extends Component {
 
                 return;
             case 'Chest':
-
+                this.morphables = {
+                    ...this.morphables.expression,
+                    body: {
+                        Height: {
+                            ...this.morphables.body.Height,
+                            Race: object
+                        },
+                        Weight: {
+                            ...this.morphables.body.Weight,
+                            Race: object
+                        },
+                        Build: {
+                            ...this.morphables.body.Build,
+                            Race: object
+                        },
+                        Muscularity: {
+                            ...this.morphables.body.Muscularity,
+                            Race: object
+                        },
+                        Bust: {
+                            ...this.morphables.body.Bust,
+                            Race: object
+                        },
+                        Waist: {                            
+                            ...this.morphables.body.Waist,
+                            Race: object
+                        },
+                        Curves: {                            
+                            ...this.morphables.body.Curves,
+                            Race: object
+                        },
+                        Booty: {                            
+                            ...this.morphables.body.Booty,
+                            Race: object} 
+                    }
+                }
                 return;
             case 'FootLeft':
 
@@ -687,11 +720,8 @@ class ModelBuilder extends Component {
                             let model = object.children[0].children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, model.parent, this.objectHolder);
-                            console.log(category);
-                            console.log(model);
                             this.addObjectToMorphables(category, model);
                             this.armatureLoaded = true;
-                            console.log(this.scene);
                        } else {
                         this.setupObjectImport(category, selection, object)
                        }
@@ -729,7 +759,7 @@ class ModelBuilder extends Component {
 
                          }
                          object.scene.children[0].children[0].castShadow = true;
-                         object.scene.children[0].children[0].morphTargetInfluences[0] = 0;
+                         console.log(object.scene);
                          this.skeleton = object.scene.children[0].children[0].skeleton;
                          this.bones = this.skeleton.bones;
 
