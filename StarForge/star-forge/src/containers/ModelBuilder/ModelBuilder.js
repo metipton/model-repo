@@ -5,6 +5,7 @@ import firebase from '../../Firebase';
 import 'firebase/storage';
 import axios from '../../axios-orders.js';
 import GLTFLoader from 'three-gltf-loader';
+// import './GPUPicker/GPUPicker.js';
 
 import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
@@ -18,6 +19,7 @@ import py from './skybox/scifi-py.jpg';
 import ny from './skybox/scifi-ny.jpg';
 import pz from './skybox/scifi-pz.jpg';
 import nz from './skybox/scifi-nz.jpg';
+import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
 
 
 
@@ -232,6 +234,9 @@ class ModelBuilder extends Component {
     }
 
     init = () => {
+        this.raycaster = new THREE.Raycaster();
+        this.mouse = new THREE.Vector2();
+        this.hexColor = 0xFFFFFF;
         this.THREE = THREE;
         this.gltfLoader = new GLTFLoader();
         this.mixer = null;
@@ -304,16 +309,24 @@ class ModelBuilder extends Component {
           1000
         )
         //offset view so model shifts to left side of the screen
-        camera.setViewOffset(width * 1.3, height * 1.3, width * .3, height * .1, width, height );
+        camera.setViewOffset(width * 1.4, height * 1.4, width * .3, height * .1, width, height );
         camera.frustrumCulled = false;
         camera.position.z = 5;
         camera.position.y = 2;
+
+
 
 
         const renderer = new THREE.WebGLRenderer({ antialias: true })
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.gammaOutput = true;
+
+        // initialize the GPUPicker
+        // this.gpuPicker = new THREE.GPUPicker({renderer:renderer, debug: false});
+        // this.gpuPicker.setFilter(function (object) {return true;});
+        // this.gpuPicker.setScene(this.scene);
+        // this.gpuPicker.setCamera(this.camera);
 
         //enable orbit controls
         const controls = new OrbitControls(camera, renderer.domElement);
@@ -337,6 +350,9 @@ class ModelBuilder extends Component {
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();
             });
+
+        //add event listener for mouse actions
+        window.addEventListener( 'mousedown', this.onMouseDown, false );
 
         // //add the lighting to the scene
         // var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
@@ -451,6 +467,8 @@ class ModelBuilder extends Component {
              loading: false
          })
      }
+     	// update the picking ray with the camera and mouse position
+
    }
 
    setInitialStateFromDatabase = () => {
@@ -710,7 +728,7 @@ class ModelBuilder extends Component {
                  ...this.state.currentName,
                  Pose : pose
              }
-         }, update => {
+         }, () => {
              console.log(this.state);
          });
      }
@@ -958,10 +976,10 @@ class ModelBuilder extends Component {
             child.skeleton = this.skeleton;
             child.bind(child.skeleton, bone.matrixWorld);
         } catch (error){
+
         }
-        
-       THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
-       child.name = category;
+        THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
+        child.name = category;
    }
 
    getBoneByName = (name) =>
@@ -974,25 +992,56 @@ class ModelBuilder extends Component {
        return null;
    }
 
+   
+   setHexColor = (color) => {
+       this.hexColor = color;
+       console.log(this.hexColor);
+   }
+
+    onMouseDown = ( event ) => {
+
+        // calculate mouse position in normalized device coordinates
+        // (-1 to +1) for both components
+
+        this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        
+        this.raycaster.setFromCamera( this.mouse, this.camera );
+        var intersection = []; 
+        let objects = this.objectHolder.children;
+        for(let i = 0; i < objects.length; i++){
+            intersection = this.raycaster.intersectObject(objects[i]);
+            console.log(objects[i]);
+            if(intersection.length !== 0){
+                var hexString = "0X" + this.hexColor;
+                var hex = parseInt( hexString, 16);
+                for ( var i = 0; i < intersection.length; i++ ) {
+                    intersection[ i ].object.material.color = new THREE.Color( hex );
+                }
+            }
+        }
+    }
+
    render() {
      let morphTargetsProp = this.morphTargets;
      return (
         <Aux className={classes.ModelBuilder}>
-           <div
-             style={{ width: '100vw', height: '100vh', position: 'absolute', top: '32'}}
-             ref={(mount) => { this.mount = mount }}/>
-         <Editor
-             state={this.state}
-             updateObject={(category, selection, setObjectStateHandler, fromInit) => this.updateObjectHandler(category, selection, false)}
-             setFeetLink={(index) => this.setFeetLinkHandler(index)}
-             updateFeet={(category, selection) => this.setFeetHandler(category, selection)}
-             setGloveLink={(index) => this.setGloveLinkHandler(index)}
-             updateGlove={(category, selection) => this.setGloveHandler(category, selection)}
-             updatePose={(pose) => this.setPoseHandler(pose)} 
-             updateExpression={(trait, newPercent) => this.updateExpressionPercent(trait, newPercent)}
-             updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
-             morphPercents={morphTargetsProp}/>
-         <BottomBar />
+            <div
+                style={{ width: '100vw', height: '100vh', position: 'absolute', top: '32'}}
+                ref={(mount) => { this.mount = mount }}/>
+            <Editor
+                state={this.state}
+                updateObject={(category, selection, setObjectStateHandler, fromInit) => this.updateObjectHandler(category, selection, false)}
+                setFeetLink={(index) => this.setFeetLinkHandler(index)}
+                updateFeet={(category, selection) => this.setFeetHandler(category, selection)}
+                setGloveLink={(index) => this.setGloveLinkHandler(index)}
+                updateGlove={(category, selection) => this.setGloveHandler(category, selection)}
+                updatePose={(pose) => this.setPoseHandler(pose)} 
+                updateExpression={(trait, newPercent) => this.updateExpressionPercent(trait, newPercent)}
+                updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
+                morphPercents={morphTargetsProp}/>
+            <SideDrawerColor setColor={(color) => this.setHexColor(color)} />
+            <BottomBar />
        </Aux>
      )
    }

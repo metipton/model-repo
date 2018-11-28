@@ -1,0 +1,23 @@
+.SideDrawerColor{
+    position: absolute;
+    top: 32px;
+    width: 20%;
+    left: 0;
+    height: 65vh;
+    color: #ddd;
+    line-height: 1.5;
+    margin: 0;
+    display: flex;
+    z-index: 5;
+    opacity: .8;
+
+}
+
+.Open {
+    transform: translateX(0);
+}
+
+.Close {
+    transform: translateX(-100%);
+}
+
