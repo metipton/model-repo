@@ -453,6 +453,7 @@ class ModelBuilder extends Component {
        if (this.mixer != null && this.mixer !== undefined) {
            this.mixer.update(delta);
        };
+
      this.renderScene()
 
      //this.frameId = window.requestAnimationFrame(this.animate)
@@ -674,7 +675,6 @@ class ModelBuilder extends Component {
 
                          }
                          object.scene.children[0].children[0].castShadow = true;
-                         console.log(object.scene);
                          this.skeleton = object.scene.children[0].children[0].skeleton;
                          this.bones = this.skeleton.bones;
 
@@ -686,6 +686,7 @@ class ModelBuilder extends Component {
                         
                         //set the pose to current selected pose if not select, else set to pose 1
                         this.setPoseByName(this.state.currentName['Pose']);
+                        this.createNewAABB( object.scene.children[0].children[0]);
                         this.animate();
                         
                     }
@@ -729,7 +730,6 @@ class ModelBuilder extends Component {
                  Pose : pose
              }
          }, () => {
-             console.log(this.state);
          });
      }
 
@@ -980,6 +980,7 @@ class ModelBuilder extends Component {
         }
         THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
         child.name = category;
+        this.createNewAABB( child );
    }
 
    getBoneByName = (name) =>
@@ -995,8 +996,126 @@ class ModelBuilder extends Component {
    
    setHexColor = (color) => {
        this.hexColor = color;
-       console.log(this.hexColor);
    }
+
+   createNewAABB = (object) => {
+      object.BoundBox = new THREE.Box3().setFromObject( object );
+      this.scene.add( new THREE.Box3Helper( object.BoundBox, 0x00ff00 ) );
+   }
+
+   updateAllAABB = () => {
+       console.log(this.scene);
+        for( var obj in this.objectHolder ){
+            console.log(obj);
+            if( obj.isSkinnedMesh ){
+                console.log(obj);
+                this.updateAABB( obj, obj.BoundBox );
+            }
+        }
+   }
+
+   updateAABB = ( skinnedMesh, aabb ) => {
+	
+	var skeleton = skinnedMesh.skeleton;
+	var boneMatrices = skeleton.boneMatrices;
+	var geometry = skinnedMesh.geometry;
+	
+	var index = geometry.index;
+	var position = geometry.attributes.position;
+	var skinIndex = geometry.attributes.skinIndex;
+	var skinWeigth = geometry.attributes.skinWeight;
+	
+	var bindMatrix = skinnedMesh.bindMatrix;
+	var bindMatrixInverse = skinnedMesh.bindMatrixInverse;
+	
+	var i, j, si, sw;
+	
+	aabb.makeEmpty();
+
+	// 
+	
+	if ( index !== null ) {
+        var vertex = new THREE.Vector3();
+        var temp = new THREE.Vector3();
+        var skinned = new THREE.Vector3();
+        var skinIndices = new THREE.Vector4();
+        var skinWeights = new THREE.Vector4();
+        var boneMatrix = new THREE.Matrix4();
+		// indexed geometry
+	
+		for ( i = 0; i < index.count; i ++ ) {
+		
+			vertex.fromBufferAttribute( position, index[ i ] );
+			skinIndices.fromBufferAttribute( skinIndex, index[ i ] );
+			skinWeights.fromBufferAttribute( skinWeigth, index[ i ] );
+			
+			// the following code section is normally implemented in the vertex shader
+
+			vertex.applyMatrix4( bindMatrix ); // transform to bind space
+			skinned.set( 0, 0, 0 );
+
+			for ( j = 0; j < 4; j ++ ) {
+
+			 	si = skinIndices.getComponent( j );
+				sw = skinWeights.getComponent( j );
+				boneMatrix.fromArray( boneMatrices, si * 16 );
+
+				// weighted vertex transformation
+
+				temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
+				skinned.add( temp );
+
+			}
+
+			skinned.applyMatrix4( bindMatrixInverse ); // back to local space
+
+			// expand aabb
+
+			aabb.expandByPoint( skinned );
+		
+		}
+	
+	} else {
+	
+		// non-indexed geometry
+	
+		for ( i = 0; i < position.count; i ++ ) {
+		
+			vertex.fromBufferAttribute( position, i );
+			skinIndices.fromBufferAttribute( skinIndex, i );
+			skinWeights.fromBufferAttribute( skinWeigth, i );
+			
+			// the following code section is normally implemented in the vertex shader
+
+			vertex.applyMatrix4( bindMatrix ); // transform to bind space
+			skinned.set( 0, 0, 0 );
+
+			for ( j = 0; j < 4; j ++ ) {
+
+				si = skinIndices.getComponent( j );
+				sw = skinWeights.getComponent( j );
+				boneMatrix.fromArray( boneMatrices, si * 16 );
+
+				// weighted vertex transformation
+
+				temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
+				skinned.add( temp );
+
+			}
+
+			skinned.applyMatrix4( bindMatrixInverse ); // back to local space
+
+			// expand aabb
+
+			aabb.expandByPoint( skinned );
+			
+		}
+	
+	}
+	
+	aabb.applyMatrix4( skinnedMesh.matrixWorld );
+
+}
 
     onMouseDown = ( event ) => {
 
@@ -1011,7 +1130,6 @@ class ModelBuilder extends Component {
         let objects = this.objectHolder.children;
         for(let i = 0; i < objects.length; i++){
             intersection = this.raycaster.intersectObject(objects[i]);
-            console.log(objects[i]);
             if(intersection.length !== 0){
                 var hexString = "0X" + this.hexColor;
                 var hex = parseInt( hexString, 16);
