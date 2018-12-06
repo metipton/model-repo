@@ -1,4 +1,4 @@
-import { UPDATE_CART } from '../../actions/shoppingCart/types';
+import * as actionTypes from '../../actions/actionTypes';
 
 
 const initialState = {
@@ -11,7 +11,7 @@ const initialState = {
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case UPDATE_CART:
+    case actionTypes.UPDATE_CART:
       return {
         ...state,
         item: action.payload

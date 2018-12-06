@@ -4,6 +4,7 @@ import {BrowserRouter} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import {createStore, applyMiddleware, compose, combineReducers} from 'redux';
 import thunk from 'redux-thunk';
+import Client from 'shopify-buy';
 
 import './index.css';
 import App from './App';
@@ -12,6 +13,7 @@ import modelBuilderReducer from './store/reducers/modelBuilder';
 import orderReducer from './store/reducers/order';
 import authReducer from './store/reducers/auth';
 import shoppingCartReducer from './store/reducers/shoppingCart'
+
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const rootReducer = combineReducers({
@@ -25,6 +27,22 @@ const store = createStore(rootReducer, composeEnhancers(
     applyMiddleware(thunk)
 
 ));
+
+const client = Client.buildClient({
+    storefrontAccessToken: '210a96f2a3cecb6c4a13fcba1c6438b8',
+    domain: 'starforge.myshopify.com'
+});
+store.dispatch({type: 'CLIENT_CREATED', payload: client});
+// buildClient() is synchronous, so we can call all these after!
+client.product.fetchAll().then((res) => {
+    store.dispatch({type: 'FETCH_PRODUCTS', payload: res});
+  });
+  client.checkout.create().then((res) => {
+    store.dispatch({type: 'CHECKOUT_FOUND', payload: res});
+  });
+  client.shop.fetchInfo().then((res) => {
+    store.dispatch({type: 'SHOP_FOUND', payload: res});
+  });
 
 const app = (
     <Provider store={store}>

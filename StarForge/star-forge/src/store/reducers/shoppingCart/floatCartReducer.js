@@ -1,4 +1,4 @@
-import { LOAD_CART, ADD_PRODUCT, REMOVE_PRODUCT } from '../../actions/shoppingCart/types';
+import * as actionTypes from '../../actions/actionTypes';
 
 
 const initialState = {
@@ -7,17 +7,17 @@ const initialState = {
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case LOAD_CART:
+    case actionTypes.LOAD_CART:
       return {
         ...state,
         items: action.payload
       };
-    case ADD_PRODUCT:
+    case actionTypes.ADD_PRODUCT:
       return {
         ...state,
         item: Object.assign({}, action.payload)
       };
-    case REMOVE_PRODUCT:
+    case actionTypes.REMOVE_PRODUCT:
       return {
         ...state,
         itemToRemove: Object.assign({}, action.payload)

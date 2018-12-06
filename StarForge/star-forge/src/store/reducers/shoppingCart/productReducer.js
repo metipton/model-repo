@@ -1,4 +1,4 @@
-import { FETCH_PRODUCTS } from '../../actions/shoppingCart/types';
+import * as actionTypes from '../../actions/actionTypes';
 
 
 const initialState = {
@@ -7,7 +7,7 @@ const initialState = {
 
 export default function(state = initialState, action){
   switch(action.type){
-    case FETCH_PRODUCTS:
+    case actionTypes.FETCH_PRODUCTS:
       return {
         ...state,
         items: action.payload

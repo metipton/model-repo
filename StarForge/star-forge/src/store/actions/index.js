@@ -19,3 +19,13 @@ export {
     logout,
     authCheckState
 } from './auth';
+export {
+    loadCart,
+    addProduct,
+    removeProduct
+} from './shoppingCart/floatCartActions';
+export {
+   fetchProducts 
+} from './shoppingCart/productActions';
+
+

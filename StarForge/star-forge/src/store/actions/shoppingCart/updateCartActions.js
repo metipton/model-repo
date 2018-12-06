@@ -1,4 +1,4 @@
-import { UPDATE_CART} from './types';
+import * as actionTypes from '../actionTypes';
 
 import persistentCart from '../../../components/ShoppingCart/persistentCart';
 
@@ -31,7 +31,7 @@ export const updateCart = (cartProducts) => dispatch => {
   persistentCart().persist(JSON.stringify(cartProducts));
 
   dispatch({
-    type: UPDATE_CART,
+    type: actionTypes.UPDATE_CART,
     payload: cartTotals,
   });
 

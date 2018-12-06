@@ -1,23 +1,23 @@
-import { LOAD_CART, ADD_PRODUCT, REMOVE_PRODUCT } from './types';
+import * as actionTypes from '../actionTypes';
 
 
 export const loadCart = (cartProducts) => dispatch => {
   dispatch({
-    type: LOAD_CART,
+    type: actionTypes.LOAD_CART,
     payload: cartProducts,
   });
 }
 
 export const addProduct = (productData) => dispatch => {
   dispatch({
-    type: ADD_PRODUCT,
+    type: actionTypes.ADD_PRODUCT,
     payload: productData,
   });
 }
 
 export const removeProduct = (productData) => dispatch => {
   dispatch({
-    type: REMOVE_PRODUCT,
+    type: actionTypes.REMOVE_PRODUCT,
     payload: productData,
   });
 }

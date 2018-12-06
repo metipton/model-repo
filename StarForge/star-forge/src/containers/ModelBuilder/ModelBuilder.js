@@ -248,6 +248,10 @@ class ModelBuilder extends Component {
         this.skeleton = null;
         this.activeObjects = [];
         this.armatureLoaded = false;
+        this.poseTime = new Date().getTime();
+        this.updateAABBTrue = false;
+        this.aabbDelay = 50;
+
         this.morphTargets = {
             body: {
                Height: {
@@ -354,19 +358,6 @@ class ModelBuilder extends Component {
         //add event listener for mouse actions
         window.addEventListener( 'mousedown', this.onMouseDown, false );
 
-        // //add the lighting to the scene
-        // var light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-        // light.position.set( 0, 200, 0 );
-        // scene.add( light );
-        // var light = new THREE.PointLight( 0xffffff );
-        // light.position.set( 0, 20, 20 );
-        // light.intensity = 1;
-        // light.castShadow = true;
-        // light.shadow.camera.top = 200;
-        // light.shadow.camera.bottom = -100;
-        // light.shadow.camera.left = -100;
-        // light.shadow.camera.right = 100;
-        //
         var hemiLight = new THREE.HemisphereLight( 0x111111, 0x111111, 0.7 );
         hemiLight.color.setHSL( 0.6, 1, 0.6 );
         hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
@@ -382,17 +373,7 @@ class ModelBuilder extends Component {
         dirLight.castShadow = true;
         dirLight.shadow.mapSize.width = 8192;
         dirLight.shadow.mapSize.height = 8192;
-        //var d = 50;
         dirLight.shadow.camera = new THREE.OrthographicCamera( -100, 100, 100, -100, 0.1, 1000 );
-        // dirLight.shadow.camera.left = - d;
-        // dirLight.shadow.camera.right = d;
-        // dirLight.shadow.camera.top = d;
-        // dirLight.shadow.camera.bottom = - d;
-        // dirLight.shadow.camera.far = 3500;
-        // dirLight.shadow.bias = - 0.0001;
-
-        // var camhelper = THREE.CameraHelper(shadowLight.shadow.camera);
-        // scene.add(camhelper);
 
 
        //add the skybox
@@ -454,9 +435,16 @@ class ModelBuilder extends Component {
            this.mixer.update(delta);
        };
 
+       if( this.updateAABBTrue ) {
+          let now = new Date();
+          if( (this.poseTime + this.aabbDelay) < now.getTime()){
+              this.updateAllAABB();
+              this.updateAABBTrue = false;
+          }
+       }
+
      this.renderScene()
 
-     //this.frameId = window.requestAnimationFrame(this.animate)
    }
 
    renderScene = () => {
@@ -511,7 +499,6 @@ class ModelBuilder extends Component {
            try {
 
                const downloadedFile = await this.downloadObjectFromStorage(category, selection);
-               //await this.downloadBinFromStorage(category, selection);
                await this.setObjectStateHandler(category, selection, downloadedFile, true, fromInit);
 
            } catch (error) {
@@ -631,7 +618,6 @@ class ModelBuilder extends Component {
 
                        object.name = category;
 
-                       //object.position.y = -1;
                        if(category === 'Race' && !this.armatureLoaded){
                             this.scene.add( object );
                             let model = object.children[0].children[0];
@@ -659,8 +645,6 @@ class ModelBuilder extends Component {
             this.gltfLoader.load(
                 url,
                 async (object) => {
-     				// var helper = new THREE.SkeletonHelper(object.scene.children[0]);
-     				// this.scene.add(helper);
                     if( category === 'Race' && !this.armatureLoaded ){
 
          				this.mixer = new THREE.AnimationMixer(object.scene);
@@ -716,6 +700,8 @@ class ModelBuilder extends Component {
              this.actions[pose].setLoop(this.THREE.LoopOnce);
              //this.actions[pose].loop(THREE.LoopOnce);
              this.actions[pose].play();
+             this.updateAABBTrue = true;
+             this.poseTime = new Date().getTime();
          }
      }
 
@@ -981,6 +967,9 @@ class ModelBuilder extends Component {
         THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
         child.name = category;
         this.createNewAABB( child );
+        if( child.isSkinnedMesh){
+            this.updateAABB( child, child.BoundBox );
+        }
    }
 
    getBoneByName = (name) =>
@@ -1000,13 +989,13 @@ class ModelBuilder extends Component {
 
    createNewAABB = (object) => {
       object.BoundBox = new THREE.Box3().setFromObject( object );
-      this.scene.add( new THREE.Box3Helper( object.BoundBox, 0x00ff00 ) );
+      object.add( new THREE.Box3Helper( object.BoundBox, 0x00ff00 ) );
    }
 
    updateAllAABB = () => {
        console.log(this.scene);
-        for( var obj in this.objectHolder ){
-            console.log(obj);
+        for (let i = 0; i < this.objectHolder.children.length; i++ ){
+            let obj = this.objectHolder.children[i];
             if( obj.isSkinnedMesh ){
                 console.log(obj);
                 this.updateAABB( obj, obj.BoundBox );
@@ -1043,11 +1032,11 @@ class ModelBuilder extends Component {
         var boneMatrix = new THREE.Matrix4();
 		// indexed geometry
 	
-		for ( i = 0; i < index.count; i ++ ) {
+		for ( i = 0; i < index.count; i += 256 ) {
 		
-			vertex.fromBufferAttribute( position, index[ i ] );
-			skinIndices.fromBufferAttribute( skinIndex, index[ i ] );
-			skinWeights.fromBufferAttribute( skinWeigth, index[ i ] );
+			vertex.fromBufferAttribute( position, index.array[ i ] );
+			skinIndices.fromBufferAttribute( skinIndex, index.array[ i ] );
+			skinWeights.fromBufferAttribute( skinWeigth, index.array[ i ] );
 			
 			// the following code section is normally implemented in the vertex shader
 
@@ -1079,7 +1068,7 @@ class ModelBuilder extends Component {
 	
 		// non-indexed geometry
 	
-		for ( i = 0; i < position.count; i ++ ) {
+		for ( i = 0; i < position.count; i += 256 ) {
 		
 			vertex.fromBufferAttribute( position, i );
 			skinIndices.fromBufferAttribute( skinIndex, i );
