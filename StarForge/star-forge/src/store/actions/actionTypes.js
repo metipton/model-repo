@@ -28,6 +28,8 @@ export const LOAD_CART = 'LOAD_CART';
 export const ADD_PRODUCT = 'ADD_PRODUCT';
 export const REMOVE_PRODUCT = 'REMOVE_PRODUCT';
 export const UPDATE_CART = 'UPDATE_CART';
+export const FINISHED_ADD = 'FINISHED_ADD';
+export const ADD_IN_PROGRESS = 'ADD_IN_PROGRSS';
 
 export const CLIENT_CREATED = 'CLIENT_CREATED'
 export const CHECKOUT_FOUND = 'CHECKOUT_FOUND'

@@ -2,6 +2,7 @@ import * as actionTypes from '../../actions/actionTypes';
 
 
 const initialState = {
+  addInProgress: false,
   items: [],
 };
 
@@ -22,6 +23,16 @@ export default function(state = initialState, action) {
         ...state,
         itemToRemove: Object.assign({}, action.payload)
       };
+    case actionTypes.ADD_IN_PROGRESS:
+      return {
+        ...state,
+        addInProgress: true
+      }
+    case actionTypes.FINISHED_ADD:
+      return {
+        ...state,
+        addInProgress: false
+      }
     default:
       return state;
   }

@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 
 import classes from './BottomBar.css';
 import MaterialUIButton from '../Button/AddToCartButton';
-import Modal from '../Modal/Modal';
 import * as actions from '../../../store/actions/index';
 
 
@@ -23,6 +22,7 @@ class BottomBar extends Component {
             <div className={classes.BottomBar}>
                 <div className={classes.Checkout}>
                     <MaterialUIButton
+                        disabled={this.props.addInProgress}
                         variant="contained"
                         color="primary"
                         clicked={this.handleAddToCart}>Add to Cart</MaterialUIButton>
@@ -34,9 +34,6 @@ class BottomBar extends Component {
         return (
             <div>
                 {bottomBar}
-                <Modal show={this.props.inCheckoutScreen} modalClosed={this.props.closeCheckout}>
-                    <p> Checkout Form </p>
-                </Modal>
             </div>
         );
     };
@@ -46,6 +43,7 @@ const mapStateToProps = state => {
     return {
         inCheckoutScreen: state.modelBuilder.inCheckoutScreen === true,
         isAuthenticated: state.auth.token !== null,
+        addInProgress: state.shoppingCart.cartProducts.addInProgress
     };
 };
 

@@ -1179,6 +1179,7 @@ class ModelBuilder extends Component {
             return new Promise( ( resolve, reject ) => {
                 firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
                     console.log("Model upload complete");
+                    this.props.finishedAdd();
                     resolve();
                 }).catch( error => {
                     reject(error);
@@ -1215,6 +1216,7 @@ class ModelBuilder extends Component {
     }
 
    addModelToCart = async () => {
+        this.props.addInProgress();
         var cartNum = this.getCartNumber();
         var dataURL = this.takeScreenshot();
 
@@ -1287,7 +1289,8 @@ class ModelBuilder extends Component {
                 updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
                 morphPercents={morphTargetsProp}/>
             <SideDrawerColor setColor={(color) => this.setHexColor(color)} />
-            <BottomBar addToCart={this.addModelToCart} />
+            <BottomBar 
+                addToCart={this.addModelToCart} />
             
        </Aux>
      )
@@ -1297,13 +1300,16 @@ const mapStateToProps = state => {
     return {
         currentCart: state.shoppingCart.cartProducts.items,
         userId: state.auth.userId,
+        addInProgress: state.shoppingCart.cartProducts.addInProgress
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         finishedLoading: () => dispatch(actions.modelFinishedLoading()),
-        addToCart: (payload) => dispatch(actions.addProduct(payload))
+        addToCart: (payload) => dispatch(actions.addProduct(payload)),
+        finishedAdd: () => dispatch(actions.completedAddToCart()),
+        addInProgress: () => dispatch(actions.addInProgress())
     };
 };
 

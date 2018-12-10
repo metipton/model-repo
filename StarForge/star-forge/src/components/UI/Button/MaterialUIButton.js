@@ -17,6 +17,7 @@ function ContainedButtons(props) {
   return (
     <div>
       <Button
+          disabled={props.disabled}
           variant={props.variant}
           color={props.color} 
           className={classes.button}

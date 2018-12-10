@@ -22,7 +22,9 @@ export {
 export {
     loadCart,
     addProduct,
-    removeProduct
+    removeProduct,
+    completedAddToCart,
+    addInProgress
 } from './shoppingCart/floatCartActions';
 export {
    fetchProducts 
