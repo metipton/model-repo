@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
+import {connect} from 'react-redux';
+import firebase from '../../Firebase';
+import 'firebase/storage';
+
+import classes from './FloatCart.css';
 
 import Thumb from "./Thumb";
-import classes from './FloatCart.css';
 import util from './util';
 
 
@@ -10,6 +14,7 @@ class CartProduct extends Component {
 
   state = {
     isMouseOver: false,
+    thumbnail: null,
   }
 
   handleMouseOver = () => {
@@ -20,30 +25,48 @@ class CartProduct extends Component {
     this.setState({isMouseOver: false});
   }
 
+  componentDidMount() {
+    this.getThumbnail();
+ }
+
+  getThumbnail = () => {
+    const storage = firebase.storage().ref();
+    storage.child('/Carts/' + this.props.userId + '/CartItem' + this.props.product.cartNumber + '/screenshot.png').getDownloadURL().then((url) => {
+      this.setState({
+        ...this.state,
+        thumbnail: url
+      })
+    })
+  }
 
   render(){
     const { product, removeProduct } = this.props;
-
-    const cartClasses = classes['shelf-item'];
+    let cartClasses = 'shelf-item';
 
     if(!!this.state.isMouseOver){
-      cartClasses.push(classes['shelf-item--mouseover']);
+      cartClasses = 'cartRemoveHover';
+    }
+
+    let image = null;
+    if( this.state.thumbnail ) {
+      image =  <Thumb
+                classes={classes["shelf-item__thumb"]}
+                src={this.state.thumbnail}
+                alt={product.title}
+              />
     }
 
     return (
-      <div className={cartClasses.join(" ")}>
+      <div className={classes[cartClasses]}>
         <div
           className={classes['shelf-item__del']}
           onMouseOver={() => this.handleMouseOver()}
           onMouseOut={() => this.handleMouseOut()}
           onClick={() => removeProduct(product)}
         />
-    <div className={classes['shelf-item__details']}>
+        {image}
+        <div className={classes['shelf-item__details']}>
           <p className={classes['title']}>{product.title}</p>
-          <p className={classes['desc']}>
-            {`${product.availableSizes[0]} | ${product.style}`} <br />
-            Quantity: {product.quantity}
-          </p>
         </div>
         <div className={classes['shelf-item__price']}>
           <p>{`${product.currencyFormat}  ${util.formatPrice(product.price)}`}</p>
@@ -61,4 +84,12 @@ CartProduct.propTypes = {
   removeProduct: PropTypes.func.isRequired,
 };
 
-export default CartProduct;
+const mapStateToProps = state => {
+  return {
+      currentCart: state.shoppingCart.cartProducts.items,
+      userId: state.auth.userId,
+  };
+};
+
+
+export default connect(mapStateToProps, null)(CartProduct);

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import firebase from '../../Firebase';
+import 'firebase/storage';
 
 import { connect } from 'react-redux';
 import { loadCart, removeProduct } from '../../store/actions/shoppingCart/floatCartActions';
@@ -49,23 +51,30 @@ class FloatCart extends Component {
     const { cartProducts, updateCart } = this.props;
     let productAlreadyInCart = false;
 
-    cartProducts.forEach(cp => {
-      if (cp.id === product.id) {
-        cp.quantity += product.quantity;
-        productAlreadyInCart = true;
-      }
-    });
+    // cartProducts.forEach(cp => {
+    //   if (cp.id === product.id) {
+    //     cp.quantity += product.quantity;
+    //     productAlreadyInCart = true;
+    //   }
+    // });
 
     if (!productAlreadyInCart) {
       cartProducts.push(product);
     }
 
     updateCart(cartProducts);
-    this.openFloatCart();
+
   }
 
   removeProduct = (product) => {
     const { cartProducts, updateCart } = this.props;
+
+    //remove 
+    const storage = firebase.storage().ref();
+    storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot.png' ).delete();
+    storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/model.glb' ).delete();
+    const database = firebase.database().ref('Carts/' + this.props.userId + '/Cart' + product.cartNumber );
+    database.set(null);
 
     const index = cartProducts.findIndex(p => p.id === product.id);
     if (index >= 0) {
@@ -150,13 +159,6 @@ class FloatCart extends Component {
               <p className={classes['sub-price__val']}>
                 {`${cartTotals.currencyFormat} ${util.formatPrice(cartTotals.totalPrice, cartTotals.currencyId)}`}
               </p>
-              <small className={classes['sub-price__installment']}>
-                {!!cartTotals.installments && (
-                  <span>
-                    {`OR UP TO ${cartTotals.installments} x ${cartTotals.currencyFormat} ${util.formatPrice(cartTotals.totalPrice / cartTotals.installments, cartTotals.currencyId)}`}
-                  </span>
-                )}
-              </small>
             </div>
             <div onClick={() => this.proceedToCheckout()} className={classes['buy-btn']}>
               Checkout
@@ -182,6 +184,7 @@ const mapStateToProps = state => ({
   newProduct: state.shoppingCart.cartProducts.item,
   productToRemove: state.shoppingCart.cartProducts.itemToRemove,
   cartTotals: state.shoppingCart.cartTotals.item,
+  userId: state.auth.userId,
 });
 
 export default connect(mapStateToProps, { loadCart, updateCart, removeProduct})(FloatCart);

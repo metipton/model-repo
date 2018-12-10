@@ -5,6 +5,7 @@ import firebase from '../../Firebase';
 import 'firebase/storage';
 import axios from '../../axios-orders.js';
 import GLTFLoader from 'three-gltf-loader';
+import GLTFExporter from 'three-gltf-exporter';
 // import './GPUPicker/GPUPicker.js';
 
 import * as actions from '../../store/actions/index';
@@ -234,11 +235,13 @@ class ModelBuilder extends Component {
     }
 
     init = () => {
+        this.skyBox = null;
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
         this.hexColor = 0xFFFFFF;
         this.THREE = THREE;
         this.gltfLoader = new GLTFLoader();
+        this.exporter = new GLTFExporter();
         this.mixer = null;
         this.subclips = {};
         this.actions = {};
@@ -306,17 +309,21 @@ class ModelBuilder extends Component {
         this.objectHolder.name = "Object Holder";
         this.scene.add(this.objectHolder);
 
-        const camera = new THREE.PerspectiveCamera(
+        let camera = new THREE.PerspectiveCamera(
           50,
           width / height,
           0.1,
           1000
         )
         //offset view so model shifts to left side of the screen
-        camera.setViewOffset(width * 1.4, height * 1.4, width * .3, height * .1, width, height );
-        camera.frustrumCulled = false;
-        camera.position.z = 5;
-        camera.position.y = 2;
+        this.camera = camera;
+        this.camera.setViewOffset(width * 1.4, height * 1.4, width * .3, height * .1, width, height );
+        this.camera.frustrumCulled = false;
+        this.camera.position.z = 5;
+        this.camera.position.y = 2;
+        this.scene.add(this.camera);
+        this.initCameraPosit = this.camera.getWorldPosition();
+        this.initCameraRotation = this.camera.getWorldQuaternion();
 
 
 
@@ -333,7 +340,7 @@ class ModelBuilder extends Component {
         // this.gpuPicker.setCamera(this.camera);
 
         //enable orbit controls
-        const controls = new OrbitControls(camera, renderer.domElement);
+        const controls = new OrbitControls(this.camera, renderer.domElement);
         controls.enabled = true;
         controls.enablePan = false;
         controls.minDistance = 4;
@@ -387,29 +394,28 @@ class ModelBuilder extends Component {
            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load(nz), side: THREE.DoubleSide}),
        ];
        var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
-       var cube = new THREE.Mesh(geometry, cubeMaterial);
+       this.skyBox = new THREE.Mesh(geometry, cubeMaterial);
 
-       cube.receiveShadow = true;
-       scene.add(cube);
+       this.skyBox.receiveShadow = true;
+       scene.add(this.skyBox);
 
        //make the ground
        var groundGeo = new THREE.PlaneBufferGeometry( 20, 20 );
        var groundMat = new THREE.MeshPhongMaterial( { color: 0xcecdd6, side: THREE.DoubleSide } );
        groundMat.transparent = true;
        groundMat.opacity = 0.1;
-       var ground = new THREE.Mesh( groundGeo, groundMat );
-       ground.receiveShadow = true;
-       ground.rotation.x = Math.PI / 2;
-       ground.renderOrder = 1;
-       ground.name = "ground";
-       scene.add(ground);
-       ground.position.y = -.1;
+       this.ground = new THREE.Mesh( groundGeo, groundMat );
+       this.ground.receiveShadow = true;
+       this.ground.rotation.x = Math.PI / 2;
+       this.ground.renderOrder = 1;
+       this.ground.name = "ground";
+       this.scene.add(this.ground);
+       this.ground.position.y = -.1;
 
        renderer.setClearColor('#000000')
        renderer.setSize(width, height)
 
        this.scene = scene
-       this.camera = camera
        this.renderer = renderer
 
        this.mount.appendChild(this.renderer.domElement)
@@ -1102,9 +1108,142 @@ class ModelBuilder extends Component {
 	
 	}
 	
-	aabb.applyMatrix4( skinnedMesh.matrixWorld );
+	    aabb.applyMatrix4( skinnedMesh.matrixWorld );
 
-}
+    }
+
+    takeScreenshot = () => {
+        var height = 140;
+        var width = 140;
+        //remove the skybox and ground
+        this.scene.remove(this.skyBox);
+        this.scene.remove(this.ground);
+        // set camera and renderer to desired screenshot dimension
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(  width, height );
+        var color = new THREE.Color(0xCBCFD2);
+        this.renderer.setClearColor( color, .5 );
+        //put the camera to null position and copy current posit/rotation
+        let currentCamPosit = this.camera.getWorldPosition();
+        let currentCamRotation = this.camera.getWorldQuaternion();
+        this.camera.position.set(this.initCameraPosit.x, this.initCameraPosit.y, 4.1);
+        this.camera.setRotationFromQuaternion(this.initCameraRotation);
+        this.camera.clearViewOffset();
+        this.camera.setViewOffset(width, height, 0, height * .28, width, height );
+        this.renderer.render( this.scene, this.camera, null, false );
+    
+        const dataURL = this.renderer.domElement.toDataURL( 'image/png' );
+
+        //convert datastring to file
+        var arr = dataURL.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        const file = new File([u8arr], 'screenshot.png', {type:mime});
+    
+        // reset to old dimensions 
+
+       this.camera.aspect = window.innerWidth / window.innerHeight;
+       this.camera.updateProjectionMatrix();
+       this.renderer.setSize( window.innerWidth, window.innerHeight );
+
+       // put the camera back to position when screenshot taken
+       this.camera.position.set(currentCamPosit.x, currentCamPosit.y, currentCamPosit.z);
+       this.camera.setRotationFromQuaternion(currentCamRotation);
+       this.camera.setViewOffset(window.innerWidth * 1.4, window.innerHeight * 1.4, window.innerWidth * .3, window.innerHeight * .1, window.innerWidth, window.innerHeight );
+
+
+       //put the skybox and ground back in
+       this.scene.add(this.skyBox);
+       this.scene.add(this.ground);
+
+       return file;
+     }
+
+     exportModel = (cartNumber) => {
+        var DEFAULT_OPTIONS = {
+            binary: true,
+            trs: false,
+            onlyVisible: true,
+            truncateDrawRange: false,
+            embedImages: false,
+            animations: [],
+            forceIndices: true,
+            forcePowerOfTwoTextures: false
+        };
+    
+        this.exporter.parse( this.objectHolder.children, (object)=> {
+
+            return new Promise( ( resolve, reject ) => {
+                firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
+                    console.log("Model upload complete");
+                    resolve();
+                }).catch( error => {
+                    reject(error);
+                });
+            });
+        }, DEFAULT_OPTIONS);
+    }
+
+    exportScreenshot = (cartNumber, url) => {
+        return new Promise( ( resolve, reject ) => {
+            firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot.png' ).put(url).then(() => {
+                console.log("Screenshot upload complete");
+                resolve();
+            }).catch( error => {
+                reject(error);
+            });
+        });
+    }
+
+    getCartNumber = () => {
+        let currentCartNums = [];
+        for( let i = 0; i < this.props.currentCart.length; i++ ){
+            currentCartNums.push(this.props.currentCart[i].cartNumber);
+        }
+        currentCartNums.sort();
+        let cartNum = 0;
+        for(let i = 0; i < currentCartNums.length; i++ ){
+            if( cartNum !== currentCartNums[i]){
+                break;
+            }
+            cartNum++;
+        }
+        return cartNum;
+    }
+
+   addModelToCart = async () => {
+        var cartNum = this.getCartNumber();
+        var dataURL = this.takeScreenshot();
+
+        this.exportModel(cartNum);
+        await this.exportScreenshot(cartNum, dataURL);
+        const timeStamp = new Date().getTime();
+        let payload = {
+            cartNumber: cartNum,
+            id: cartNum,
+            sku: 12064273040195392,
+            title: "Standard Model",
+            description: "4 MSL",
+            availableSizes: ["S", "XS"],
+            style: "Blank",
+            price: 19.99,
+            installments: 9,
+            currencyId: "USD",
+            currencyFormat: "$",
+            quantity: 1,
+            isFreeShipping: false,
+            timeStamp: timeStamp
+          };
+
+        //push payload to firebase database
+        const database = firebase.database().ref('Carts/' + this.props.userId + '/Cart' + cartNum + '/');
+        database.set(payload);
+
+        this.props.addToCart(payload);
+     }
 
     onMouseDown = ( event ) => {
 
@@ -1122,7 +1261,7 @@ class ModelBuilder extends Component {
             if(intersection.length !== 0){
                 var hexString = "0X" + this.hexColor;
                 var hex = parseInt( hexString, 16);
-                for ( var i = 0; i < intersection.length; i++ ) {
+                for ( let i = 0; i < intersection.length; i++ ) {
                     intersection[ i ].object.material.color = new THREE.Color( hex );
                 }
             }
@@ -1138,7 +1277,7 @@ class ModelBuilder extends Component {
                 ref={(mount) => { this.mount = mount }}/>
             <Editor
                 state={this.state}
-                updateObject={(category, selection, setObjectStateHandler, fromInit) => this.updateObjectHandler(category, selection, false)}
+                updateObject={(category, selection) => this.updateObjectHandler(category, selection, false)}
                 setFeetLink={(index) => this.setFeetLinkHandler(index)}
                 updateFeet={(category, selection) => this.setFeetHandler(category, selection)}
                 setGloveLink={(index) => this.setGloveLinkHandler(index)}
@@ -1148,18 +1287,26 @@ class ModelBuilder extends Component {
                 updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
                 morphPercents={morphTargetsProp}/>
             <SideDrawerColor setColor={(color) => this.setHexColor(color)} />
-            <BottomBar />
+            <BottomBar addToCart={this.addModelToCart} />
+            
        </Aux>
      )
    }
 }
+const mapStateToProps = state => {
+    return {
+        currentCart: state.shoppingCart.cartProducts.items,
+        userId: state.auth.userId,
+    };
+};
 
 const mapDispatchToProps = dispatch => {
     return {
-        finishedLoading: () => dispatch(actions.modelFinishedLoading())
+        finishedLoading: () => dispatch(actions.modelFinishedLoading()),
+        addToCart: (payload) => dispatch(actions.addProduct(payload))
     };
 };
 
 ModelBuilder.propTypes = {};
 
-export default connect(null, mapDispatchToProps)(ModelBuilder);
+export default connect(mapStateToProps, mapDispatchToProps)(ModelBuilder);
