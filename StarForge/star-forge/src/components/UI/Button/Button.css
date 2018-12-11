@@ -8,6 +8,7 @@
     padding: 10px;
     margin: 10px;
     font-weight: bold;
+    width: auto;
 }
 
 .Button:first-of-type {

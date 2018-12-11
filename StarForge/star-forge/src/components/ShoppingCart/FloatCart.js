@@ -20,13 +20,17 @@ class FloatCart extends Component {
   };
 
   componentWillMount() {
-    this.props.loadCart( JSON.parse(persistentCart().get()) || [] );
+    //this.props.loadCart( JSON.parse(persistentCart().get()) || [] );
+    this.pullCartFromFirebase();
   }
+
+ 
 
   componentDidMount() {
     setTimeout(() => {
       this.props.updateCart(this.props.cartProducts);
     }, 0);
+    this.addProduct = this.addProduct.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -37,6 +41,22 @@ class FloatCart extends Component {
     if (nextProps.productToRemove !== this.props.productToRemove) {
       this.removeProduct(nextProps.productToRemove);
     }
+  }
+
+   pullCartFromFirebase = () => {
+    let product = [];
+    const cart = firebase.database().ref();
+    const json = cart.child('Carts/' + this.props.userId);
+    json.once("value").then((snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        // childData will be the actual contents of the child
+        product.push(childSnapshot.val());
+      })
+      console.log()
+      for(let i = 0; i < product.length; i++){
+        this.addProduct(product[i]);
+      }
+    });
   }
 
   openFloatCart = () => {

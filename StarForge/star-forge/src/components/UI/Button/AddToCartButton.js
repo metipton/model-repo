@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import Button from '@material-ui/core/Button/';
 
 const styles = theme => ({
+  root: {
+    width: '500px'
+  },
   button: {
     margin: theme.spacing.unit,
     width: '500px',
+    textAlign: 'center'
   },
   input: {
     display: 'none',

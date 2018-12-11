@@ -150,7 +150,8 @@ class ModelBuilder extends Component {
                 }
             }
         },
-        loading: true
+        loading: true,
+        coloringEnabled: false
     }
 
 
@@ -243,6 +244,7 @@ class ModelBuilder extends Component {
         this.gltfLoader = new GLTFLoader();
         this.exporter = new GLTFExporter();
         this.mixer = null;
+        this.animationScene = null;
         this.subclips = {};
         this.actions = {};
         this.clock = new THREE.Clock();
@@ -437,7 +439,7 @@ class ModelBuilder extends Component {
    animate = () => {
        requestAnimationFrame( this.animate );
        var delta = this.clock.getDelta();
-       if (this.mixer != null && this.mixer !== undefined) {
+       if (this.mixer !== null && this.mixer !== undefined) {
            this.mixer.update(delta);
        };
 
@@ -627,8 +629,11 @@ class ModelBuilder extends Component {
                        if(category === 'Race' && !this.armatureLoaded){
                             this.scene.add( object );
                             let model = object.children[0].children[0];
+                            let parent = object.children[0];
                             model.name = category;
-                            THREE.SceneUtils.attach(model, model.parent, this.objectHolder);
+                            THREE.SceneUtils.attach(model, parent, this.objectHolder);
+                            THREE.SceneUtils.attach(parent, parent.parent, this.objectHolder);
+
                             this.armatureLoaded = true;
                        } else {
                         this.setupObjectImport(category, selection, object)
@@ -652,8 +657,10 @@ class ModelBuilder extends Component {
                 url,
                 async (object) => {
                     if( category === 'Race' && !this.armatureLoaded ){
+                        this.animationScene = object;
+                        console.log(this.animationScene);
 
-         				this.mixer = new THREE.AnimationMixer(object.scene);
+                        this.mixer = new THREE.AnimationMixer(object.scene);
          				var allAction = this.mixer.clipAction( object.animations[ 0 ] );
 
                          for( let i = 0; i < object.animations[0].tracks[0].times.length; i++) {
@@ -995,7 +1002,8 @@ class ModelBuilder extends Component {
 
    createNewAABB = (object) => {
       object.BoundBox = new THREE.Box3().setFromObject( object );
-      object.add( new THREE.Box3Helper( object.BoundBox, 0x00ff00 ) );
+      //object.add( new THREE.Box3Helper( object.BoundBox, 0x00ff00 ) );
+      object.add( object.BoundBox );
    }
 
    updateAllAABB = () => {
@@ -1169,12 +1177,12 @@ class ModelBuilder extends Component {
             onlyVisible: true,
             truncateDrawRange: false,
             embedImages: false,
-            animations: [],
+            animations: this.animationScene.animations[0],
             forceIndices: true,
             forcePowerOfTwoTextures: false
         };
     
-        this.exporter.parse( this.objectHolder.children, (object)=> {
+        this.exporter.parse(  this.objectHolder.children, (object)=> {
 
             return new Promise( ( resolve, reject ) => {
                 firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
@@ -1226,13 +1234,9 @@ class ModelBuilder extends Component {
         let payload = {
             cartNumber: cartNum,
             id: cartNum,
-            sku: 12064273040195392,
             title: "Standard Model",
-            description: "4 MSL",
-            availableSizes: ["S", "XS"],
-            style: "Blank",
+            description: "30mm scale on 1 in. base",
             price: 19.99,
-            installments: 9,
             currencyId: "USD",
             currencyFormat: "$",
             quantity: 1,
@@ -1247,27 +1251,37 @@ class ModelBuilder extends Component {
         this.props.addToCart(payload);
      }
 
+    
+
     onMouseDown = ( event ) => {
 
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
-
-        this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-        
-        this.raycaster.setFromCamera( this.mouse, this.camera );
-        var intersection = []; 
-        let objects = this.objectHolder.children;
-        for(let i = 0; i < objects.length; i++){
-            intersection = this.raycaster.intersectObject(objects[i]);
-            if(intersection.length !== 0){
-                var hexString = "0X" + this.hexColor;
-                var hex = parseInt( hexString, 16);
-                for ( let i = 0; i < intersection.length; i++ ) {
-                    intersection[ i ].object.material.color = new THREE.Color( hex );
+        if(this.state.coloringEnabled){
+            this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            
+            this.raycaster.setFromCamera( this.mouse, this.camera );
+            var intersection = []; 
+            let objects = this.objectHolder.children;
+            for(let i = 0; i < objects.length; i++){
+                intersection = this.raycaster.intersectObject(objects[i]);
+                if(intersection.length !== 0){
+                    var hexString = "0X" + this.hexColor;
+                    var hex = parseInt( hexString, 16);
+                    for ( let i = 0; i < intersection.length; i++ ) {
+                        intersection[ i ].object.material.color = new THREE.Color( hex );
+                    }
                 }
             }
         }
+    }
+
+    toggleColorHandler = () => {
+        this.setState(prevState => ({
+            ...this.state,
+            coloringEnabled: !prevState.coloringEnabled
+        }));
     }
 
    render() {
@@ -1288,7 +1302,9 @@ class ModelBuilder extends Component {
                 updateExpression={(trait, newPercent) => this.updateExpressionPercent(trait, newPercent)}
                 updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
                 morphPercents={morphTargetsProp}/>
-            <SideDrawerColor setColor={(color) => this.setHexColor(color)} />
+            <SideDrawerColor 
+                toggleColor={this.toggleColorHandler} 
+                setColor={(color) => this.setHexColor(color)} />
             <BottomBar 
                 addToCart={this.addModelToCart} />
             

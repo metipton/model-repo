@@ -18,17 +18,31 @@ class BottomBar extends Component {
 
     render (){
 
-        const bottomBar = (
+        let bottomBar = (
             <div className={classes.BottomBar}>
                 <div className={classes.Checkout}>
                     <MaterialUIButton
-                        disabled={this.props.addInProgress}
+                        disabled={false}
                         variant="contained"
                         color="primary"
                         clicked={this.handleAddToCart}>Add to Cart</MaterialUIButton>
                 </div>
             </div>
         );
+
+        if(this.props.addInProgress){
+            bottomBar = (
+                <div className={classes.BottomBar}>
+                    <div className={classes.Checkout}>
+                        <MaterialUIButton
+                            disabled={true}
+                            variant="contained"
+                            color="primary"
+                            clicked={this.handleAddToCart}>Adding to Cart</MaterialUIButton>
+                    </div>
+                </div>
+            ); 
+        }
 
 
         return (
