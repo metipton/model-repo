@@ -643,7 +643,6 @@ class ModelBuilder extends Component {
                             let parent = object.children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, parent, this.objectHolder);
-                            THREE.SceneUtils.attach(parent, parent.parent, this.objectHolder);
 
                             this.armatureLoaded = true;
                        } else {
@@ -1130,6 +1129,63 @@ class ModelBuilder extends Component {
 
 //     }
 
+    createPosedClone = (skinnedMesh) => {
+            
+        let clone = skinnedMesh.clone();
+        var boneMatrices = this.skeleton.boneMatrices;
+        var geometry = skinnedMesh.geometry;
+        
+        var position = geometry.attributes.position;
+        var skinIndex = geometry.attributes.skinIndex;
+        var skinWeigth = geometry.attributes.skinWeight;
+        
+        var bindMatrix = skinnedMesh.bindMatrix;
+        var bindMatrixInverse = skinnedMesh.bindMatrixInverse;
+        
+        var i, j, si, sw;
+    
+
+        var vertex = new THREE.Vector3();
+        var temp = new THREE.Vector3();
+        var skinned = new THREE.Vector3();
+        var skinIndices = new THREE.Vector4();
+        var skinWeights = new THREE.Vector4();
+        var boneMatrix = new THREE.Matrix4();
+        // non-indexed geometry
+    
+        for ( i = 0; i < position.count; i++ ) {
+        
+            vertex.fromBufferAttribute( position, i );
+            skinIndices.fromBufferAttribute( skinIndex, i );
+            skinWeights.fromBufferAttribute( skinWeigth, i );
+            
+            // the following code section is normally implemented in the vertex shader
+
+            vertex.applyMatrix4( bindMatrix ); // transform to bind space
+            skinned.set( 0, 0, 0 );
+
+            for ( j = 0; j < 4; j ++ ) {
+
+                si = skinIndices.getComponent( j );
+                sw = skinWeights.getComponent( j );
+                boneMatrix.fromArray( boneMatrices, si * 16 );
+
+                // weighted vertex transformation
+
+                temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
+                skinned.add( temp );
+
+            }
+
+            skinned.applyMatrix4( bindMatrixInverse ); // back to local space
+
+            // change the position of the object
+
+            clone.geometry.attributes.position.setXYZ(i, skinned.x, skinned.y, skinned.z);  
+        }
+        return clone;
+    }
+
     takeScreenshot = () => {
         var height = 140;
         var width = 140;
@@ -1181,6 +1237,23 @@ class ModelBuilder extends Component {
      }
 
      exportModel = (cartNumber) => {
+        let objects = [];
+
+        //morph geometry of all objects to match the pose
+        for(let i = 0; i < this.objectHolder.children.length; i++) {
+            let child = this.objectHolder.children[i];
+            if(child.name !== "rigcurrent"){
+                let clone;
+                if(child.isSkinnedMesh){
+                    clone = this.createPosedClone(this.objectHolder.children[i]);
+                    console.log(clone);
+                } else {
+                    clone = this.objectHolder.children[i].clone();
+                }
+                objects.push(clone);
+            }
+        }
+
         var DEFAULT_OPTIONS = {
             binary: true,
             trs: false,
@@ -1192,7 +1265,7 @@ class ModelBuilder extends Component {
             forcePowerOfTwoTextures: false
         };
     
-        this.exporter.parse(  this.objectHolder.children, (object)=> {
+        this.exporter.parse(  objects, (object)=> {
 
             return new Promise( ( resolve, reject ) => {
                 firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
