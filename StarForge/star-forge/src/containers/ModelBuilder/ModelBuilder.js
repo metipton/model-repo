@@ -21,6 +21,7 @@ import ny from './skybox/scifi-ny.jpg';
 import pz from './skybox/scifi-pz.jpg';
 import nz from './skybox/scifi-nz.jpg';
 import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
+import { ThemeProvider } from 'styled-components';
 
 
 
@@ -356,20 +357,13 @@ class ModelBuilder extends Component {
         controls.maxPolarAngle = Math.PI / 2; // radians
 
         //changes the size of screen when browser resized
-        window.addEventListener('resize', function()
-            {
-                this.updateRenderScene = true;
-                var width = window.innerWidth;
-                var height = window.innerHeight;
-                renderer.setSize(width, height);
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-                this.updateRenderScene = false;
-            });
+        window.addEventListener('resize', this.onWindowResize, false);
 
         //add event listener for mouse actions
         window.addEventListener( 'mousedown', this.onMouseDown, false );
         window.addEventListener( 'mouseup', this.onMouseUp, false);
+
+
 
         var hemiLight = new THREE.HemisphereLight( 0x111111, 0x111111, 0.7 );
         hemiLight.color.setHSL( 0.6, 1, 0.6 );
@@ -652,8 +646,9 @@ class ModelBuilder extends Component {
                        console.log( error );
                    }
                };
-
+               this.updateRenderScene = true;
                this.renderScene();
+               this.updateRenderScene = false;
                resolve();
        } catch ( error ) {
            reject( error );
@@ -989,9 +984,9 @@ class ModelBuilder extends Component {
         THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
         child.name = category;
         //this.createNewAABB( child );
-        if( child.isSkinnedMesh){
-            this.updateAABB( child, child.BoundBox );
-        }
+        // if( child.isSkinnedMesh){
+        //     this.updateAABB( child, child.BoundBox );
+        // }
    }
 
    getBoneByName = (name) =>
@@ -1362,6 +1357,23 @@ class ModelBuilder extends Component {
     }
 
     onMouseUp = ( event ) => {
+        this.updateRenderScene = false;
+    }
+
+    onMouseWheel = () => {
+
+        this.updateRenderScene = true;
+        this.animate();
+    }
+
+    onWindowResize = () => {
+        this.updateRenderScene = true;
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        this.renderer.setSize(width, height);
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.animate();
         this.updateRenderScene = false;
     }
 
