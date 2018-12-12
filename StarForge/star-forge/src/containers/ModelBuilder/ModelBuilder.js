@@ -256,6 +256,7 @@ class ModelBuilder extends Component {
         this.poseTime = new Date().getTime();
         this.updateAABBTrue = false;
         this.aabbDelay = 50;
+        this.updateRenderScene = true;
 
         this.morphTargets = {
             body: {
@@ -357,15 +358,18 @@ class ModelBuilder extends Component {
         //changes the size of screen when browser resized
         window.addEventListener('resize', function()
             {
+                this.updateRenderScene = true;
                 var width = window.innerWidth;
                 var height = window.innerHeight;
                 renderer.setSize(width, height);
                 camera.aspect = width / height;
                 camera.updateProjectionMatrix();
+                this.updateRenderScene = false;
             });
 
         //add event listener for mouse actions
         window.addEventListener( 'mousedown', this.onMouseDown, false );
+        window.addEventListener( 'mouseup', this.onMouseUp, false);
 
         var hemiLight = new THREE.HemisphereLight( 0x111111, 0x111111, 0.7 );
         hemiLight.color.setHSL( 0.6, 1, 0.6 );
@@ -429,6 +433,7 @@ class ModelBuilder extends Component {
    start = () => {
      if (!this.frameId) {
        this.frameId = requestAnimationFrame(this.animate)
+       this.updateRenderScene = false;
      }
    }
 
@@ -437,22 +442,28 @@ class ModelBuilder extends Component {
    }
 
    animate = () => {
-       requestAnimationFrame( this.animate );
-       var delta = this.clock.getDelta();
-       if (this.mixer !== null && this.mixer !== undefined) {
-           this.mixer.update(delta);
-       };
-
-       if( this.updateAABBTrue ) {
-          let now = new Date();
-          if( (this.poseTime + this.aabbDelay) < now.getTime()){
-              this.updateAllAABB();
-              this.updateAABBTrue = false;
-          }
+       let now;
+       if(this.updateAABBTrue){
+           now = new Date();
        }
+       if( this.updateRenderScene || (this.updateAABBTrue && (this.poseTime + this.aabbDelay) > now.getTime() ) ){
+            requestAnimationFrame( this.animate );
+            var delta = this.clock.getDelta();
+            if (this.mixer !== null && this.mixer !== undefined) {
+                this.mixer.update(delta);
+            };
 
-     this.renderScene()
+            //    if( this.updateAABBTrue ) {
+            //       let now = new Date();
+            //       if( (this.poseTime + this.aabbDelay) < now.getTime()){
+            //           this.updateAllAABB();
+            //           this.updateAABBTrue = false;
+            //       }
+            //    }
 
+            this.renderScene();
+            console.log(this.renderer.info);
+        }
    }
 
    renderScene = () => {
@@ -683,8 +694,7 @@ class ModelBuilder extends Component {
                         
                         //set the pose to current selected pose if not select, else set to pose 1
                         this.setPoseByName(this.state.currentName['Pose']);
-                        this.createNewAABB( object.scene.children[0].children[0]);
-                        this.animate();
+                        //this.createNewAABB( object.scene.children[0].children[0]);
                         
                     }
                     resolve(object.scene);
@@ -979,7 +989,7 @@ class ModelBuilder extends Component {
         }
         THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
         child.name = category;
-        this.createNewAABB( child );
+        //this.createNewAABB( child );
         if( child.isSkinnedMesh){
             this.updateAABB( child, child.BoundBox );
         }
@@ -1000,125 +1010,125 @@ class ModelBuilder extends Component {
        this.hexColor = color;
    }
 
-   createNewAABB = (object) => {
-      object.BoundBox = new THREE.Box3().setFromObject( object );
-      //object.add( new THREE.Box3Helper( object.BoundBox, 0x00ff00 ) );
-      object.add( object.BoundBox );
-   }
+//    createNewAABB = (object) => {
+//       object.BoundBox = new THREE.Box3().setFromObject( object );
+//       //object.add( new THREE.Box3Helper( object.BoundBox, 0x00ff00 ) );
+//       object.add( object.BoundBox );
+//    }
 
-   updateAllAABB = () => {
-       console.log(this.scene);
-        for (let i = 0; i < this.objectHolder.children.length; i++ ){
-            let obj = this.objectHolder.children[i];
-            if( obj.isSkinnedMesh ){
-                console.log(obj);
-                this.updateAABB( obj, obj.BoundBox );
-            }
-        }
-   }
+//    updateAllAABB = () => {
+//        console.log(this.scene);
+//         for (let i = 0; i < this.objectHolder.children.length; i++ ){
+//             let obj = this.objectHolder.children[i];
+//             if( obj.isSkinnedMesh ){
+//                 console.log(obj);
+//                 this.updateAABB( obj, obj.BoundBox );
+//             }
+//         }
+//    }
 
-   updateAABB = ( skinnedMesh, aabb ) => {
+//    updateAABB = ( skinnedMesh, aabb ) => {
 	
-	var skeleton = skinnedMesh.skeleton;
-	var boneMatrices = skeleton.boneMatrices;
-	var geometry = skinnedMesh.geometry;
+// 	var skeleton = skinnedMesh.skeleton;
+// 	var boneMatrices = skeleton.boneMatrices;
+// 	var geometry = skinnedMesh.geometry;
 	
-	var index = geometry.index;
-	var position = geometry.attributes.position;
-	var skinIndex = geometry.attributes.skinIndex;
-	var skinWeigth = geometry.attributes.skinWeight;
+// 	var index = geometry.index;
+// 	var position = geometry.attributes.position;
+// 	var skinIndex = geometry.attributes.skinIndex;
+// 	var skinWeigth = geometry.attributes.skinWeight;
 	
-	var bindMatrix = skinnedMesh.bindMatrix;
-	var bindMatrixInverse = skinnedMesh.bindMatrixInverse;
+// 	var bindMatrix = skinnedMesh.bindMatrix;
+// 	var bindMatrixInverse = skinnedMesh.bindMatrixInverse;
 	
-	var i, j, si, sw;
+// 	var i, j, si, sw;
 	
-	aabb.makeEmpty();
+// 	aabb.makeEmpty();
 
-	// 
+// 	// 
 	
-	if ( index !== null ) {
-        var vertex = new THREE.Vector3();
-        var temp = new THREE.Vector3();
-        var skinned = new THREE.Vector3();
-        var skinIndices = new THREE.Vector4();
-        var skinWeights = new THREE.Vector4();
-        var boneMatrix = new THREE.Matrix4();
-		// indexed geometry
+// 	if ( index !== null ) {
+//         var vertex = new THREE.Vector3();
+//         var temp = new THREE.Vector3();
+//         var skinned = new THREE.Vector3();
+//         var skinIndices = new THREE.Vector4();
+//         var skinWeights = new THREE.Vector4();
+//         var boneMatrix = new THREE.Matrix4();
+// 		// indexed geometry
 	
-		for ( i = 0; i < index.count; i += 256 ) {
+// 		for ( i = 0; i < index.count; i += 256 ) {
 		
-			vertex.fromBufferAttribute( position, index.array[ i ] );
-			skinIndices.fromBufferAttribute( skinIndex, index.array[ i ] );
-			skinWeights.fromBufferAttribute( skinWeigth, index.array[ i ] );
+// 			vertex.fromBufferAttribute( position, index.array[ i ] );
+// 			skinIndices.fromBufferAttribute( skinIndex, index.array[ i ] );
+// 			skinWeights.fromBufferAttribute( skinWeigth, index.array[ i ] );
 			
-			// the following code section is normally implemented in the vertex shader
+// 			// the following code section is normally implemented in the vertex shader
 
-			vertex.applyMatrix4( bindMatrix ); // transform to bind space
-			skinned.set( 0, 0, 0 );
+// 			vertex.applyMatrix4( bindMatrix ); // transform to bind space
+// 			skinned.set( 0, 0, 0 );
 
-			for ( j = 0; j < 4; j ++ ) {
+// 			for ( j = 0; j < 4; j ++ ) {
 
-			 	si = skinIndices.getComponent( j );
-				sw = skinWeights.getComponent( j );
-				boneMatrix.fromArray( boneMatrices, si * 16 );
+// 			 	si = skinIndices.getComponent( j );
+// 				sw = skinWeights.getComponent( j );
+// 				boneMatrix.fromArray( boneMatrices, si * 16 );
 
-				// weighted vertex transformation
+// 				// weighted vertex transformation
 
-				temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
-				skinned.add( temp );
+// 				temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
+// 				skinned.add( temp );
 
-			}
+// 			}
 
-			skinned.applyMatrix4( bindMatrixInverse ); // back to local space
+// 			skinned.applyMatrix4( bindMatrixInverse ); // back to local space
 
-			// expand aabb
+// 			// expand aabb
 
-			aabb.expandByPoint( skinned );
+// 			aabb.expandByPoint( skinned );
 		
-		}
+// 		}
 	
-	} else {
+// 	} else {
 	
-		// non-indexed geometry
+// 		// non-indexed geometry
 	
-		for ( i = 0; i < position.count; i += 256 ) {
+// 		for ( i = 0; i < position.count; i += 256 ) {
 		
-			vertex.fromBufferAttribute( position, i );
-			skinIndices.fromBufferAttribute( skinIndex, i );
-			skinWeights.fromBufferAttribute( skinWeigth, i );
+// 			vertex.fromBufferAttribute( position, i );
+// 			skinIndices.fromBufferAttribute( skinIndex, i );
+// 			skinWeights.fromBufferAttribute( skinWeigth, i );
 			
-			// the following code section is normally implemented in the vertex shader
+// 			// the following code section is normally implemented in the vertex shader
 
-			vertex.applyMatrix4( bindMatrix ); // transform to bind space
-			skinned.set( 0, 0, 0 );
+// 			vertex.applyMatrix4( bindMatrix ); // transform to bind space
+// 			skinned.set( 0, 0, 0 );
 
-			for ( j = 0; j < 4; j ++ ) {
+// 			for ( j = 0; j < 4; j ++ ) {
 
-				si = skinIndices.getComponent( j );
-				sw = skinWeights.getComponent( j );
-				boneMatrix.fromArray( boneMatrices, si * 16 );
+// 				si = skinIndices.getComponent( j );
+// 				sw = skinWeights.getComponent( j );
+// 				boneMatrix.fromArray( boneMatrices, si * 16 );
 
-				// weighted vertex transformation
+// 				// weighted vertex transformation
 
-				temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
-				skinned.add( temp );
+// 				temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
+// 				skinned.add( temp );
 
-			}
+// 			}
 
-			skinned.applyMatrix4( bindMatrixInverse ); // back to local space
+// 			skinned.applyMatrix4( bindMatrixInverse ); // back to local space
 
-			// expand aabb
+// 			// expand aabb
 
-			aabb.expandByPoint( skinned );
+// 			aabb.expandByPoint( skinned );
 			
-		}
+// 		}
 	
-	}
+// 	}
 	
-	    aabb.applyMatrix4( skinnedMesh.matrixWorld );
+// 	    aabb.applyMatrix4( skinnedMesh.matrixWorld );
 
-    }
+//     }
 
     takeScreenshot = () => {
         var height = 140;
@@ -1254,7 +1264,8 @@ class ModelBuilder extends Component {
     
 
     onMouseDown = ( event ) => {
-
+        this.updateRenderScene = true;
+        this.animate();
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
         if(this.state.coloringEnabled){
@@ -1275,6 +1286,10 @@ class ModelBuilder extends Component {
                 }
             }
         }
+    }
+
+    onMouseUp = ( event ) => {
+        this.updateRenderScene = false;
     }
 
     toggleColorHandler = () => {
