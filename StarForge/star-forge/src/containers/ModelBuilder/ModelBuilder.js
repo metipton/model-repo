@@ -257,7 +257,6 @@ class ModelBuilder extends Component {
         this.poseTime = new Date().getTime();
         this.updateAABBTrue = false;
         this.aabbDelay = 50;
-        this.updateRenderScene = true;
 
         this.morphTargets = {
             body: {
@@ -427,7 +426,6 @@ class ModelBuilder extends Component {
    start = () => {
      if (!this.frameId) {
        this.frameId = requestAnimationFrame(this.animate)
-       this.updateRenderScene = false;
      }
    }
 
@@ -436,28 +434,7 @@ class ModelBuilder extends Component {
    }
 
    animate = () => {
-       let now;
-       if(this.updateAABBTrue){
-           now = new Date();
-       }
-    //    if( this.updateRenderScene || (this.updateAABBTrue && (this.poseTime + this.aabbDelay) > now.getTime() ) ){
-    //         requestAnimationFrame( this.animate );
-    //         var delta = this.clock.getDelta();
-    //         if (this.mixer !== null && this.mixer !== undefined) {
-    //             this.mixer.update(delta);
-    //         };
 
-    //         //    if( this.updateAABBTrue ) {
-    //         //       let now = new Date();
-    //         //       if( (this.poseTime + this.aabbDelay) < now.getTime()){
-    //         //           this.updateAllAABB();
-    //         //           this.updateAABBTrue = false;
-    //         //       }
-    //         //    }
-
-    //         this.renderScene();
-    //         console.log(this.renderer.info);
-    //     }
         requestAnimationFrame( this.animate );
         var delta = this.clock.getDelta();
         if (this.mixer !== null && this.mixer !== undefined) {
@@ -653,9 +630,6 @@ class ModelBuilder extends Component {
                        console.log( error );
                    }
                };
-               this.updateRenderScene = true;
-               this.renderScene();
-               this.updateRenderScene = false;
                resolve();
        } catch ( error ) {
            reject( error );
@@ -1339,7 +1313,6 @@ class ModelBuilder extends Component {
     
 
     onMouseDown = ( event ) => {
-        this.updateRenderScene = true;
         //this.animate();
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
@@ -1363,25 +1336,14 @@ class ModelBuilder extends Component {
         }
     }
 
-    onMouseUp = ( event ) => {
-        this.updateRenderScene = false;
-    }
-
-    onMouseWheel = () => {
-
-        this.updateRenderScene = true;
-        //this.animate();
-    }
 
     onWindowResize = () => {
-        this.updateRenderScene = true;
         var width = window.innerWidth;
         var height = window.innerHeight;
         this.renderer.setSize(width, height);
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
         //this.animate();
-        this.updateRenderScene = false;
     }
 
     toggleColorHandler = () => {
