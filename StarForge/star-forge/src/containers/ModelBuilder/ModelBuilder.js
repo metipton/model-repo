@@ -440,24 +440,31 @@ class ModelBuilder extends Component {
        if(this.updateAABBTrue){
            now = new Date();
        }
-       if( this.updateRenderScene || (this.updateAABBTrue && (this.poseTime + this.aabbDelay) > now.getTime() ) ){
-            requestAnimationFrame( this.animate );
-            var delta = this.clock.getDelta();
-            if (this.mixer !== null && this.mixer !== undefined) {
-                this.mixer.update(delta);
-            };
+    //    if( this.updateRenderScene || (this.updateAABBTrue && (this.poseTime + this.aabbDelay) > now.getTime() ) ){
+    //         requestAnimationFrame( this.animate );
+    //         var delta = this.clock.getDelta();
+    //         if (this.mixer !== null && this.mixer !== undefined) {
+    //             this.mixer.update(delta);
+    //         };
 
-            //    if( this.updateAABBTrue ) {
-            //       let now = new Date();
-            //       if( (this.poseTime + this.aabbDelay) < now.getTime()){
-            //           this.updateAllAABB();
-            //           this.updateAABBTrue = false;
-            //       }
-            //    }
+    //         //    if( this.updateAABBTrue ) {
+    //         //       let now = new Date();
+    //         //       if( (this.poseTime + this.aabbDelay) < now.getTime()){
+    //         //           this.updateAllAABB();
+    //         //           this.updateAABBTrue = false;
+    //         //       }
+    //         //    }
 
-            this.renderScene();
-            console.log(this.renderer.info);
-        }
+    //         this.renderScene();
+    //         console.log(this.renderer.info);
+    //     }
+        requestAnimationFrame( this.animate );
+        var delta = this.clock.getDelta();
+        if (this.mixer !== null && this.mixer !== undefined) {
+            this.mixer.update(delta);
+        };
+
+        this.renderScene();
    }
 
    renderScene = () => {
@@ -1333,7 +1340,7 @@ class ModelBuilder extends Component {
 
     onMouseDown = ( event ) => {
         this.updateRenderScene = true;
-        this.animate();
+        //this.animate();
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
         if(this.state.coloringEnabled){
@@ -1363,7 +1370,7 @@ class ModelBuilder extends Component {
     onMouseWheel = () => {
 
         this.updateRenderScene = true;
-        this.animate();
+        //this.animate();
     }
 
     onWindowResize = () => {
@@ -1373,7 +1380,7 @@ class ModelBuilder extends Component {
         this.renderer.setSize(width, height);
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
-        this.animate();
+        //this.animate();
         this.updateRenderScene = false;
     }
 
