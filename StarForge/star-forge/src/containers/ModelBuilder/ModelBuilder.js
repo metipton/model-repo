@@ -21,7 +21,7 @@ import ny from './skybox/scifi-ny.jpg';
 import pz from './skybox/scifi-pz.jpg';
 import nz from './skybox/scifi-nz.jpg';
 import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
-import { ThemeProvider } from 'styled-components';
+import SideDrawerEditor from '../../components/UI/SideDrawerEditor/SideDrawerEditor';
 
 
 
@@ -320,7 +320,7 @@ class ModelBuilder extends Component {
         )
         //offset view so model shifts to left side of the screen
         this.camera = camera;
-        this.camera.setViewOffset(width * 1.4, height * 1.4, width * .3, height * .1, width, height );
+        this.camera.setViewOffset(width * 1.3, height * 1.3, width * .25, height * .15, width, height );
         this.camera.frustrumCulled = false;
         this.camera.position.z = 5;
         this.camera.position.y = 2;
@@ -1157,8 +1157,35 @@ class ModelBuilder extends Component {
 
             // change the position of the object
 
+            var morphTargetArray = clone.geometry.morphAttributes.position;
+            var morphInfluences = clone.morphTargetInfluences;
+            var meshVertices = clone.geometry.attributes.position;
+
+            var vA = new THREE.Vector3();
+            var tempA = new THREE.Vector3();
+            var target = new THREE.Vector3();
+            var vertices = new THREE.Vector3();
+
+            vertices.fromBufferAttribute(meshVertices, i); // the vertex to transform
+        
+            for ( var t = 0; t < morphTargetArray.length; t ++ ) {
+        
+                var influence = morphInfluences[ t ];
+        
+                if ( influence === 0 ) continue;
+        
+                target.fromBufferAttribute( morphTargetArray[t], i);
+        
+                vA.addScaledVector( tempA.subVectors( target, vertices ), influence );
+        
+            }
+        
+            skinned.add( vA ); // the transformed value
+
             clone.geometry.attributes.position.setXYZ(i, skinned.x, skinned.y, skinned.z);  
         }
+
+        //now iterate over all
         return clone;
     }
 
@@ -1202,7 +1229,7 @@ class ModelBuilder extends Component {
        // put the camera back to position when screenshot taken
        this.camera.position.set(currentCamPosit.x, currentCamPosit.y, currentCamPosit.z);
        this.camera.setRotationFromQuaternion(currentCamRotation);
-       this.camera.setViewOffset(window.innerWidth * 1.4, window.innerHeight * 1.4, window.innerWidth * .3, window.innerHeight * .1, window.innerWidth, window.innerHeight );
+       this.camera.setViewOffset(window.innerWidth * 1.3, window.innerHeight * 1.3, window.innerWidth * .3, window.innerHeight * .15, window.innerWidth, window.innerHeight );
 
 
        //put the skybox and ground back in
@@ -1226,6 +1253,7 @@ class ModelBuilder extends Component {
                 } else {
                     clone = this.objectHolder.children[i].clone();
                 }
+                console.log(objects);
                 objects.push(clone);
             }
         }
