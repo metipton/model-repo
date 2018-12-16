@@ -6,7 +6,6 @@ import 'firebase/storage';
 import axios from '../../axios-orders.js';
 import GLTFLoader from 'three-gltf-loader';
 import GLTFExporter from 'three-gltf-exporter';
-// import './GPUPicker/GPUPicker.js';
 
 import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
@@ -311,6 +310,10 @@ class ModelBuilder extends Component {
         this.objectHolder = objectHolder;
         this.objectHolder.name = "Object Holder";
         this.scene.add(this.objectHolder);
+        const raycastObjectHolder = new THREE.Object3D();
+        this.raycastObjectHolder = raycastObjectHolder;
+        this.raycastObjectHolder.name = "Raycast Object Holder";
+        this.scene.add(this.raycastObjectHolder);
 
         let camera = new THREE.PerspectiveCamera(
           50,
@@ -336,7 +339,7 @@ class ModelBuilder extends Component {
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.gammaOutput = true;
 
-        // initialize the GPUPicker
+        // // initialize the GPUPicker
         // this.gpuPicker = new THREE.GPUPicker({renderer:renderer, debug: false});
         // this.gpuPicker.setFilter(function (object) {return true;});
         // this.gpuPicker.setScene(this.scene);
@@ -440,6 +443,12 @@ class ModelBuilder extends Component {
         if (this.mixer !== null && this.mixer !== undefined) {
             this.mixer.update(delta);
         };
+
+        // if(this.objectHolder && this.raycastObjectHolder && this.raycastObjectHolder.children 
+        //     && this.objectHolder.children.length !== this.raycastObjectHolder.children.length){
+        //     this.updateRayCastObjects();
+        //     console.log("raycast objs updated");
+        // }
 
         this.renderScene();
    }
@@ -618,10 +627,11 @@ class ModelBuilder extends Component {
                        if(category === 'Race' && !this.armatureLoaded){
                             this.scene.add( object );
                             let model = object.children[0].children[0];
+                            let name = model.name;
                             let parent = object.children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, parent, this.objectHolder);
-
+                            this.createRaycastObject(this.objectHolder.getObjectByName(name));
                             this.armatureLoaded = true;
                        } else {
                         this.setupObjectImport(category, selection, object)
@@ -957,12 +967,15 @@ class ModelBuilder extends Component {
         this.activeObjects.push(child.name);
        //imported heirachy scene->object3D->skinnedmesh
         try {
+            child.material.skinning = true;
+           // this.createRaycastObject(child);
             child.skeleton = this.skeleton;
             child.bind(child.skeleton, bone.matrixWorld);
         } catch (error){
 
         }
         THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
+
         child.name = category;
         //this.createNewAABB( child );
         // if( child.isSkinnedMesh){
@@ -1167,19 +1180,19 @@ class ModelBuilder extends Component {
             var vertices = new THREE.Vector3();
 
             vertices.fromBufferAttribute(meshVertices, i); // the vertex to transform
-        
-            for ( var t = 0; t < morphTargetArray.length; t ++ ) {
-        
-                var influence = morphInfluences[ t ];
-        
-                if ( influence === 0 ) continue;
-        
-                target.fromBufferAttribute( morphTargetArray[t], i);
-        
-                vA.addScaledVector( tempA.subVectors( target, vertices ), influence );
-        
+            if(morphTargetArray){
+                for ( var t = 0; t < morphTargetArray.length; t ++ ) {
+            
+                    var influence = morphInfluences[ t ];
+            
+                    if ( influence === 0 ) continue;
+            
+                    target.fromBufferAttribute( morphTargetArray[t], i);
+            
+                    vA.addScaledVector( tempA.subVectors( target, vertices ), influence );
+            
+                }
             }
-        
             skinned.add( vA ); // the transformed value
 
             clone.geometry.attributes.position.setXYZ(i, skinned.x, skinned.y, skinned.z);  
@@ -1338,28 +1351,58 @@ class ModelBuilder extends Component {
         this.props.addToCart(payload);
      }
 
-    
+    createRaycastObject = (skinnedMesh) => {
+        if(skinnedMesh && skinnedMesh.isSkinnedMesh){
+            var material = new THREE.MeshBasicMaterial( { color: 0xcecdd6, side: THREE.DoubleSide } );
+            var clone = this.createPosedClone(skinnedMesh);
+            var mesh = new THREE.Mesh(clone.geometry, material);
+            mesh.name = skinnedMesh.name;
+            mesh.visible = false;
+            this.raycastObjectHolder.add(mesh);
+            
+        } else if( skinnedMesh ) {
+            var clone = skinnedMesh.clone();
+            clone.name = skinnedMesh.name;
+            this.raycastObjectHolder.add(clone);
+        } 
+    }
+
+    updateRayCastObjects = () => {
+        this.raycastObjectHolder = new THREE.Object3D();
+        for(let i = 0; i < this.objectHolder.children.length; i++){
+            this.createRaycastObject(this.objectHolder.children[i]);
+        }
+    }
 
     onMouseDown = ( event ) => {
-        //this.animate();
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
         if(this.state.coloringEnabled){
+            console.log(this.raycastObjectHolder);
             this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
             this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
             
             this.raycaster.setFromCamera( this.mouse, this.camera );
-            var intersection = []; 
-            let objects = this.objectHolder.children;
-            for(let i = 0; i < objects.length; i++){
-                intersection = this.raycaster.intersectObject(objects[i]);
-                if(intersection.length !== 0){
-                    var hexString = "0X" + this.hexColor;
-                    var hex = parseInt( hexString, 16);
-                    for ( let i = 0; i < intersection.length; i++ ) {
-                        intersection[ i ].object.material.color = new THREE.Color( hex );
-                    }
-                }
+
+            // for(let i = 0; i < clones.length; i++){
+            //     intersection = this.raycaster.intersectObject(clones[i]);
+            //     if(intersection.length !== 0){
+            //         var hexString = "0X" + this.hexColor;
+            //         var hex = parseInt( hexString, 16);
+            //         for ( let i = 0; i < intersection.length; i++ ) {
+            //             let obj = this.objectHolder.getObjectByName(intersection[i].object.name);
+            //             obj.material.color = new THREE.Color( hex );
+            //         }
+            //     }
+            // }
+            console.log(this.scene);
+            var intersections = this.raycaster.intersectObjects(this.raycastObjectHolder);
+            console.log(intersections);
+            if(intersections.length > 0){
+                var hexString = "0X" + this.hexColor;
+                var hex = parseInt( hexString, 16);
+                let obj = this.objectHolder.getObjectByName(intersections[0].object.name);
+                obj.material.color = new THREE.Color( hex );
             }
         }
     }
@@ -1371,7 +1414,6 @@ class ModelBuilder extends Component {
         this.renderer.setSize(width, height);
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
-        //this.animate();
     }
 
     toggleColorHandler = () => {

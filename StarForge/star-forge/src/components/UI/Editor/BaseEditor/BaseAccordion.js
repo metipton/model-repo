@@ -95,7 +95,7 @@ const styles = theme => ({
       },
     border: 'solid',
     borderRadius: '10',
-    backgroundColor: 'grey',
+    backgroundColor: '#5d809d',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,

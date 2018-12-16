@@ -497,4 +497,8 @@ import * as THREE from 'three';
 		}
 		return 0;
 	};
+
+  return THREE;
 }(THREE));
+
+export default THREE;

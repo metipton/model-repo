@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button/';
 
 const styles = theme => ({
   root: {
-    width: '500px'
+    width: '500px',
   },
   button: {
     margin: theme.spacing.unit,

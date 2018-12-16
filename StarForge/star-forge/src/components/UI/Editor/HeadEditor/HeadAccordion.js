@@ -217,7 +217,7 @@ const styles = theme => ({
       },
     border: 'solid',
     borderRadius: '10',
-    backgroundColor: 'grey',
+    backgroundColor: '#5d809d',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
@@ -234,7 +234,7 @@ const styles = theme => ({
   secondaryHeading: {
       width: '100%',
       border: 'solid',
-      backgroundColor: 'lightgrey',
+      backgroundColor: '#5d809d',
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
   },
