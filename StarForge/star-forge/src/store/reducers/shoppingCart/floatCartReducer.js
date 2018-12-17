@@ -33,6 +33,11 @@ export default function(state = initialState, action) {
         ...state,
         addInProgress: false
       }
+    case actionTypes.RESET_CART:
+      return {
+        addInProgress: false,
+        items: []
+      }
     default:
       return state;
   }

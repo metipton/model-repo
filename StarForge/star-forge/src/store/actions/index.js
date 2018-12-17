@@ -24,7 +24,8 @@ export {
     addProduct,
     removeProduct,
     completedAddToCart,
-    addInProgress
+    addInProgress,
+    resetCart
 } from './shoppingCart/floatCartActions';
 export {
    fetchProducts 

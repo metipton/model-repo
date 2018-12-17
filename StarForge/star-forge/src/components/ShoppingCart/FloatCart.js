@@ -9,7 +9,6 @@ import { updateCart } from '../../store/actions/shoppingCart/updateCartActions';
 
 import classes from './FloatCart.css';
 import CartProduct from './CartProduct';
-import persistentCart from "./persistentCart";
 import util from './util';
 
 

@@ -2,12 +2,12 @@ import * as actionTypes from '../actions/actionTypes';
 import {updateObject} from '../utility';
 
 const initialState = {
-    token: null,
+    idToken: null,
     userId: null,
+    accessToken: null,
+    expiresAt: 0,
     email: null,
     error: null,
-    loading: false,
-    inAuthScreen: false
 }
 
 const authStart = (state, action) => {
@@ -16,11 +16,12 @@ const authStart = (state, action) => {
 
 const authSuccess = (state, action) => {
     return updateObject(state, {
-        token: action.idToken,
+        accessToken: action.accessToken,
         userId: action.userId,
+        idToken: action.idToken,
+        expiresAt: action.expiresAt,
         email: action.email,
         error: null,
-        loading: false
     });
 };
 
@@ -33,8 +34,10 @@ const authFailed = (state, action) => {
 
 const authLogout = (state, action) => {
     return updateObject(state, {
-            token: null,
+            accessToken: null,
             userId: null,
+            idToken: null,
+            expiresAt: 0,
             email: null
         });
 };

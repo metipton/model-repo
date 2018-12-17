@@ -33,3 +33,9 @@ export const removeProduct = (productData) => dispatch => {
     payload: productData,
   });
 }
+
+export const resetCart = () => dispatch => {
+  dispatch({
+    type: actionTypes.RESET_CART,
+  })
+}

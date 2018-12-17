@@ -12,6 +12,8 @@ import * as actions from '../../store/actions/index';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import ShoppingCart from '../../components/ShoppingCart/FloatCart';
 
+import Auth from '../auth0/Auth';
+
 
 import shoppingCartImage from '../../assets/Icons/shopping_cart_white_24x24.png';
 
@@ -19,6 +21,11 @@ class Toolbar extends Component {
 
     state = {
         showShoppingCart: false
+    }
+
+    componentWillMount(){
+        const auth = new Auth();
+        this.auth = auth;
     }
 
     shoppingCartOpenHandler = () => {
@@ -36,8 +43,12 @@ class Toolbar extends Component {
         } );
     }
 
+    authLogin = () => {
+        this.auth.login();
+    }
+
     authLogout = () => {
-        this.props.logout();
+        this.auth.logout();
         firebase.auth().signOut().then(function() {
             console.log('Signed Out');
         }, function(error) {
@@ -61,7 +72,7 @@ class Toolbar extends Component {
             <MaterialUIButton
                 variant="outlined"
                 color="primary"
-                clicked={this.props.openAuth}>Log In</MaterialUIButton>
+                clicked={this.authLogin}>Log In</MaterialUIButton>
         );
 
         if(this.props.isAuthenticated){
@@ -99,7 +110,7 @@ class Toolbar extends Component {
             <div>
                 {toolbar}
                 <Modal show={this.props.inAuthScreen} modalClosed={this.props.closeAuth}>
-                    <AuthFormik loginUI={(uiConfig, firebaseAuth) =>this.StyledLoginUI(uiConfig, firebaseAuth)}  />
+                    <AuthFormik loginUI={(uiConfig, firebaseAuth) =>this.StyledLoginUI(uiConfig, firebaseAuth)} />
                 </Modal>
 
             </div>
@@ -109,7 +120,7 @@ class Toolbar extends Component {
 
 const mapStateToProps = state => {
     return {
-        isAuthenticated: state.auth.token !== null,
+        isAuthenticated: state.auth.accessToken !== null,
         inAuthScreen: state.auth.inAuthScreen === true,
         authEmail: state.auth.email
     };

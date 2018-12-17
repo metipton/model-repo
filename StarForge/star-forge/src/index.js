@@ -13,20 +13,23 @@ import modelBuilderReducer from './store/reducers/modelBuilder';
 import orderReducer from './store/reducers/order';
 import authReducer from './store/reducers/auth';
 import shoppingCartReducer from './store/reducers/shoppingCart'
+import newStore from './store';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const rootReducer = combineReducers({
-    modelBuilder: modelBuilderReducer,
-    order: orderReducer,
-    auth: authReducer,
-    shoppingCart: shoppingCartReducer
-});
+// const rootReducer = combineReducers({
+//     modelBuilder: modelBuilderReducer,
+//     order: orderReducer,
+//     auth: authReducer,
+//     shoppingCart: shoppingCartReducer
+// });
 
-const store = createStore(rootReducer, composeEnhancers(
-    applyMiddleware(thunk)
+// const store = createStore(rootReducer, composeEnhancers(
+//     applyMiddleware(thunk)
 
-));
+// ));
+
+const store = newStore;
 
 const client = Client.buildClient({
     storefrontAccessToken: '210a96f2a3cecb6c4a13fcba1c6438b8',

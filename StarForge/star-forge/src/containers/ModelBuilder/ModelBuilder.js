@@ -1242,7 +1242,7 @@ class ModelBuilder extends Component {
        // put the camera back to position when screenshot taken
        this.camera.position.set(currentCamPosit.x, currentCamPosit.y, currentCamPosit.z);
        this.camera.setRotationFromQuaternion(currentCamRotation);
-       this.camera.setViewOffset(window.innerWidth * 1.3, window.innerHeight * 1.3, window.innerWidth * .3, window.innerHeight * .15, window.innerWidth, window.innerHeight );
+       this.camera.setViewOffset(window.innerWidth * 1.3, window.innerHeight * 1.3, window.innerWidth * .25, window.innerHeight * .15, window.innerWidth, window.innerHeight );
 
 
        //put the skybox and ground back in
