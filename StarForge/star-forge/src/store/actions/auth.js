@@ -55,11 +55,6 @@ export const authFail = (error) => {
 };
 
 export const logout = () => {
-    localStorage.removeItem('idToken');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('expiresAt');
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('email');
     
     return {
         type: actionTypes.AUTH_LOGOUT

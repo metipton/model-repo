@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import firebase from '../../Firebase';
+import Iframe from 'react-iframe';
 
 
 import classes from './Toolbar.css';
 import DrawerToggle from '../../components/Navigation/SideDrawer/DrawerToggle/DrawerToggle';
 import MaterialUIButton from '../../components/UI/Button/MaterialUIButton';
-import AuthFormik from '../Auth/AuthFormik';
+//import AuthFormik from '../Auth/AuthFormik';
 import Modal from '../../components/UI/Modal/Modal';
 import * as actions from '../../store/actions/index';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
@@ -109,10 +110,16 @@ class Toolbar extends Component {
         return (
             <div>
                 {toolbar}
-                <Modal show={this.props.inAuthScreen} modalClosed={this.props.closeAuth}>
-                    <AuthFormik loginUI={(uiConfig, firebaseAuth) =>this.StyledLoginUI(uiConfig, firebaseAuth)} />
+                <Modal show={this.props.inCheckout} modalClosed={this.props.closeCheckout}>
+                    <Iframe url={this.props.checkoutURL}
+                        width="100%"
+                        height="100%"
+                        id="myId"
+                        className="myClassname"
+                        display="initial"
+                        position="relative"
+                        allowFullScreen/>
                 </Modal>
-
             </div>
         );
     };
@@ -121,16 +128,16 @@ class Toolbar extends Component {
 const mapStateToProps = state => {
     return {
         isAuthenticated: state.auth.accessToken !== null,
-        inAuthScreen: state.auth.inAuthScreen === true,
-        authEmail: state.auth.email
+        authEmail: state.auth.email,
+        inCheckout: state.shoppingCart.cart.inCheckout,
+        checkoutURL: state.shoppingCart.cart.checkout.webUrl
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        openAuth: () => dispatch(actions.authOpenModal()),
-        closeAuth: () => dispatch(actions.authCloseModal()),
-        logout: () => dispatch(actions.logout())
+        logout: () => dispatch(actions.logout()),
+        closeCheckout: () => dispatch(actions.exitCheckout()),
     }
 }
 

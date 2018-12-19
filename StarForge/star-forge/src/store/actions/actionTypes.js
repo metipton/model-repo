@@ -31,6 +31,8 @@ export const UPDATE_CART = 'UPDATE_CART';
 export const FINISHED_ADD = 'FINISHED_ADD';
 export const ADD_IN_PROGRESS = 'ADD_IN_PROGRSS';
 export const RESET_CART = 'RESET_CART';
+export const ENTER_CHECKOUT = 'ENTER_CHECKOUT';
+export const EXIT_CHECKOUT = 'EXIT_CHECKOUT';
 
 export const CLIENT_CREATED = 'CLIENT_CREATED'
 export const CHECKOUT_FOUND = 'CHECKOUT_FOUND'

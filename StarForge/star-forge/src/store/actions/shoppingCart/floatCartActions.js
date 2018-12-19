@@ -39,3 +39,15 @@ export const resetCart = () => dispatch => {
     type: actionTypes.RESET_CART,
   })
 }
+
+export const enterCheckout = () => dispatch => {
+  dispatch({
+    type: actionTypes.ENTER_CHECKOUT,
+  })
+}
+
+export const exitCheckout = () => dispatch => {
+  dispatch({
+    type: actionTypes.EXIT_CHECKOUT,
+  })
+}

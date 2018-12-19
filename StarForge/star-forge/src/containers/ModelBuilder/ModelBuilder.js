@@ -301,6 +301,15 @@ class ModelBuilder extends Component {
             }
         }
 
+        //Create all the picking scene holders
+        const pickingScene = new THREE.Scene();
+        this.pickingScene = pickingScene;
+        this.pickingScene.background = new THREE.Color(0);
+        const idToObject = {};
+        this.idToObject = idToObject;
+        this.numObjects = 0;
+        this.pickingSceneObjHolder = new THREE.Object3D();
+
 
         const width = this.mount.clientWidth;
         const height = this.mount.clientHeight;
@@ -310,10 +319,7 @@ class ModelBuilder extends Component {
         this.objectHolder = objectHolder;
         this.objectHolder.name = "Object Holder";
         this.scene.add(this.objectHolder);
-        const raycastObjectHolder = new THREE.Object3D();
-        this.raycastObjectHolder = raycastObjectHolder;
-        this.raycastObjectHolder.name = "Raycast Object Holder";
-        this.scene.add(this.raycastObjectHolder);
+
 
         let camera = new THREE.PerspectiveCamera(
           50,
@@ -443,12 +449,6 @@ class ModelBuilder extends Component {
         if (this.mixer !== null && this.mixer !== undefined) {
             this.mixer.update(delta);
         };
-
-        // if(this.objectHolder && this.raycastObjectHolder && this.raycastObjectHolder.children 
-        //     && this.objectHolder.children.length !== this.raycastObjectHolder.children.length){
-        //     this.updateRayCastObjects();
-        //     console.log("raycast objs updated");
-        // }
 
         this.renderScene();
    }
@@ -627,11 +627,9 @@ class ModelBuilder extends Component {
                        if(category === 'Race' && !this.armatureLoaded){
                             this.scene.add( object );
                             let model = object.children[0].children[0];
-                            let name = model.name;
                             let parent = object.children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, parent, this.objectHolder);
-                            this.createRaycastObject(this.objectHolder.getObjectByName(name));
                             this.armatureLoaded = true;
                        } else {
                         this.setupObjectImport(category, selection, object)
@@ -968,7 +966,6 @@ class ModelBuilder extends Component {
        //imported heirachy scene->object3D->skinnedmesh
         try {
             child.material.skinning = true;
-           // this.createRaycastObject(child);
             child.skeleton = this.skeleton;
             child.bind(child.skeleton, bone.matrixWorld);
         } catch (error){
@@ -977,10 +974,6 @@ class ModelBuilder extends Component {
         THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
 
         child.name = category;
-        //this.createNewAABB( child );
-        // if( child.isSkinnedMesh){
-        //     this.updateAABB( child, child.BoundBox );
-        // }
    }
 
    getBoneByName = (name) =>
@@ -1351,59 +1344,34 @@ class ModelBuilder extends Component {
         this.props.addToCart(payload);
      }
 
-    createRaycastObject = (skinnedMesh) => {
-        if(skinnedMesh && skinnedMesh.isSkinnedMesh){
-            var material = new THREE.MeshBasicMaterial( { color: 0xcecdd6, side: THREE.DoubleSide } );
-            var clone = this.createPosedClone(skinnedMesh);
-            var mesh = new THREE.Mesh(clone.geometry, material);
-            mesh.name = skinnedMesh.name;
-            mesh.visible = false;
-            this.raycastObjectHolder.add(mesh);
-            
-        } else if( skinnedMesh ) {
-            var clone = skinnedMesh.clone();
-            clone.name = skinnedMesh.name;
-            this.raycastObjectHolder.add(clone);
-        } 
-    }
+    createPickingClone = (skinnedMesh) => {
+        this.numObjects++;
+        const id = this.numObjects;
 
-    updateRayCastObjects = () => {
-        this.raycastObjectHolder = new THREE.Object3D();
-        for(let i = 0; i < this.objectHolder.children.length; i++){
-            this.createRaycastObject(this.objectHolder.children[i]);
-        }
+
+        this.idToObject[id] = skinnedMesh;
+
+        const pickingMaterial = new THREE.MeshPhongMaterial({
+            emissive: new THREE.Color(id),
+            color: new THREE.Color(0, 0, 0),
+            specular: new THREE.Color(0, 0, 0),
+            map: texture,
+            transparent: true,
+            side: THREE.DoubleSide,
+            alphaTest: 0.5,
+            blending: THREE.NoBlending,
+        });
+        
+        const clone = skinnedMesh.clone();
+
+
     }
 
     onMouseDown = ( event ) => {
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
         if(this.state.coloringEnabled){
-            console.log(this.raycastObjectHolder);
-            this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-            this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-            
-            this.raycaster.setFromCamera( this.mouse, this.camera );
 
-            // for(let i = 0; i < clones.length; i++){
-            //     intersection = this.raycaster.intersectObject(clones[i]);
-            //     if(intersection.length !== 0){
-            //         var hexString = "0X" + this.hexColor;
-            //         var hex = parseInt( hexString, 16);
-            //         for ( let i = 0; i < intersection.length; i++ ) {
-            //             let obj = this.objectHolder.getObjectByName(intersection[i].object.name);
-            //             obj.material.color = new THREE.Color( hex );
-            //         }
-            //     }
-            // }
-            console.log(this.scene);
-            var intersections = this.raycaster.intersectObjects(this.raycastObjectHolder);
-            console.log(intersections);
-            if(intersections.length > 0){
-                var hexString = "0X" + this.hexColor;
-                var hex = parseInt( hexString, 16);
-                let obj = this.objectHolder.getObjectByName(intersections[0].object.name);
-                obj.material.color = new THREE.Color( hex );
-            }
         }
     }
 

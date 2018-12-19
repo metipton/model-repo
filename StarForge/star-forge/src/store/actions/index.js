@@ -25,7 +25,9 @@ export {
     removeProduct,
     completedAddToCart,
     addInProgress,
-    resetCart
+    resetCart,
+    enterCheckout,
+    exitCheckout
 } from './shoppingCart/floatCartActions';
 export {
    fetchProducts 

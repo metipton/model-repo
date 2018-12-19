@@ -1,9 +1,7 @@
 // src/Auth/Auth.js
 import auth0 from 'auth0-js';
 import * as actions from '../../store/actions/index';
-import history from './history';
 import decode from 'jwt-decode';
-
 import newStore from '../../store.js';
 
 class Auth {
@@ -63,6 +61,11 @@ class Auth {
     this.userId = null;
     // Remove isLoggedIn flag from localStorage
     localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('expiresAt');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('email');
     this.store.dispatch(actions.logout());
     this.store.dispatch(actions.resetCart());
     // navigate to the home route

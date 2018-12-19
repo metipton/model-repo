@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import firebase from '../../Firebase';
 import 'firebase/storage';
+import Client from 'shopify-buy';
 
 import { connect } from 'react-redux';
-import { loadCart, removeProduct } from '../../store/actions/shoppingCart/floatCartActions';
+import { loadCart, removeProduct, enterCheckout } from '../../store/actions/shoppingCart/floatCartActions';
 import { updateCart } from '../../store/actions/shoppingCart/updateCartActions';
 
 import classes from './FloatCart.css';
@@ -19,7 +20,6 @@ class FloatCart extends Component {
   };
 
   componentWillMount() {
-    //this.props.loadCart( JSON.parse(persistentCart().get()) || [] );
     this.pullCartFromFirebase();
   }
 
@@ -104,12 +104,16 @@ class FloatCart extends Component {
 
   proceedToCheckout = () => {
     const { totalPrice, productQuantity, currencyFormat, currencyId } = this.props.cartTotals;
-
+    // Create an empty checkout
     if (!productQuantity) {
       alert("Add some product in the bag!");
     }else {
+      console.log(this.props.checkoutURL);
+      window.open(this.props.checkoutURL, 'width=50% height = 50%');
       alert(`Checkout - Subtotal: ${currencyFormat} ${util.formatPrice(totalPrice, currencyId)}`);
     }
+
+    //enterCheckout();
   }
 
   render() {
@@ -204,6 +208,8 @@ const mapStateToProps = state => ({
   productToRemove: state.shoppingCart.cartProducts.itemToRemove,
   cartTotals: state.shoppingCart.cartTotals.item,
   userId: state.auth.userId,
+  checkoutURL: state.shoppingCart.cart.checkout.webUrl
 });
 
-export default connect(mapStateToProps, { loadCart, updateCart, removeProduct})(FloatCart);
+
+export default connect(mapStateToProps, { loadCart, updateCart, removeProduct, enterCheckout})(FloatCart);
