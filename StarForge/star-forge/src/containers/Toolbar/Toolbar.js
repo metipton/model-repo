@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import firebase from '../../Firebase';
-import Iframe from 'react-iframe';
+
 
 
 import classes from './Toolbar.css';
@@ -111,14 +111,6 @@ class Toolbar extends Component {
             <div>
                 {toolbar}
                 <Modal show={this.props.inCheckout} modalClosed={this.props.closeCheckout}>
-                    <Iframe url={this.props.checkoutURL}
-                        width="100%"
-                        height="100%"
-                        id="myId"
-                        className="myClassname"
-                        display="initial"
-                        position="relative"
-                        allowFullScreen/>
                 </Modal>
             </div>
         );

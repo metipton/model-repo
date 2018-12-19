@@ -20,7 +20,7 @@ import ny from './skybox/scifi-ny.jpg';
 import pz from './skybox/scifi-pz.jpg';
 import nz from './skybox/scifi-nz.jpg';
 import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
-import SideDrawerEditor from '../../components/UI/SideDrawerEditor/SideDrawerEditor';
+import LoadingScreen from './LoadingScreen/LoadingScreen';
 
 
 
@@ -151,7 +151,8 @@ class ModelBuilder extends Component {
             }
         },
         loading: true,
-        coloringEnabled: false
+        coloringEnabled: false,
+        RESOURCES_LOADED: false
     }
 
 
@@ -234,8 +235,21 @@ class ModelBuilder extends Component {
             objList[obj].morphTargetInfluences[0] = convPercent;
         }
     }
+    
+    onTransitionEnd = ( event ) => {
+        event.target.remove(); 
+    }
 
     init = () => {
+        // const loadingManager = new THREE.LoadingManager( () => {
+	
+        //     const loadingScreen = document.getElementById( LoadingScreen);
+            
+        //     // optional: remove loader from DOM via event listener
+        //     loadingScreen.addEventListener( 'transitionend', this.onTransitionEnd );
+            
+        // } );
+
         this.skyBox = null;
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
@@ -631,6 +645,10 @@ class ModelBuilder extends Component {
                             model.name = category;
                             THREE.SceneUtils.attach(model, parent, this.objectHolder);
                             this.armatureLoaded = true;
+                            this.setState({
+                                ...this.state,
+                                RESOURCES_LOADED: true
+                            })
                        } else {
                         this.setupObjectImport(category, selection, object)
                        }
@@ -1355,7 +1373,6 @@ class ModelBuilder extends Component {
             emissive: new THREE.Color(id),
             color: new THREE.Color(0, 0, 0),
             specular: new THREE.Color(0, 0, 0),
-            map: texture,
             transparent: true,
             side: THREE.DoubleSide,
             alphaTest: 0.5,
@@ -1392,9 +1409,19 @@ class ModelBuilder extends Component {
     }
 
    render() {
-     let morphTargetsProp = this.morphTargets;
+    let morphTargetsProp = this.morphTargets;
+    let screen = null;
+
+    if(!this.state.RESOURCES_LOADED){
+        screen = (
+            <LoadingScreen/>
+        );
+    }
+
+    
      return (
         <Aux className={classes.ModelBuilder}>
+            {screen}
             <div
                 style={{ width: '100vw', height: '100vh', position: 'absolute', top: '32'}}
                 ref={(mount) => { this.mount = mount }}/>
@@ -1413,9 +1440,9 @@ class ModelBuilder extends Component {
                 toggleColor={this.toggleColorHandler} 
                 setColor={(color) => this.setHexColor(color)} />
             <BottomBar 
-                addToCart={this.addModelToCart} />
-            
-       </Aux>
+                addToCart={this.addModelToCart} />       
+        </Aux>
+
      )
    }
 }
