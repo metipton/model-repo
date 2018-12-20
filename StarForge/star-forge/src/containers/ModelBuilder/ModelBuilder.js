@@ -21,6 +21,7 @@ import pz from './skybox/scifi-pz.jpg';
 import nz from './skybox/scifi-nz.jpg';
 import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
 import LoadingScreen from './LoadingScreen/LoadingScreen';
+import GPUPickHelper from './GPUPicker/GPUPicker';
 
 
 
@@ -235,20 +236,34 @@ class ModelBuilder extends Component {
             objList[obj].morphTargetInfluences[0] = convPercent;
         }
     }
+
+    //object picking functions
+    setPickPosition = (event) => {
+        this.pickPosition.x = event.clientX;
+        this.pickPosition.y = event.clientY;
+      }
     
-    onTransitionEnd = ( event ) => {
-        event.target.remove(); 
-    }
+    clearPickPosition = () => {
+        // unlike the mouse which always has a position
+        // if the user stops touching the screen we want
+        // to stop picking. For now we just pick a value
+        // unlikely to pick something
+        this.pickPosition.x = -100000;
+        this.pickPosition.y = -100000;
+      }
+
+    resizeRendererToDisplaySize = (renderer) => {
+        const canvas = renderer.domElement;
+        const width = this.canvas.clientWidth;
+        const height = this.canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+          renderer.setSize(width, height, false);
+        }
+        return needResize;
+      }
 
     init = () => {
-        // const loadingManager = new THREE.LoadingManager( () => {
-	
-        //     const loadingScreen = document.getElementById( LoadingScreen);
-            
-        //     // optional: remove loader from DOM via event listener
-        //     loadingScreen.addEventListener( 'transitionend', this.onTransitionEnd );
-            
-        // } );
 
         this.skyBox = null;
         this.raycaster = new THREE.Raycaster();
@@ -314,6 +329,10 @@ class ModelBuilder extends Component {
                 Embarrassed: {}
             }
         }
+        //all scene managing objects
+        this.numObjects = 0;
+        this.allScenes = [];
+        this.allObjectHolders = [];
 
         //Create all the picking scene holders
         const pickingScene = new THREE.Scene();
@@ -321,10 +340,16 @@ class ModelBuilder extends Component {
         this.pickingScene.background = new THREE.Color(0);
         const idToObject = {};
         this.idToObject = idToObject;
-        this.numObjects = 0;
         this.pickingSceneObjHolder = new THREE.Object3D();
+        this.pickingScene.add(this.pickingSceneObjHolder);
+        const pickPosition = {x: 0, y: 0};
+        const pickHelper = new GPUPickHelper();
+        this.pickPosition = pickPosition;
+        this.pickHelper = pickHelper;
+        this.clearPickPosition();
 
 
+        //main scene objects
         const width = this.mount.clientWidth;
         const height = this.mount.clientHeight;
         const scene = new THREE.Scene();
@@ -359,11 +384,6 @@ class ModelBuilder extends Component {
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.gammaOutput = true;
 
-        // // initialize the GPUPicker
-        // this.gpuPicker = new THREE.GPUPicker({renderer:renderer, debug: false});
-        // this.gpuPicker.setFilter(function (object) {return true;});
-        // this.gpuPicker.setScene(this.scene);
-        // this.gpuPicker.setCamera(this.camera);
 
         //enable orbit controls
         const controls = new OrbitControls(this.camera, renderer.domElement);
@@ -1366,7 +1386,6 @@ class ModelBuilder extends Component {
         this.numObjects++;
         const id = this.numObjects;
 
-
         this.idToObject[id] = skinnedMesh;
 
         const pickingMaterial = new THREE.MeshPhongMaterial({
@@ -1378,10 +1397,10 @@ class ModelBuilder extends Component {
             alphaTest: 0.5,
             blending: THREE.NoBlending,
         });
-        
-        const clone = skinnedMesh.clone();
+  
+        const clone = new THREE.SkinnedMesh(skinnedMesh.geometry, pickingMaterial);
 
-
+        return clone;
     }
 
     onMouseDown = ( event ) => {

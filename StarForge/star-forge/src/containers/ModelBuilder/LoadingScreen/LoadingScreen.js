@@ -151,7 +151,6 @@ export default class loadingScreen extends React.Component {
     render() {
       return (
         <Background>
-            <img src={ty} />
             <Container>
                 <Tomato0/>
                 <Tomato1/>

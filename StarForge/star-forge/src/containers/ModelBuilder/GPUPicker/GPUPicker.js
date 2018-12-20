@@ -1,12 +1,15 @@
+import * as THREE from 'three';
+
 class GPUPickHelper {
-    constructor() {
+    constructor(renderer ,idToObject) {
       // create a 1x1 pixel render target
       this.pickingTexture = new THREE.WebGLRenderTarget(1, 1);
       this.pixelBuffer = new Uint8Array(4);
       this.pickedObject = null;
       this.pickedObjectSavedColor = 0;
+      this.renderer = renderer;
     }
-    pick(cssPosition, scene, camera, time) {
+    pick(cssPosition, scene, camera, idToObject) {
       const {pickingTexture, pixelBuffer} = this;
 
       // restore the color if there is a picked object
@@ -16,21 +19,21 @@ class GPUPickHelper {
       }
 
       // set the view offset to represent just a single pixel under the mouse
-      const pixelRatio = renderer.getPixelRatio();
+      const pixelRatio = this.renderer.getPixelRatio();
       camera.setViewOffset(
-          renderer.context.drawingBufferWidth,   // full width
-          renderer.context.drawingBufferHeight,  // full top
+          this.renderer.context.drawingBufferWidth,   // full width
+          this.renderer.context.drawingBufferHeight,  // full top
           cssPosition.x * pixelRatio | 0,        // rect x
           cssPosition.y * pixelRatio | 0,        // rect y
           1,                                     // rect width
           1,                                     // rect height
       );
       // render the scene
-      renderer.render(scene, camera, pickingTexture);
+      this.renderer.render(scene, camera, pickingTexture);
       // clear the view offset so rendering returns to normal
       camera.clearViewOffset();
       //read the pixel
-      renderer.readRenderTargetPixels(
+      this.renderer.readRenderTargetPixels(
           pickingTexture,
           0,   // x
           0,   // y
@@ -48,10 +51,6 @@ class GPUPickHelper {
       if (intersectedObject) {
         // pick the first object. It's the closest one
         this.pickedObject = intersectedObject;
-        // save its color
-        this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
-        // set its emissive color to flashing red/yellow
-        this.pickedObject.material.emissive.setHex((time * 8) % 2 > 1 ? 0xFFFF00 : 0xFF0000);
       }
     }
   }
