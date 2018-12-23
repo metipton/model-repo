@@ -2,7 +2,6 @@ import React from 'react';
 
 import styled from 'styled-components';
 import {keyFrameExampleOne} from './Keyframes';
-import ty from './ty.jpg';
 
     const Background = styled.div`
         top: 0;

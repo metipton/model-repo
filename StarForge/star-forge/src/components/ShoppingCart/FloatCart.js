@@ -7,6 +7,7 @@ import Client from 'shopify-buy';
 import { connect } from 'react-redux';
 import { loadCart, removeProduct, enterCheckout } from '../../store/actions/shoppingCart/floatCartActions';
 import { updateCart } from '../../store/actions/shoppingCart/updateCartActions';
+import CheckoutStepper from '../../containers/Checkout/CheckoutStepper';
 
 import classes from './FloatCart.css';
 import CartProduct from './CartProduct';
@@ -108,12 +109,9 @@ class FloatCart extends Component {
     if (!productQuantity) {
       alert("Add some product in the bag!");
     }else {
-      console.log(this.props.checkoutURL);
-      window.open(this.props.checkoutURL, 'width=50% height = 50%');
-      alert(`Checkout - Subtotal: ${currencyFormat} ${util.formatPrice(totalPrice, currencyId)}`);
+      this.props.close();
+      this.props.enterCheckout();
     }
-
-    //enterCheckout();
   }
 
   render() {
@@ -183,8 +181,10 @@ class FloatCart extends Component {
                 {`${cartTotals.currencyFormat} ${util.formatPrice(cartTotals.totalPrice, cartTotals.currencyId)}`}
               </p>
             </div>
-            <div onClick={() => this.proceedToCheckout()} className={classes['buy-btn']}>
-              Checkout
+            <div className={classes['buy-btn']}>
+                <CheckoutStepper
+                  disabled={true}
+                  checkout={()=> this.proceedToCheckout()}/>
             </div>
           </div>
         </div>
@@ -208,7 +208,7 @@ const mapStateToProps = state => ({
   productToRemove: state.shoppingCart.cartProducts.itemToRemove,
   cartTotals: state.shoppingCart.cartTotals.item,
   userId: state.auth.userId,
-  checkoutURL: state.shoppingCart.cart.checkout.webUrl
+  inCheckout: state.shoppingCart.cart.inCheckout,
 });
 
 

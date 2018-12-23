@@ -4,16 +4,25 @@ import {connect} from 'react-redux';
 import classes from './BottomBar.css';
 import MaterialUIButton from '../Button/AddToCartButton';
 import * as actions from '../../../store/actions/index';
-
+import Auth from '../../../containers/auth0/Auth';
 
 class BottomBar extends Component {
 
+    componentDidMount  () {
+        const auth = new Auth();
+        this.auth = auth;
+    }
+
     handleAddToCart = () => {
         if( !this.props.isAuthenticated){
-            this.props.openAuth();
+            this.authLogin();
         } else {
             this.props.addToCart();
         }
+    }
+
+    authLogin = () => {
+        this.auth.login();
     }
 
     render (){
@@ -56,7 +65,7 @@ class BottomBar extends Component {
 const mapStateToProps = state => {
     return {
         inCheckoutScreen: state.modelBuilder.inCheckoutScreen === true,
-        isAuthenticated: state.auth.token !== null,
+        isAuthenticated: state.auth.idToken !== null,
         addInProgress: state.shoppingCart.cartProducts.addInProgress
     };
 };
