@@ -242,6 +242,8 @@ class ModelBuilder extends Component {
         this.pickPosition.x = event.clientX;
         this.pickPosition.y = event.clientY;
       }
+
+      
     
     clearPickPosition = () => {
         // unlike the mouse which always has a position
@@ -348,6 +350,22 @@ class ModelBuilder extends Component {
         this.pickHelper = pickHelper;
         this.clearPickPosition();
 
+        //add picking event listeners
+        window.addEventListener('mousemove', this.setPickPosition);
+        window.addEventListener('mouseout', this.clearPickPosition);
+        window.addEventListener('mouseleave', this.clearPickPosition);
+      
+        window.addEventListener('touchstart', (event) => {
+          // prevent the window from scrolling
+          event.preventDefault();
+          this.setPickPosition(event.touches[0]);
+        }, {passive: false});
+      
+        window.addEventListener('touchmove', (event) => {
+          this.setPickPosition(event.touches[0]);
+        });
+      
+        window.addEventListener('touchend', this.clearPickPosition);
 
         //main scene objects
         const width = this.mount.clientWidth;
@@ -661,6 +679,7 @@ class ModelBuilder extends Component {
                        if(category === 'Race' && !this.armatureLoaded){
                             this.scene.add( object );
                             let model = object.children[0].children[0];
+                            const clone = this.createPickingClone(model);
                             let parent = object.children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, parent, this.objectHolder);
@@ -669,6 +688,7 @@ class ModelBuilder extends Component {
                                 ...this.state,
                                 RESOURCES_LOADED: true
                             })
+                            
                        } else {
                         this.setupObjectImport(category, selection, object)
                        }
@@ -1029,126 +1049,6 @@ class ModelBuilder extends Component {
        this.hexColor = color;
    }
 
-//    createNewAABB = (object) => {
-//       object.BoundBox = new THREE.Box3().setFromObject( object );
-//       //object.add( new THREE.Box3Helper( object.BoundBox, 0x00ff00 ) );
-//       object.add( object.BoundBox );
-//    }
-
-//    updateAllAABB = () => {
-//        console.log(this.scene);
-//         for (let i = 0; i < this.objectHolder.children.length; i++ ){
-//             let obj = this.objectHolder.children[i];
-//             if( obj.isSkinnedMesh ){
-//                 console.log(obj);
-//                 this.updateAABB( obj, obj.BoundBox );
-//             }
-//         }
-//    }
-
-//    updateAABB = ( skinnedMesh, aabb ) => {
-	
-// 	var skeleton = skinnedMesh.skeleton;
-// 	var boneMatrices = skeleton.boneMatrices;
-// 	var geometry = skinnedMesh.geometry;
-	
-// 	var index = geometry.index;
-// 	var position = geometry.attributes.position;
-// 	var skinIndex = geometry.attributes.skinIndex;
-// 	var skinWeigth = geometry.attributes.skinWeight;
-	
-// 	var bindMatrix = skinnedMesh.bindMatrix;
-// 	var bindMatrixInverse = skinnedMesh.bindMatrixInverse;
-	
-// 	var i, j, si, sw;
-	
-// 	aabb.makeEmpty();
-
-// 	// 
-	
-// 	if ( index !== null ) {
-//         var vertex = new THREE.Vector3();
-//         var temp = new THREE.Vector3();
-//         var skinned = new THREE.Vector3();
-//         var skinIndices = new THREE.Vector4();
-//         var skinWeights = new THREE.Vector4();
-//         var boneMatrix = new THREE.Matrix4();
-// 		// indexed geometry
-	
-// 		for ( i = 0; i < index.count; i += 256 ) {
-		
-// 			vertex.fromBufferAttribute( position, index.array[ i ] );
-// 			skinIndices.fromBufferAttribute( skinIndex, index.array[ i ] );
-// 			skinWeights.fromBufferAttribute( skinWeigth, index.array[ i ] );
-			
-// 			// the following code section is normally implemented in the vertex shader
-
-// 			vertex.applyMatrix4( bindMatrix ); // transform to bind space
-// 			skinned.set( 0, 0, 0 );
-
-// 			for ( j = 0; j < 4; j ++ ) {
-
-// 			 	si = skinIndices.getComponent( j );
-// 				sw = skinWeights.getComponent( j );
-// 				boneMatrix.fromArray( boneMatrices, si * 16 );
-
-// 				// weighted vertex transformation
-
-// 				temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
-// 				skinned.add( temp );
-
-// 			}
-
-// 			skinned.applyMatrix4( bindMatrixInverse ); // back to local space
-
-// 			// expand aabb
-
-// 			aabb.expandByPoint( skinned );
-		
-// 		}
-	
-// 	} else {
-	
-// 		// non-indexed geometry
-	
-// 		for ( i = 0; i < position.count; i += 256 ) {
-		
-// 			vertex.fromBufferAttribute( position, i );
-// 			skinIndices.fromBufferAttribute( skinIndex, i );
-// 			skinWeights.fromBufferAttribute( skinWeigth, i );
-			
-// 			// the following code section is normally implemented in the vertex shader
-
-// 			vertex.applyMatrix4( bindMatrix ); // transform to bind space
-// 			skinned.set( 0, 0, 0 );
-
-// 			for ( j = 0; j < 4; j ++ ) {
-
-// 				si = skinIndices.getComponent( j );
-// 				sw = skinWeights.getComponent( j );
-// 				boneMatrix.fromArray( boneMatrices, si * 16 );
-
-// 				// weighted vertex transformation
-
-// 				temp.copy( vertex ).applyMatrix4( boneMatrix ).multiplyScalar( sw );
-// 				skinned.add( temp );
-
-// 			}
-
-// 			skinned.applyMatrix4( bindMatrixInverse ); // back to local space
-
-// 			// expand aabb
-
-// 			aabb.expandByPoint( skinned );
-			
-// 		}
-	
-// 	}
-	
-// 	    aabb.applyMatrix4( skinnedMesh.matrixWorld );
-
-//     }
-
     createPosedClone = (skinnedMesh) => {
             
         let clone = skinnedMesh.clone();
@@ -1398,7 +1298,9 @@ class ModelBuilder extends Component {
             blending: THREE.NoBlending,
         });
   
-        const clone = new THREE.SkinnedMesh(skinnedMesh.geometry, pickingMaterial);
+        const clone = THREE.AnimationUtils.clone(skinnedMesh);
+        clone.skinning = true;
+        clone.material = pickingMaterial;
 
         return clone;
     }

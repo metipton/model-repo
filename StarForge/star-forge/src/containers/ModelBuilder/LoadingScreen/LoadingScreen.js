@@ -17,7 +17,7 @@ import {keyFrameExampleOne} from './Keyframes';
         `
 
     const Tomato0 = styled.div`
-    background: tomato;
+    background: #5d809d;
     z-index: 10000;
     display: inline-block;
     width: 2em;
@@ -37,7 +37,7 @@ import {keyFrameExampleOne} from './Keyframes';
         }
     `
     const Tomato1 = styled.div`
-    background: tomato;
+    background: #5d809d;
     z-index: 10000;
     display: inline-block;
     width: 2em;
@@ -57,7 +57,7 @@ import {keyFrameExampleOne} from './Keyframes';
         }
     `
     const Tomato2 = styled.div`
-    background: tomato;
+    background: #5d809d;
     z-index: 10000;
 
     display: inline-block;
@@ -78,7 +78,7 @@ import {keyFrameExampleOne} from './Keyframes';
         }
     `
     const Tomato3 = styled.div`
-    background: tomato;
+    background: #5d809d;
     z-index: 10000;
     display: inline-block;
     width: 2em;
@@ -99,7 +99,7 @@ import {keyFrameExampleOne} from './Keyframes';
     `
 
     const Tomato4 = styled.div`
-    background: tomato;
+    background: #5d809d;
     z-index: 10000;
     display: inline-block;
     width: 2em;
@@ -119,7 +119,7 @@ import {keyFrameExampleOne} from './Keyframes';
         }
     `
     const Tomato5 = styled.div`
-    background: tomato;
+    background: #5d809d;
     z-index: 10000;
     display: inline-block;
     width: 2em;

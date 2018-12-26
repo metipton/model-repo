@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import firebase from '../../Firebase';
 import 'firebase/storage';
-import Client from 'shopify-buy';
 
 import { connect } from 'react-redux';
 import { loadCart, removeProduct, enterCheckout } from '../../store/actions/shoppingCart/floatCartActions';
@@ -183,7 +182,7 @@ class FloatCart extends Component {
             </div>
             <div className={classes['buy-btn']}>
                 <CheckoutStepper
-                  disabled={true}
+                  disabled={this.props.cartEmpty}
                   checkout={()=> this.proceedToCheckout()}/>
             </div>
           </div>
@@ -209,6 +208,7 @@ const mapStateToProps = state => ({
   cartTotals: state.shoppingCart.cartTotals.item,
   userId: state.auth.userId,
   inCheckout: state.shoppingCart.cart.inCheckout,
+  cartEmpty: state.shoppingCart.cartTotals.item.productQuantity === 0,
 });
 
 

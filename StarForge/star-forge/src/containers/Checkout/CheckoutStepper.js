@@ -6,7 +6,7 @@ import STRIPE_PUBLISHABLE from './constants/stripe';
 import PAYMENT_SERVER_URL from './constants/server';
 import ty from './ty.jpg';
 
-const CURRENCY = 'EUR';
+const CURRENCY = 'USD';
 
 const fromEuroToCent = amount => amount * 100;
 
@@ -20,17 +20,17 @@ const errorPayment = data => {
 
 const onToken = (amount, description) => token => {
   axios.post(PAYMENT_SERVER_URL,
-    // {
-    //   description,
-    //   source: token.id,
-    //   currency: CURRENCY,
-    //   amount: fromEuroToCent(amount)
-    // }
+    {
+      description,
+      source: token.id,
+      currency: CURRENCY,
+      amount: fromEuroToCent(amount)
+    }
     )
     .then(successPayment)
     .catch(errorPayment);
 }
-const Checkout = ({ name, description, amount }) =>(
+const Checkout = (props) =>(
     <div >
         <StripeCheckout
             name="Starforge" // the pop-in header title
@@ -39,7 +39,7 @@ const Checkout = ({ name, description, amount }) =>(
             ComponentClass="div"
             panelLabel="Pay" // prepended to the amount in the bottom pay button
             amount={1000000} // cents
-            currency="USD"
+            currency={CURRENCY}
             stripeKey={STRIPE_PUBLISHABLE}
             locale="auto"
             email="starforge@starforge.com"
@@ -52,6 +52,7 @@ const Checkout = ({ name, description, amount }) =>(
             zipCode={true}
             allowRememberMe // "Remember Me" option (default true)
             token={onToken} // submit callback
+            disabled={props.disabled}
             >
         </StripeCheckout>
     </div>
