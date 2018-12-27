@@ -538,13 +538,19 @@ class ModelBuilder extends Component {
 
    async loadInitialModelAndObjects () {
        await this.setInitialStateFromDatabase();
-       Object.keys(this.state.currentName).map(async( i ) => {
-           if(this.state.currentName[i] !== "''" && i !== 'Pose') {
+       await this.updateObjectHandler('Race', this.state.currentName['Race'], true, this.setObjectStateHandler);
+       const results = Object.keys(this.state.currentName).map(async( i ) => {
+           if(this.state.currentName[i] !== "''" && i !== 'Pose' && i !== 'Race') {
               await this.updateObjectHandler(i, this.state.currentName[i], true, this.setObjectStateHandler);
           }
        });
+
        //this makes sure all the above async calls are complete before applying the pose.
-       //Promise.all(results).then(() => this.applyPose());
+       Promise.all(results).then(() => {    
+            this.setState({
+                ...this.state,
+                RESOURCES_LOADED: true
+            })});
    }
 
  
@@ -684,10 +690,6 @@ class ModelBuilder extends Component {
                             model.name = category;
                             THREE.SceneUtils.attach(model, parent, this.objectHolder);
                             this.armatureLoaded = true;
-                            this.setState({
-                                ...this.state,
-                                RESOURCES_LOADED: true
-                            })
                             
                        } else {
                         this.setupObjectImport(category, selection, object)
