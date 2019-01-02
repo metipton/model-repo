@@ -4,6 +4,7 @@ firebase.initializeApp({
     apiKey: "AIzaSyCFhZpMGAAUnjCqcziGL-Yh7TjXB37BPG0",
     authDomain: "starforge-153cc.firebaseapp.com",
     databaseURL: "https://starforge-153cc.firebaseio.com/",
+    projectId: "starforge-153cc",
     storageBucket: "gs://starforge-153cc.appspot.com",
 })
 

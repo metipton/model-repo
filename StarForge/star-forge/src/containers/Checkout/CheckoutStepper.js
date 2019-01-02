@@ -1,37 +1,36 @@
 import React from 'react'
-import axios from 'axios';
+import firebase from '../../Firebase';
 import StripeCheckout from 'react-stripe-checkout';
+import {connect} from 'react-redux';
 
 import STRIPE_PUBLISHABLE from './constants/stripe';
 import PAYMENT_SERVER_URL from './constants/server';
-import ty from './ty.jpg';
 
-const CURRENCY = 'USD';
 
-const fromEuroToCent = amount => amount * 100;
+class Checkout extends React.Component {
 
-const successPayment = data => {
-  alert('Payment Successful');
-};
+  successPayment = data => {
+    console.log(data);
+    alert('Payment Successful');
+  };
 
-const errorPayment = data => {
-  alert('Payment Error');
-};
+  errorPayment = data => {
+    alert('Payment Error');
+  };
 
-const onToken = (amount, description) => token => {
-  axios.post(PAYMENT_SERVER_URL,
-    {
-      description,
-      source: token.id,
-      currency: CURRENCY,
-      amount: fromEuroToCent(amount)
-    }
-    )
-    .then(successPayment)
-    .catch(errorPayment);
-}
-const Checkout = (props) =>(
-    <div >
+  onToken = token => {
+    firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/sources`).push({token: token})
+      .then(this.successPayment)
+      .catch(this.errorPayment);
+  }
+  // ...
+
+  render() {
+    const CURRENCY = 'USD';
+
+    const fromEuroToCent = amount => amount * 100;
+    return (
+      <div >
         <StripeCheckout
             name="Starforge" // the pop-in header title
             description="Forge your star" // the pop-in header subtitle
@@ -51,10 +50,26 @@ const Checkout = (props) =>(
             // cause zipCheck to be pulled from billing address (set to shipping if none provided).
             zipCode={true}
             allowRememberMe // "Remember Me" option (default true)
-            token={onToken} // submit callback
-            disabled={props.disabled}
+            token={this.onToken} // submit callback
+            disabled={this.props.disabled}
             >
         </StripeCheckout>
-    </div>
-)
-export default Checkout;
+      </div>
+    )
+  }
+}
+const mapStateToProps = state => {
+  return {
+      currentCart: state.shoppingCart.cartProducts.items,
+      userId: state.auth.userId,
+      addInProgress: state.shoppingCart.cartProducts.addInProgress
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
