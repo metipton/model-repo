@@ -19,7 +19,7 @@ class Checkout extends React.Component {
   };
 
   onToken = token => {
-    firebase.database().ref(`/stripe_customers/${this.currentUser.uid}/sources`).push({token: token})
+    firebase.database().ref(`/stripe_customers/${this.props.userid}/sources`).push({token: token.id})
       .then(this.successPayment)
       .catch(this.errorPayment);
   }
@@ -60,9 +60,7 @@ class Checkout extends React.Component {
 }
 const mapStateToProps = state => {
   return {
-      currentCart: state.shoppingCart.cartProducts.items,
       userId: state.auth.userId,
-      addInProgress: state.shoppingCart.cartProducts.addInProgress
   };
 };
 
