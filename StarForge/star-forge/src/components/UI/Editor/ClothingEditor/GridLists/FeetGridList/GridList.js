@@ -118,7 +118,7 @@ class ImageGridList extends Component {
                       className={(this.props.state.currentName.FootRight === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tile.cols || 1}
                       onClick={() => this.clickHandler('FootRight', tile.name)}>
-                    <img className={classes.image}  src={tile.img} alt={tile.title} />
+                    <img className={classes.image}  src={tileDataRight[index].img} alt={tileDataRight[index].title} />
                   </GridListTile>
                   {this.props.state.links.feet.linked ?
                       <img
@@ -133,7 +133,7 @@ class ImageGridList extends Component {
                       className={(this.props.state.currentName.FootLeft === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tileDataRight[index].cols || 1}
                       onClick={() => this.clickHandler('FootLeft', tileDataRight[index].name)}>
-                    <img className={classes.image}  src={tileDataRight[index].img} alt={tileDataRight[index].title} />
+                    <img className={classes.image}  src={tileDataLeft[index].img} alt={tileDataLeft[index].title} />
                   </GridListTile>
               </div>
             ))}

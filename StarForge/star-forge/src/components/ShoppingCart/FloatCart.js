@@ -92,7 +92,7 @@ class FloatCart extends Component {
     const storage = firebase.storage().ref();
     storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot.png' ).delete();
     storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/model.glb' ).delete();
-    const database = firebase.database().ref('Carts/' + this.props.userId + '/Cart' + product.cartNumber );
+    const database = firebase.database().ref('users/' + this.props.userId + '/Cart/' + product.cartNumber );
     database.set(null);
 
     const index = cartProducts.findIndex(p => p.id === product.id);
@@ -103,7 +103,7 @@ class FloatCart extends Component {
   }
 
   proceedToCheckout = () => {
-    const { totalPrice, productQuantity, currencyFormat, currencyId } = this.props.cartTotals;
+    const {productQuantity} = this.props.cartTotals;
     // Create an empty checkout
     if (!productQuantity) {
       alert("Add some product in the bag!");

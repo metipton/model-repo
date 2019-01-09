@@ -151,6 +151,11 @@ class ModelBuilder extends Component {
                 }
             }
         },
+        materials: {
+            matType: 'Standard Plastic',
+            price: 19.99
+        },
+        modelName: 'Unnamed',
         loading: true,
         coloringEnabled: false,
         RESOURCES_LOADED: false
@@ -331,6 +336,17 @@ class ModelBuilder extends Component {
                 Embarrassed: {}
             }
         }
+
+        //create materials for different printing mats
+        const metalMat = new THREE.MeshStandardMaterial( {
+
+            color: 0xffffff,
+        
+            roughness: .1,
+            metalness: 1,
+        
+        } );
+
         //all scene managing objects
         this.numObjects = 0;
         this.allScenes = [];
@@ -685,7 +701,7 @@ class ModelBuilder extends Component {
                        if(category === 'Race' && !this.armatureLoaded){
                             this.scene.add( object );
                             let model = object.children[0].children[0];
-                            const clone = this.createPickingClone(model);
+                            //const clone = this.createPickingClone(model);
                             let parent = object.children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, parent, this.objectHolder);
@@ -936,6 +952,43 @@ class ModelBuilder extends Component {
              })
          }
      }
+
+    setMaterialHandler = (material) => {
+        this.updateMaterialSelectionOnModels(material);
+        var priceDict = {'Standard': 19.99, 'Premium': 29.99, 'Steel': 34.99, 'Bronze': 99.99, 'Digital': 9.99};
+        const modelPrice = priceDict[material];
+        if(modelPrice && !this.state.materials.matType !== material){
+            this.setState({
+                ...this.state,
+                currentName: {
+                    ...this.state.currentName,
+                    Material: material
+                },
+                materials: {
+                    matType: material,
+                    price: modelPrice
+                }
+            }, () => {
+                console.log(this.state);
+            });
+        }
+    }
+
+    updateMaterialSelectionOnModels = (material) => {
+        if( material === 'Standard'){
+
+        } else if ( material === 'Premium') {
+
+        } else if ( material === 'Steel' ){
+
+        } else if (material === 'Bronze' ){
+
+        } else if (material === 'Digital') {
+
+        } 
+    }
+
+
 
     isObjectInCache = (category, selection) => {
         const cacheCategory = this.state.cache[category];
@@ -1267,9 +1320,10 @@ class ModelBuilder extends Component {
         let payload = {
             cartNumber: cartNum,
             id: cartNum,
-            title: "Standard Model",
+            title: this.state.modelName,
+            matType: this.state.materials.matType,
             description: "30mm scale on 1 in. base",
-            price: 19.99,
+            price: this.state.materials.price,
             currencyId: "USD",
             currencyFormat: "$",
             quantity: 1,
@@ -1278,7 +1332,8 @@ class ModelBuilder extends Component {
           };
 
         //push payload to firebase database
-        const database = firebase.database().ref('Carts/' + this.props.userId + '/Cart' + cartNum + '/');
+        //const database = firebase.database().ref('Carts/' + this.props.userId + '/Cart' + cartNum + '/');
+        const database = firebase.database().ref('users/' + this.props.userId + '/Cart/' + cartNum + '/' );
         database.set(payload);
 
         this.props.addToCart(payload);
@@ -1358,6 +1413,7 @@ class ModelBuilder extends Component {
                 updatePose={(pose) => this.setPoseHandler(pose)} 
                 updateExpression={(trait, newPercent) => this.updateExpressionPercent(trait, newPercent)}
                 updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
+                updateMaterial={(material) => this.setMaterialHandler(material)}
                 morphPercents={morphTargetsProp}/>
             <SideDrawerColor 
                 toggleColor={this.toggleColorHandler} 

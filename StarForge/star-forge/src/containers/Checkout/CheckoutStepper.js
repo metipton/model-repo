@@ -9,6 +9,11 @@ import PAYMENT_SERVER_URL from './constants/server';
 
 class Checkout extends React.Component {
 
+  getCheckoutAmount = () => {
+
+    return 10 * 100;
+  }
+
   successPayment = data => {
     console.log(data);
     alert('Payment Successful');
@@ -19,7 +24,7 @@ class Checkout extends React.Component {
   };
 
   onToken = token => {
-    firebase.database().ref(`/stripe_customers/${this.props.userid}/sources`).push({token: token.id})
+    firebase.database().ref(`/stripe_customers/${this.props.userId}/sources`).push({token: token.id})
       .then(this.successPayment)
       .catch(this.errorPayment);
   }
@@ -28,7 +33,6 @@ class Checkout extends React.Component {
   render() {
     const CURRENCY = 'USD';
 
-    const fromEuroToCent = amount => amount * 100;
     return (
       <div >
         <StripeCheckout
@@ -37,7 +41,7 @@ class Checkout extends React.Component {
             image="https://stripe.com/img/documentation/checkout/marketplace.png"// the pop-in header image (default none)
             ComponentClass="div"
             panelLabel="Pay" // prepended to the amount in the bottom pay button
-            amount={1000000} // cents
+            amount={this.props.totalPrice * 100} // cents
             currency={CURRENCY}
             stripeKey={STRIPE_PUBLISHABLE}
             locale="auto"
@@ -61,6 +65,7 @@ class Checkout extends React.Component {
 const mapStateToProps = state => {
   return {
       userId: state.auth.userId,
+      totalPrice: state.shoppingCart.cartTotals.item.totalPrice
   };
 };
 

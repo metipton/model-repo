@@ -12,7 +12,6 @@ import Materials from './OtherRoutes/Materials/Materials';
 import Privacy from './OtherRoutes/Privacy/Privacy';
 import Shipping from './OtherRoutes/Shipping/Shipping';
 import ToS from './OtherRoutes/ToS/ToS';
-import SideDrawerColor from './components/UI/SideDrawerColor/SideDrawerColor';
 
 
 class App extends Component {

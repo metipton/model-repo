@@ -1,46 +1,18 @@
-import image1 from './images/img1.png';
-import image2 from './images/img2.png';
-import image3 from './images/img3.png';
-import image4 from './images/img4.png';
-import image5 from './images/img5.jpg';
-import image6 from './images/img6.jpg';
-import image7 from './images/img7.jpg';
-import image8 from './images/img8.jpg';
+import Base1 from './images/Base1.png';
+
 
 
 const tileData = [
   {
-    img: image1,
+    img: Base1,
     name: "Base1",
-  },
-  {
-    img: image2,
-    name: "Base2",
-  },
-  {
-    img: image3,
-    name: "Base3",
-  },
-  {
-    img: image4,
-    name: "Base4",
-  },
-  {
-    img: image5,
-    name: "Base5",
-  },
-  {
-    img: image6,
-    name: "image6",
-  },
-  {
-    img:  image7,
-    name: "image7",
-  },
-  {
-    img: image8,
-    name: "image8",
   }
+  //,
+  // {
+  //   img: image2,
+  //   name: "Base2",
+  // },
+  // {
 ];
 
 export default tileData;

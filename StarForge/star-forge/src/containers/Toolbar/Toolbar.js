@@ -12,7 +12,6 @@ import Modal from '../../components/UI/Modal/Modal';
 import * as actions from '../../store/actions/index';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import ShoppingCart from '../../components/ShoppingCart/FloatCart';
-import CheckoutStepper from '../../containers/Checkout/CheckoutStepper';
 
 import Auth from '../auth0/Auth';
 

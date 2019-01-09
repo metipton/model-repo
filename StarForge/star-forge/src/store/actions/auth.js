@@ -1,7 +1,5 @@
-import axios from 'axios';
-
 import * as actionTypes from './actionTypes';
-import { access } from 'fs';
+
 
 export const authOpenModal = () => {
     return {

@@ -1,13 +1,13 @@
 3d modeling
 
 Model Builder
-
-
-Shopping Cart
-   Add checkout process to model builder -> OrderSummary -> Shipping -> Payment Details -> Preview -> Confirmation
+   Implement color scenes
 
 UI
+   
    Editor
+        Remove buttons that don't do anything.
+        Add all the images
 	Make race always two column with male and female side
 	Make two handed/sided things always two column with a selector between them
 	Material - Card w/ buttons and images - Retextures the model
@@ -15,25 +15,35 @@ UI
 	Abstract out the gridList component
 	add a clear button to the bar
    
-    Bottom toolbar - checkout button, save character, my charcters, screenshot, new char
-    Add better fonts for everything
 
+    Bottom toolbar - checkout button, save character, my charcters, screenshot, new char
+	Move all these items to fixed position on the bottom instead of using a div
+
+Shopping cart
+   Record material type to orders category in RTDB when adding to cart
+   
 Auth
    Update the database rules code
-   Store user data in realtime database on first time user
+   Change header for Auth log in
+   Send welcome email on first login
+
 
 Checkout
-
-
-
-Graphics
--New layout
--New color scheme
--New fonts 
+   Allow for material selection
+   Make sure that price validation happens server side
+   Make sure correct price is shown on checkout
+   Include shipping and tax
+   Make cart have number of items in cart next to icon
+   Get the stripe order confirmation working 
+   Send an order confirmation email when done
+   Population RTDB with order details
+   Populate customer subtree with order details
+   clear checkout cart after order
+   close the cart
+   tap into voodoo api to send order info
 
 Known bugs
 	Need to make the editor example to file entire viewport dynamically
 	fix the selection/state setting for accordion items
-	Fix app crash when resizing with certain accordions open
 
 	

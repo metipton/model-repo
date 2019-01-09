@@ -14,7 +14,7 @@ const sideDrawerColor = (props) => {
                 <div 
                     onClick={props.toggleColor}
                     className={classes["pure-toggle-icon-img"]}>   
-                    <img src={paintbrush} />
+                    <img src={paintbrush} alt="paintbrush"/>
                 </div>
             </label>
             <div className={classes["pure-drawer"]} data-position="left">

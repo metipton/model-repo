@@ -10,6 +10,7 @@ import ItemEditor from './ItemsEditor/ItemsAccordion';
 import ClothingEditor from './ClothingEditor/ClothingAccordion';
 import PoseEditor from './PoseEditor/PoseEditor';
 import BaseEditor from './BaseEditor/BaseAccordion';
+import MaterialEditor from './MaterialEditor/MaterialEditor';
 
 class categorySelectors extends Component{
     state = {
@@ -104,6 +105,13 @@ class categorySelectors extends Component{
                 );
                 break;
             case 'Material':
+                secondaryPanel = (
+                    <div className={classes.SecondColumn}>
+                            <MaterialEditor
+                                state={this.props.state}
+                                updateMaterial={this.props.updateMaterial}/>
+                    </div>
+                );
                 break;
             case 'Ships':
                 break;
