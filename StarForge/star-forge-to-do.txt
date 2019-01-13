@@ -16,11 +16,11 @@ UI
 	add a clear button to the bar
    
 
-    Bottom toolbar - checkout button, save character, my charcters, screenshot, new char
+    Bottom toolbar -  save character, my characters, screenshot, new char
 	Move all these items to fixed position on the bottom instead of using a div
 
 Shopping cart
-   Record material type to orders category in RTDB when adding to cart
+
    
 Auth
    Update the database rules code
@@ -29,9 +29,8 @@ Auth
 
 
 Checkout
-   Allow for material selection
    Make sure that price validation happens server side
-   Make sure correct price is shown on checkout
+	in the charge function, add logic that checks the cart
    Include shipping and tax
    Make cart have number of items in cart next to icon
    Get the stripe order confirmation working 
@@ -39,11 +38,16 @@ Checkout
    Population RTDB with order details
    Populate customer subtree with order details
    clear checkout cart after order
+   clear customer source /save shipping info when complete
    close the cart
    tap into voodoo api to send order info
+
+Site security
+   Get SSL cert and set up HTTPS
 
 Known bugs
 	Need to make the editor example to file entire viewport dynamically
 	fix the selection/state setting for accordion items
+	G
 
 	
