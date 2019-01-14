@@ -121,14 +121,6 @@ class categorySelectors extends Component{
                                 title="Ships"
                                 src={ship} />
                         </div>
-                        <div className={classes.List}
-                             onClick={() => this.clickHandler('panel11')}>
-                            <CategorySelector
-                                backgroundActive={(this.state.selected ==='panel11') ? true : false }            
-                                clicked={this.props.updateCategory}
-                                title="Robots"
-                                src={robot} />
-                        </div>
                 </div>
         );
     }

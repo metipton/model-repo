@@ -115,7 +115,6 @@ class categorySelectors extends Component{
                 break;
             case 'Ships':
                 break;
-            case 'Robots':
             default:
                 break;
 

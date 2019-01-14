@@ -1,0 +1,35 @@
+html {
+    text-align: center;
+    margin: 0;
+}
+.button {
+    background-color: #a11544;
+    width: 150px;
+    height: 45px;
+    -moz-border-radius-topleft: 25px 25px;
+    -moz-border-radius-topright: 25px 25px;
+    border-top-left-radius: 25px 25px;
+    border-top-right-radius: 25px 25px;
+    color:#fff;
+    text-align: center;
+    float:right;
+}
+.drawer {
+    position:fixed;
+    bottom:0;
+    right:0;
+    width:100%;
+}
+.drawer-appear{clear:both;}
+.drawer-inside {
+    height: 0;
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+    transition: height .4s ease;
+    background: #c3c3c3;
+}
+.drawer-inside.openup {
+    height: 210px;
+    transition: height .7s ease;
+}

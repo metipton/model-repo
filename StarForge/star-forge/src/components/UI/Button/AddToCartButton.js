@@ -5,11 +5,11 @@ import Button from '@material-ui/core/Button/';
 
 const styles = theme => ({
   root: {
-    width: '500px',
+    width: '250px',
   },
   button: {
     margin: theme.spacing.unit,
-    width: '500px',
+    width: '250px',
     textAlign: 'center'
   },
   input: {

@@ -404,7 +404,7 @@ class ModelBuilder extends Component {
         this.camera = camera;
         this.camera.setViewOffset(width * 1.3, height * 1.3, width * .25, height * .15, width, height );
         this.camera.frustrumCulled = false;
-        this.camera.position.z = 5;
+        this.camera.position.z = 5.5;
         this.camera.position.y = 2;
         this.scene.add(this.camera);
         this.initCameraPosit = this.camera.getWorldPosition();

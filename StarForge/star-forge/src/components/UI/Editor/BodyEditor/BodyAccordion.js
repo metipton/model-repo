@@ -26,14 +26,22 @@ class BodyAccordion extends Component {
     };
 
 
+
   render() {
     const { classes } = this.props;
     const { expanded } = this.state;
 
+    const styles = theme => ({
+      // Look at here: applied specific styles to resizing and background
+      expansion: {
+        height: "500px"
+      }
+    });
+
     return (
       <div className={classes.root}>
           <div>
-            <ExpansionPanel expanded={expanded === 'panel1'} onChange={this.handleChange('panel1')}>
+            <ExpansionPanel className={styles.expansion} expanded={expanded === 'panel1'} onChange={this.handleChange('panel1')}>
               <ExpansionPanelSummary
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
