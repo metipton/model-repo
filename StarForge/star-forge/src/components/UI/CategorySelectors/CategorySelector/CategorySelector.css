@@ -1,39 +1,40 @@
 .CategorySelector {
-    width: 130px;
-    height: 50px;
-    background: #5d809d;
-    margin: 5px, 5px, 5px, 5px;
+    box-sizing: border-box;
+    width: 8.125rem;
+    height: 6vh;
+    background: #06437A;
+    margin: .33rem, .33rem, .33rem, .33rem;
     vertical-align: middle;
-    border-style: solid;
-    border-radius: 10px;
+    border-radius: .5rem;
     cursor: pointer;
     pointer-events: auto;
 }
 
 .CategorySelector span {
     font-weight: bold;
-    font-size: 16px;
-    margin-top: 15px;
-    margin-right: 10px;
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-right: .66rem;
     color: white;
     float: right;
     vertical-align: middle;
 }
 
 .CategorySelector img {
-    margin-left: 5px;
-    margin-top: 12px;
+    margin-left: .33rem;
+    margin-top: .75rem;
     float:left;
 }
 
 .CategorySelectorSelected {
-    width: 130px;
-    height: 50px;
+    box-sizing: border-box;
+    width: 8.75rem;
+    height: 6vh;
     background: #888888;
-    margin: 5px, 5px, 5px, 5px;
+    margin: .33rem, .33rem, .33rem, .33rem;
     vertical-align: middle;
     border-style: solid;
-    border-radius: 10px;
+    border-radius: .66rem;
     cursor: pointer;
     pointer-events: auto;
     background-color: #FFA500;
@@ -41,16 +42,16 @@
 
 .CategorySelectorSelected span {
     font-weight: bold;
-    font-size: 16px;
-    margin-top: 15px;
-    margin-right: 10px;
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-right: .66rem;
     color: white;
     float: right;
     vertical-align: middle;
 }
 
 .CategorySelectorSelected img {
-    margin-left: 5px;
-    margin-top: 12px;
+    margin-left: .33rem;
+    margin-top: .75rem;
     float:left;
 }

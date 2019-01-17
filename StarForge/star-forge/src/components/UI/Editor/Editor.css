@@ -1,6 +1,6 @@
 .Editor {
     position: relative;
-    top: 20px;
+    top: 2.5rem;
     width: 100%;
     left: 60%;
     height: 90vh;
@@ -11,7 +11,7 @@
 }
 
 .FirstColumn {
-    margin-right: 5px;
+    margin-right: .33rem;
 }
 
 .SecondColumn {

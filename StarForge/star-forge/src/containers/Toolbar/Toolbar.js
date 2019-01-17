@@ -12,6 +12,7 @@ import Modal from '../../components/UI/Modal/Modal';
 import * as actions from '../../store/actions/index';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import ShoppingCart from '../../components/ShoppingCart/FloatCart';
+import ShoppingCartIcon from '../../components/UI/ShoppingCartIcon/ShoppingCartIcon';
 
 import Auth from '../auth0/Auth';
 
@@ -38,7 +39,7 @@ class Toolbar extends Component {
     }
 
 
-    ShoppingCartToggleHandler = () => {
+    shoppingCartToggleHandler = () => {
         this.setState( ( prevState ) => {
             return { showShoppingCart: !prevState.showShoppingCart };
         } );
@@ -66,12 +67,11 @@ class Toolbar extends Component {
     }
 
 
-
+//<img className={classes.toolbarItem} src={shoppingCartImage} alt='shopping_cart' onClick={this.ShoppingCartToggleHandler} />
 
     render (){
         let authSection = (
             <MaterialUIButton
-                variant="outlined"
                 color="primary"
                 clicked={this.authLogin}>Log In</MaterialUIButton>
         );
@@ -82,12 +82,14 @@ class Toolbar extends Component {
                     <div className={classes.toolbarItem}>{this.props.authEmail}</div>
                     <div>
                         <MaterialUIButton
-                            variant="outlined"
                             color="primary"
                             clicked={this.authLogout}>Log Out</MaterialUIButton>
                     </div>
                     <div className={classes.toolbarItem}>
-                        <img className={classes.toolbarItem} src={shoppingCartImage} alt='shopping_cart' onClick={this.ShoppingCartToggleHandler} />
+                        <ShoppingCartIcon
+                            numItems={this.props.numCartItems}
+                            showBadge={this.state.showShoppingCart}
+                            clicked={this.shoppingCartToggleHandler}/>
                     </div>
                     <div>
                         <ShoppingCart
@@ -123,7 +125,8 @@ const mapStateToProps = state => {
         isAuthenticated: state.auth.accessToken !== null,
         authEmail: state.auth.email,
         inCheckout: state.shoppingCart.cart.inCheckout,
-        checkoutURL: state.shoppingCart.cart.checkout.webUrl
+        checkoutURL: state.shoppingCart.cart.checkout.webUrl,
+        numCartItems: state.shoppingCart.cartTotals.item.productQuantity
     };
 };
 

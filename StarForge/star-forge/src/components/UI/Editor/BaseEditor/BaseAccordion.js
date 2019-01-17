@@ -24,6 +24,8 @@ class ItemsAccordion extends Component {
     };
 
 
+
+
   render() {
     const { classes } = this.props;
     const { expanded } = this.state;
@@ -35,7 +37,8 @@ class ItemsAccordion extends Component {
               <ExpansionPanelSummary
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
-                    expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expanded: classes.headingExpanded,
+                    expandedIcon: classes.headingContentExpanded // class name, e.g. `classes-nesting-label-x`
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -87,15 +90,16 @@ const styles = theme => ({
     height: 70,
     width: '30%',
     borderRadius: "10px",
-    opacity: .8
+    opacity: .8,
+    backgroundColor: '#06437A'
   },
   heading: {
       '&:hover': {
-        backgroundColor: '#4c4e51',
+        backgroundColor: '#FFA500',
       },
     border: 'solid',
     borderRadius: '10',
-    backgroundColor: '#5d809d',
+    backgroundColor: '#06437A',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
@@ -106,8 +110,8 @@ const styles = theme => ({
     flexBasis: '33.33%',
     flexShrink: 0,
   },
-  headingContent: {
-
+  headingContentExpanded: {
+    backgroundColor: '#4c4e51',
   },
   secondaryHeading: {
       width: '100%',

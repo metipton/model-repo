@@ -21,7 +21,9 @@ import pz from './skybox/scifi-pz.jpg';
 import nz from './skybox/scifi-nz.jpg';
 import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
 import LoadingScreen from './LoadingScreen/LoadingScreen';
+import BottomDrawer from '../../components/UI/BottomDrawer/BottomDrawer';
 import GPUPickHelper from './GPUPicker/GPUPicker';
+
 
 
 
@@ -1362,6 +1364,13 @@ class ModelBuilder extends Component {
         return clone;
     }
 
+    nameChangeHandler = name => event => {
+        this.setState({
+          ...this.state,
+          [name]: event.target.value,
+        });
+      };
+
     onMouseDown = ( event ) => {
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
@@ -1401,7 +1410,7 @@ class ModelBuilder extends Component {
         <Aux className={classes.ModelBuilder}>
             {screen}
             <div
-                style={{ width: '100vw', height: '100vh', position: 'absolute', top: '32'}}
+                style={{ width: '100vw', height: '100vh', position: 'absolute', top: '3rem'}}
                 ref={(mount) => { this.mount = mount }}/>
             <Editor
                 state={this.state}
@@ -1419,7 +1428,10 @@ class ModelBuilder extends Component {
                 toggleColor={this.toggleColorHandler} 
                 setColor={(color) => this.setHexColor(color)} />
             <BottomBar 
-                addToCart={this.addModelToCart} />       
+                addToCart={this.addModelToCart} />  
+            <BottomDrawer
+                name={this.state.modelName}
+                changeName={(name) => this.nameChangeHandler(name)}/>  
         </Aux>
 
      )
