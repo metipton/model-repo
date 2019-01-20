@@ -26,7 +26,7 @@ const theme = createMuiTheme({
       },
       typography: {
         "fontFamily": "\"Griffos\", \"Helvetica\", \"Arial\", sans-serif",
-        "fontSize": 18,
+        "fontSize": 16,
         "fontWeight": 'normal',
         "fontWeightLight": 100,
         "fontWeightRegular": 100,

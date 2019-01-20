@@ -215,10 +215,6 @@ const styles = theme => ({
       '&:hover': {
         backgroundColor: '#FFA500',
       },
-      '&$expanded': {
-        minHeight: '2rem',
-        height: '2.25rem'
-      },
     border: 'solid',
     minHeight: '2rem',
     height: '2rem',

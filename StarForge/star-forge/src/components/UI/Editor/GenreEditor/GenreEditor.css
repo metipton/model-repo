@@ -6,15 +6,19 @@
 
 .Genre {
     box-sizing: border-box;
+    border: .1rem solid #d9dbde;
+    vertical-align: middle;
     padding-top: .4rem;
+    padding-bottom: .4rem;
+    padding-left: 1.33rem;
     height: 2rem;
     background-color: #06437A;
     margin-top: .33rem;
-    font-size: 1.25rem !important;
+    font-size: 1rem !important;
     font-weight: normal;
     flex: 1;
     width: 25rem;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
     pointer-events: auto;
     transition: all .1s;
@@ -29,16 +33,20 @@
 
 .GenreSelected {
     box-sizing: border-box;
+    border: .1rem solid #d9dbde;
     opacity: .8;
+    vertical-align: middle;
     padding-top: .4rem;
-    height: 2.5rem;
+    padding-bottom: .4rem;
+    padding-left: 1.33rem;
+    height: 2rem;
     background-color: #888888;
-    margin-top: .3rempx;
+    margin-top: .3rem;
     font-size: 1rem;
     font-weight: normal;
     flex: 1;
     width: 25rem;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
     pointer-events: auto;
     transition: all .1s;
