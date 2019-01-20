@@ -1,6 +1,17 @@
 .Menu {
     position: fixed;
-    left: 10vh;
+    left: 9vh;
+    font-weight: 15; 
+    font-size: 1.75rem; 
+    border-right: 0.05rem solid black; 
+    padding: 0.3rem;
+    text-decoration: none; 
+    cursor: pointer;
+}
+
+.Menu:hover {
+    position: fixed;
+    left: 9vh;
     font-weight: 15; 
     font-size: 1.75rem; 
     border-right: 0.05rem solid black; 

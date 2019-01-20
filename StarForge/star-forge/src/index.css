@@ -1,14 +1,14 @@
 
 @font-face {
-  font-family: 'Nodesto';
+  font-family: 'Griffos';
   font-style: normal;
   font-weight: 400;
-  src: url('./assets/fonts/Nodesto-Caps-Condensed.otf'); /* IE9 Compat Modes */
+  src: url('./assets/fonts/GriffosSCapsFont.ttf'); /* IE9 Compat Modes */
 }
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Nodesto';
+  font-family: 'Griffos';
   overflow: hidden;
   font-weight: 20;
   font-size: 1.25rem;

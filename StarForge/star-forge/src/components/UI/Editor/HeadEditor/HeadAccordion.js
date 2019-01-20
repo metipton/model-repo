@@ -215,7 +215,13 @@ const styles = theme => ({
       '&:hover': {
         backgroundColor: '#FFA500',
       },
+      '&$expanded': {
+        minHeight: '2rem',
+        height: '2.25rem'
+      },
     border: 'solid',
+    minHeight: '2rem',
+    height: '2rem',
     borderRadius: '10',
     backgroundColor: '#06437A',
     fontSize: theme.typography.pxToRem(15),
@@ -223,6 +229,8 @@ const styles = theme => ({
     flexShrink: 0,
   },
   headingExpanded: {
+    minHeight: '2rem',
+    height: '2.25rem',
     backgroundColor: '#FFA500',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
