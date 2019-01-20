@@ -15,7 +15,7 @@ const styles = theme => ({
   badge: {
     top: '20%',
     right: '-.5rem',
-    color: '#47494c'
+    color: 'white'
   },
 });
 

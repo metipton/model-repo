@@ -52,6 +52,10 @@
     cursor: pointer;
 }
 
+.shoppingCart {
+    color: #FFA500 ;
+}
+
 .toolbarItem :hover,
 .toolbarItem :active,
 .toolbarItem .active,

@@ -66,9 +66,14 @@ class Toolbar extends Component {
     }
 
 
+
 //<img className={classes.toolbarItem} src={shoppingCartImage} alt='shopping_cart' onClick={this.ShoppingCartToggleHandler} />
 
-    render (){
+    render (){   
+        let styles = {
+            borderRight: '0.02rem solid black', 
+        };
+        
         let authSection = (
             <MaterialUIButton
                 color="primary"
@@ -78,7 +83,10 @@ class Toolbar extends Component {
         if(this.props.isAuthenticated){
             authSection = (
                 <div className={classes.Login}>
-                    <div className={classes.toolbarItem}>{this.props.authEmail}</div>
+                    <div 
+                        className={classes.toolbarItem}>
+                            {this.props.authEmail}
+                    </div>
                     <div>
                         <MaterialUIButton
                             color="primary"
@@ -86,6 +94,7 @@ class Toolbar extends Component {
                     </div>
                     <div className={classes.toolbarItem}>
                         <ShoppingCartIcon
+                            className={classes.shoppingCart}
                             numItems={this.props.numCartItems}
                             showBadge={this.state.showShoppingCart}
                             clicked={this.shoppingCartToggleHandler}/>
