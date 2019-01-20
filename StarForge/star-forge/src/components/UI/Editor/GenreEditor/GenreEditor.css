@@ -10,8 +10,8 @@
     height: 2rem;
     background-color: #06437A;
     margin-top: .33rem;
-    font-size: 1rem !important;
-    font-weight: bold;
+    font-size: 1.25rem !important;
+    font-weight: normal;
     flex: 1;
     width: 25rem;
     text-align: center;
@@ -35,7 +35,7 @@
     background-color: #888888;
     margin-top: .3rempx;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: normal;
     flex: 1;
     width: 25rem;
     text-align: center;

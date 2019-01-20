@@ -230,7 +230,7 @@ const styles = theme => ({
   },
   typography: {
       opacity: 1,
-    fontWeight: 'bold',
+    fontWeight: 'normal',
     color: 'white',
   },
 });

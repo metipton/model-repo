@@ -9,6 +9,7 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import newStore from './store';
+import { normalize } from 'path';
 
 
 const store = newStore;
@@ -25,10 +26,11 @@ const theme = createMuiTheme({
       },
       typography: {
         "fontFamily": "\"Nodesto\", \"Helvetica\", \"Arial\", sans-serif",
-        "fontSize": 16,
-        "fontWeightLight": 200,
-        "fontWeightRegular": 300,
-        "fontWeightMedium": 400
+        "fontSize": 18,
+        "fontWeight": 'normal',
+        "fontWeightLight": 100,
+        "fontWeightRegular": 100,
+        "fontWeightMedium": 100
        }
     },
   )

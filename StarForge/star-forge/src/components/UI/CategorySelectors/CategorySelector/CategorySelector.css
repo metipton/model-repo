@@ -11,8 +11,8 @@
 }
 
 .CategorySelector span {
-    font-weight: bold;
-    font-size: 1rem;
+    font-weight: normal;
+    font-size: 1.25rem;
     margin-top: 1rem;
     margin-right: .66rem;
     color: white;
