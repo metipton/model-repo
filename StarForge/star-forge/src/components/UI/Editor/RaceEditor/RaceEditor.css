@@ -2,15 +2,17 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    background: #888888;
+    background-color: #06437A;
+    opacity: .5;
     overflow: auto;
-    width: 30%;
-    height: 400px;
+    width: 10rem;
+    height: 30rem;
     padding-left: 7%;
     padding-right: 7%;
 }
 
 .Image {
+    opacity: 1;
     margin-top: 15px;
     margin-bottom: 15px;
     height: 150px;
@@ -20,6 +22,7 @@
 }
 
 .Image img {
+    opacity: 1;
     margin-top: 15px;
     margin-bottom: 15px;
     height: 150px;
@@ -27,12 +30,14 @@
 }
 
 .Image img:hover {
+    opacity: 1;
     background-color: #4c4e51;
     border: solid 2px;
     border-color: #FFA500;
 }
 
 .ImageSelected img {
+    opacity: 1;
     background-color: #4c4e51;
     margin-top: 15px;
     margin-bottom: 15px;

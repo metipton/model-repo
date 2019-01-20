@@ -131,34 +131,24 @@ const styles = theme => ({
     height: 70,
     width: '30%',
     borderRadius: "10px",
-    opacity: .8
+    opacity: .8,
   },
   heading: {
       '&:hover': {
-        backgroundColor: '#4c4e51',
+        backgroundColor: '#FFA500',
       },
     border: 'solid',
     borderRadius: '10',
-    backgroundColor: '#5d809d',
+    backgroundColor: '#06437A',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
   },
   headingExpanded: {
-    backgroundColor: '#4c4e51',
+    backgroundColor: '#FFA500',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
-  },
-  headingContent: {
-
-  },
-  secondaryHeading: {
-      width: '100%',
-      border: 'solid',
-      backgroundColor: 'lightgrey',
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
   },
   typography: {
       opacity: 1,

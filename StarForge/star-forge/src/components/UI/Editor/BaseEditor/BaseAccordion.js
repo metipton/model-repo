@@ -38,7 +38,6 @@ class ItemsAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded,
-                    expandedIcon: classes.headingContentExpanded // class name, e.g. `classes-nesting-label-x`
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -91,7 +90,6 @@ const styles = theme => ({
     width: '30%',
     borderRadius: "10px",
     opacity: .8,
-    backgroundColor: '#06437A'
   },
   heading: {
       '&:hover': {
@@ -105,20 +103,10 @@ const styles = theme => ({
     flexShrink: 0,
   },
   headingExpanded: {
-    backgroundColor: '#4c4e51',
+    backgroundColor: '#FFA500',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
-  },
-  headingContentExpanded: {
-    backgroundColor: '#4c4e51',
-  },
-  secondaryHeading: {
-      width: '100%',
-      border: 'solid',
-      backgroundColor: 'lightgrey',
-    fontSize: theme.typography.pxToRem(15),
-    color: theme.palette.text.secondary,
   },
   typography: {
       opacity: 1,

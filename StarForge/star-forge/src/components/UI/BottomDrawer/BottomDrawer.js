@@ -23,14 +23,16 @@ const styles = theme => ({
       borderRadius: '10px'
   },
   container: {
+    verticalAlign: 'middle',
     position: 'absolute',
-    marginLeft:'-50px',
+    marginLeft:'-100px',
     left: '50%',
     bottom: 0,
   },
   button: {
     width:'200px',
     height: '20px',
+
     backgroundColor: '#a8a8a8',
     opacity: '.5'
   },
@@ -55,6 +57,10 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
     width: 150,
   },
+  label:{
+    fontWeight: 'bold',
+    height: '.66rem'
+  }
 });
 
 class TemporaryDrawer extends React.Component {
@@ -99,7 +105,12 @@ class TemporaryDrawer extends React.Component {
 
     return (
       <div className={classes.container}>
-        <Button className={buttonClass} onClick={this.toggleDrawer('bottom', true)}>
+        <Button 
+          className={buttonClass} 
+          onClick={this.toggleDrawer('bottom', true)}
+          classes={{
+              label: classes.label
+          }}>
             Options
             <UpIcon />
         </Button>

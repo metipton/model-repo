@@ -12,7 +12,7 @@
     box-sizing: border-box;
     z-index: 90;
     overflow: hidden;
-    opacity: .8;
+    background-color: #d9dbde;
 }
 
 .Toggle {
@@ -47,7 +47,7 @@
 }
 
 .toolbarItem{
-    font-size: 1rem;
+    font-size: 1.25rem;
     vertical-align: center;
     cursor: pointer;
 }

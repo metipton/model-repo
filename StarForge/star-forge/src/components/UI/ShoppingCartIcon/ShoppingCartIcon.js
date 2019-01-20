@@ -9,11 +9,13 @@ import IconButton from '@material-ui/core/IconButton';
 const styles = theme => ({
   root:{
     height: 10,
-    padding:5
+    padding:5,
+    color: 'white'
   },
   badge: {
-    top: '5%',
-    right: '-20px',
+    top: '20%',
+    right: '-.5rem',
+    color: '#47494c'
   },
 });
 
@@ -33,7 +35,7 @@ class BadgeVisibility extends React.Component {
         <IconButton aria-label="Cart">
           <Badge 
             badgeContent={this.props.numItems} 
-            color="primary" 
+            color= 'secondary'
             classes={{ 
               badge: classes.badge}}
             invisible={this.props.showBadge}>

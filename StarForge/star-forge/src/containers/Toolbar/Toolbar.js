@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import firebase from '../../Firebase';
 
 
-
 import classes from './Toolbar.css';
 import DrawerToggle from '../../components/Navigation/SideDrawer/DrawerToggle/DrawerToggle';
 import MaterialUIButton from '../../components/UI/Button/MaterialUIButton';
@@ -13,11 +12,11 @@ import * as actions from '../../store/actions/index';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import ShoppingCart from '../../components/ShoppingCart/FloatCart';
 import ShoppingCartIcon from '../../components/UI/ShoppingCartIcon/ShoppingCartIcon';
+import SocialMedia from '../../components/Navigation/NavigationItems/SocialMedia/SocialMedia';
 
 import Auth from '../auth0/Auth';
 
 
-import shoppingCartImage from '../../assets/Icons/shopping_cart_white_24x24.png';
 
 class Toolbar extends Component {
 
@@ -104,6 +103,7 @@ class Toolbar extends Component {
         const toolbar = (
             <header className={classes.Toolbar}>
                 <DrawerToggle clicked={this.props.drawerToggleClicked} />
+                <SocialMedia/>
                 {authSection}
             </header>
         );

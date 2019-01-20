@@ -1,5 +1,17 @@
 .SocialMedia {
+    position: absolute;
+    left: 50%;
     display: flex;
     justify-content: space-between;
-    padding: 8px;
+    transform: 			translateX(-50%);
+    
+}
+
+.Icon {
+    padding: .8rem;
+    color: #696969;
+}
+
+.Icon:hover {
+    color: black;
 }

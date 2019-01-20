@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import {Route, Switch, withRouter, Redirect} from 'react-router-dom';
-import LoadingScreen from 'react-loading-screen';
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+import { faTwitter } from '@fortawesome/fontawesome-free-brands'
+import { faFacebook } from '@fortawesome/fontawesome-free-brands'
+import { faInstagram } from '@fortawesome/fontawesome-free-brands'
 
 import * as actions from './store/actions/index';
 import ModelBuilder from './containers/ModelBuilder/ModelBuilder'
@@ -23,6 +28,10 @@ class App extends Component {
 
     render() {
 
+        library.add(faTwitter);
+        library.add(faFacebook);
+        library.add(faInstagram);
+
         let routes = (
           <Switch>
             <Route path="/" exact component={ModelBuilder} />
@@ -40,17 +49,9 @@ class App extends Component {
 
         return (
           <div className="App">
-             <LoadingScreen
-                loading={false}
-                bgColor='#f1f1f1'
-                spinnerColor='#9ee5f8'
-                textColor='#676767'
-                logoSrc='/logo.png'
-                text='Star Forge'>
                 <Layout>
                   {routes}
                 </Layout>
-            </LoadingScreen>
           </div>
       );
     }

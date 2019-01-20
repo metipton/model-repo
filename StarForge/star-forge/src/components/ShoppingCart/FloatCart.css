@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
 
 .buy-btn {
-  background-color: #1b1a20;
+  background-color: #47494c;
   color: #ececec;
   text-transform: uppercase;
   text-align: center;
@@ -15,16 +15,19 @@
   right: -450px;
   width: 450px;
   height: 100%;
-  background-color: #1b1a20;
+  background-color: #47494c;
   box-sizing: border-box;
   transition: right 0.2s; }
+  .float-cart span {
+    color: white;
+  }
   .float-cart--open {
     right: 0; }
   .float-cart__close-btn {
     width: 50px;
     height: 50px;
     color: #ececec;
-    background-color: #1b1a20;
+    background-color: #47494c;
     text-align: center;
     line-height: 50px;
     position: absolute;
@@ -136,7 +139,7 @@
           color: #ececec;
           margin: 0; }
         .float-cart__shelf-container .shelf-item__details .desc {
-          color: #5b5a5e;
+          color: white;
           margin: 0; }
       .float-cart__shelf-container .shelf-item__price {
         color: #eabf00;
@@ -197,7 +200,7 @@
     .float-cart__close-btn {
       left: 0px;
       z-index: 2;
-      background-color: #1b1a20; }
+      background-color: #47494c; }
     .float-cart__header {
       padding: 25px 0; } }
       @import url("https://fonts.googleapis.com/css?family=Roboto");
@@ -208,7 +211,7 @@
         right: -450px;
         width: 450px;
         height: 100%;
-        background-color: #1b1a20;
+        background-color: #47494c;
         box-sizing: border-box;
         transition: right 0.2s; }
         .float-cart--open {
@@ -217,7 +220,7 @@
           width: 50px;
           height: 50px;
           color: #ececec;
-          background-color: #1b1a20;
+          background-color: #47494c;
           text-align: center;
           line-height: 50px;
           position: absolute;
@@ -328,7 +331,7 @@
                 color: #ececec;
                 margin: 0; }
               .float-cart__shelf-container .shelf-item__details .desc {
-                color: #5b5a5e;
+                color: white;
                 margin: 0; }
             .float-cart__shelf-container .shelf-item__price {
               color: #eabf00;
@@ -339,7 +342,7 @@
           padding: 5%;
           box-shadow: 0px -0.5em 1em rgba(0, 0, 0, 0.3); }
           .float-cart__footer .sub, .float-cart__footer .sub-price {
-            color: #5b5a5e;
+            color: white;
             vertical-align: middle;
             display: inline-block; }
           .float-cart__footer .sub {
@@ -393,7 +396,7 @@
           .float-cart__close-btn {
             left: 0px;
             z-index: 2;
-            background-color: #1b1a20; }
+            background-color: #47494c; }
           .float-cart__header {
             padding: 25px 0; } }
 
