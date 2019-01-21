@@ -4,7 +4,7 @@
     display: flex;
     justify-content: space-between;
     transform: 			translateX(-50%);
-    
+    text-decoration: none;
 }
 
 .Icon {

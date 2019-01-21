@@ -17,7 +17,7 @@ const styles = theme => ({
       width: '40%',
       marginLeft:'-20%',
       left: '50%',
-      opacity: .7,
+      opacity: .8,
       backgroundColor: '#5d809d',
       overflow: 'hidden',
       borderRadius: '10px'
@@ -34,7 +34,7 @@ const styles = theme => ({
     height: '20px',
 
     backgroundColor: '#a8a8a8',
-    opacity: '.7'
+    opacity: '.8'
   },
   buttonInvis: {
     width:'200px',
