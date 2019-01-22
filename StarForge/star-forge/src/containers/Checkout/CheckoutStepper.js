@@ -15,12 +15,13 @@ class Checkout extends React.Component {
   }
 
   successPayment = data => {
-    console.log(data);
-    alert('Payment Successful');
+    console.log("payment complete");
+    this.props.resetCart();
+    this.props.closeCart();
   };
 
   errorPayment = data => {
-    alert('Payment Error');
+    alert(data);
   };
 
   onToken = token => {

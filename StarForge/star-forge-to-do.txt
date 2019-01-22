@@ -35,9 +35,9 @@ Auth
 
 
 Checkout
+   Make the shopping cart close on checkout	
    Make sure that price validation happens server side
 	in the charge function, add logic that checks the cart
-   Make cart have number of items in cart next to icon
    Get order complete modal on successful checkout
    Send an order confirmation email when done
    Population RTDB with order details

@@ -85,21 +85,28 @@ class FloatCart extends Component {
 
   }
 
-  removeProduct = (product) => {
+  removeProduct = async (product) => {
     const { cartProducts, updateCart } = this.props;
 
     //remove 
     const storage = firebase.storage().ref();
-    storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot.png' ).delete();
-    storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/model.glb' ).delete();
+    await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot.png' ).delete();
+    await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/model.glb' ).delete();
     const database = firebase.database().ref('users/' + this.props.userId + '/Cart/' + product.cartNumber );
-    database.set(null);
+    await database.set(null);
 
     const index = cartProducts.findIndex(p => p.id === product.id);
     if (index >= 0) {
       cartProducts.splice(index, 1);
-      updateCart(cartProducts);
+      await updateCart(cartProducts);
     }
+  }
+
+  resetShoppingCart = async () => {
+    for( let i = this.props.cartProducts.length - 1; i >= 0; i--){
+      this.removeProduct(this.props.cartProducts[i]);
+    }
+
   }
 
   proceedToCheckout = () => {
@@ -189,7 +196,9 @@ class FloatCart extends Component {
             <div className={classes['buy-btn']}>
                 <CheckoutStepper
                   disabled={this.props.cartEmpty}
-                  checkout={()=> this.proceedToCheckout()}/>
+                  checkout={()=> this.proceedToCheckout()}
+                  resetCart={this.resetShoppingCart}
+                  closeCart={this.closeFloatCart}/>
             </div>
           </div>
         </div>
