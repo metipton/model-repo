@@ -2,6 +2,7 @@ import * as actionTypes from '../../actions/actionTypes';
 
 
 const initialState = {
+  shipping: 499,
   item: {
     productQuantity: 0,
     installments: 0,

@@ -1,6 +1,6 @@
 .Menu {
     position: fixed;
-    left: 9vh;
+    left: 4rem;
     font-weight: 15; 
     font-size: 1.25rem; 
     border-right: 0.05rem solid black; 
@@ -21,7 +21,7 @@
 }
 
 .DrawerToggle {
-    width: 40px;
+    width: 2.5rem;
     height: 100%;
     display: flex;
     flex-flow: column;

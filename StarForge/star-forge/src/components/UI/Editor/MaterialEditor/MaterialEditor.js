@@ -17,7 +17,8 @@ class GenreEditor extends Component {
             <div className={classes.Container}>
                 <div
                     className={(this.props.state.currentName.Material === 'Standard') ? classes.MaterialSelected : classes.Material}
-                    onClick={() => this.clickHandler('Standard')}>Standard Plastic</div>
+                    onClick={() => this.clickHandler('Standard')}
+                    style={{marginTop: '0px'}}>Standard Plastic</div>
                 <div
                     className={(this.props.state.currentName.Material === 'Premium') ? classes.MaterialSelected : classes.Material}
                     onClick={() => this.clickHandler('Premium')}>Premium Plastic</div>

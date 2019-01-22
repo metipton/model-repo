@@ -45,7 +45,7 @@ class FloatCart extends Component {
    pullCartFromFirebase = () => {
     let product = [];
     const cart = firebase.database().ref();
-    const json = cart.child('Carts/' + this.props.userId);
+    const json = cart.child('users/' + this.props.userId + '/Cart');
     json.once("value").then((snapshot) => {
       snapshot.forEach((childSnapshot) => {
         // childData will be the actual contents of the child
@@ -168,16 +168,22 @@ class FloatCart extends Component {
             {products}
             {!products.length && (
               <p className={classes['shelf-empty']}>
-                Add some product in the bag <br />:)
+                Add a model to your cart <br />
               </p>
             )}
           </div>
 
           <div className={classes['float-cart__footer']}>
+          <div className={classes['sub']}>SHIPPING</div>
+            <div className={classes['sub-price']}>
+              <p className={classes['sub-price__val']}>
+                {`${cartTotals.currencyFormat} ${util.formatPrice(this.props.cartEmpty ? 0 : this.props.shippingPrice / 100, cartTotals.currencyId)}`}
+              </p>
+            </div>
             <div className={classes['sub']}>SUBTOTAL</div>
             <div className={classes['sub-price']}>
               <p className={classes['sub-price__val']}>
-                {`${cartTotals.currencyFormat} ${util.formatPrice(cartTotals.totalPrice, cartTotals.currencyId)}`}
+                {`${cartTotals.currencyFormat} ${util.formatPrice(this.props.cartEmpty? 0 : cartTotals.totalPrice + this.props.shippingPrice / 100, cartTotals.currencyId)}`}
               </p>
             </div>
             <div className={classes['buy-btn']}>
@@ -209,6 +215,7 @@ const mapStateToProps = state => ({
   userId: state.auth.userId,
   inCheckout: state.shoppingCart.cart.inCheckout,
   cartEmpty: state.shoppingCart.cartTotals.item.productQuantity === 0,
+  shippingPrice: state.shoppingCart.cartTotals.shipping
 });
 
 

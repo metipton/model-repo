@@ -4,8 +4,13 @@ Model Builder
    Implement color scenes
 
 UI
+Styling:
+	Remove background for all images
+        Apply halo to selected image   
    
-   Editor
+
+Editor
+	apply shipping
         Remove buttons that don't do anything.
         Add all the images
 	Make race always two column with male and female side
@@ -17,9 +22,10 @@ UI
    
 
     Bottom toolbar -  save character, my characters, screenshot, new char
-	Move all these items to fixed position on the bottom instead of using a div
+
 
 Shopping cart
+	Add a larger image that pops up when scrolling over
 
    
 Auth
@@ -31,16 +37,15 @@ Auth
 Checkout
    Make sure that price validation happens server side
 	in the charge function, add logic that checks the cart
-   Include shipping and tax
    Make cart have number of items in cart next to icon
-   Get the stripe order confirmation working 
+   Get order complete modal on successful checkout
    Send an order confirmation email when done
    Population RTDB with order details
+   execute cloud function to move all models to user -> orders -> order#
+	
    Populate customer subtree with order details
-   clear checkout cart after order
    clear customer source /save shipping info when complete
-   close the cart
-   tap into voodoo api to send order info
+   tap into voodoo api to send order info and models
 
 Site security
    Get SSL cert and set up HTTPS

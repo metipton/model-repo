@@ -41,7 +41,7 @@ class Checkout extends React.Component {
             image="https://stripe.com/img/documentation/checkout/marketplace.png"// the pop-in header image (default none)
             ComponentClass="div"
             panelLabel="Pay" // prepended to the amount in the bottom pay button
-            amount={this.props.totalPrice * 100} // cents
+            amount={Math.round(this.props.totalPrice * 100 + this.props.shipping)} // cents
             currency={CURRENCY}
             stripeKey={STRIPE_PUBLISHABLE}
             locale="auto"
@@ -65,7 +65,8 @@ class Checkout extends React.Component {
 const mapStateToProps = state => {
   return {
       userId: state.auth.userId,
-      totalPrice: state.shoppingCart.cartTotals.item.totalPrice
+      totalPrice: state.shoppingCart.cartTotals.item.totalPrice,
+      shipping: state.shoppingCart.cartTotals.shipping
   };
 };
 

@@ -8,6 +8,7 @@
     border-radius: .5rem;
     cursor: pointer;
     pointer-events: auto;
+    border-style: solid;
 }
 
 .CategorySelector span {

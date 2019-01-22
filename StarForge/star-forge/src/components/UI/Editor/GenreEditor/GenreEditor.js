@@ -15,7 +15,8 @@ class GenreEditor extends Component {
             <div className={classes.Container}>
                 <div
                     className={(this.props.state.currentName.Genre === 'Fantasy') ? classes.GenreSelected : classes.Genre}
-                    onClick={() => this.clickHandler('Genre', 'Fantasy', 'panel1')}>Fantasy</div>
+                    onClick={() => this.clickHandler('Genre', 'Fantasy', 'panel1')}
+                    style={{marginTop: '0px'}}>Fantasy</div>
                 <div
                     className={(this.props.state.currentName.Genre === 'Sci Fi') ? classes.GenreSelected : classes.Genre}
                     onClick={() => this.clickHandler('Genre', 'Sci Fi', 'panel2')}>Sci Fi</div>
