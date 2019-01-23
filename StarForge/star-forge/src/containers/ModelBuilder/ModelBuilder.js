@@ -217,14 +217,14 @@ class ModelBuilder extends Component {
     }
 
     updateMorphTargets = (trait, newPercent) => {
-        var objects = this.scene.getObjectByName("Object Holder");
-        for(let i = 0; i < objects.children.length; i++) {
+        var objects = this.objectHolder.children;
+        for(let i = 0; i < objects.length; i++) {
             let dictionary = null;
             let influences = null;
-            if(objects.children[i].morphTargetDictionary 
-                && objects.children[i].morphTargetInfluences){
-                dictionary = objects.children[i].morphTargetDictionary;
-                influences = objects.children[i].morphTargetInfluences;
+            if(objects[i].morphTargetDictionary 
+                && objects[i].morphTargetInfluences){
+                dictionary = objects[i].morphTargetDictionary;
+                influences = objects[i].morphTargetInfluences;
             } else {
                 continue;
             }
@@ -234,6 +234,23 @@ class ModelBuilder extends Component {
                 }
             }
         }
+    }
+
+    applyMorphTargetsOnImport = (object) => {
+        if(!object.isSkinnedMesh || !object.morphTargetDictionary 
+            || !object.morphTargetInfluences) {
+            return;
+        }
+        let dictionary = object.morphTargetDictionary;
+        let influences = object.morphTargetInfluences;
+        for(var morph in dictionary){
+            if(this.morphTargets.body[morph]){
+                influences[dictionary[morph]] = (this.morphTargets.body[morph].percent / 100 );
+            } else {
+                influences[dictionary[morph]] = (this.morphTargets.expression[morph].percent / 100 );
+            }
+        }
+
     }
 
 
@@ -291,9 +308,7 @@ class ModelBuilder extends Component {
 
         this.morphTargets = {
             body: {
-               Height: {
-                   percent: 0
-                },
+               Height: {percent: 0},
                Weight: {percent: 0},
                Build: {percent: 0},
                Muscularity: {percent: 0},
@@ -497,8 +512,6 @@ class ModelBuilder extends Component {
    }
 
    renderScene = () => {
-    // console.log(this.objectHolder);
-    // console.log(this.state);
      this.renderer.render(this.scene, this.camera)
      if(this.state.loading){
          this.props.finishedLoading();
@@ -1064,7 +1077,7 @@ class ModelBuilder extends Component {
 
         }
         THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
-
+        this.applyMorphTargetsOnImport(child);
         child.name = category;
    }
 
@@ -1393,7 +1406,6 @@ class ModelBuilder extends Component {
         }
 
         for(var part in this.morphTargets.body){
-            console.log(part);
             this.updateBodyPercent(part, 0);
         }
         for(var expression in this.morphTargets.expression){
