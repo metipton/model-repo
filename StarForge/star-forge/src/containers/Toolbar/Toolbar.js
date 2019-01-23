@@ -83,9 +83,11 @@ class Toolbar extends Component {
         if(this.props.isAuthenticated){
             authSection = (
                 <div className={classes.Login}>
-                    <div 
-                        className={classes.toolbarItem}>
-                            {this.props.authEmail}
+                    <div>
+                        <MaterialUIButton
+                            color="primary">
+                             {this.props.authEmail}
+                        </MaterialUIButton>
                     </div>
                     <div>
                         <MaterialUIButton
@@ -111,7 +113,7 @@ class Toolbar extends Component {
         const toolbar = (
             <header className={classes.Toolbar}>
                 <DrawerToggle clicked={this.props.drawerToggleClicked} />
-                <SocialMedia/>
+                <SocialMedia className={classes.socialMedia}/>
                 {authSection}
             </header>
         );

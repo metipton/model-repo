@@ -1,8 +1,8 @@
-import image1 from './images/icons8-angry-80.png';
-import image2 from './images/icons8-cool-80.png';
-import image3 from './images/icons8-kiss-80.png';
-import image4 from './images/icons8-lol-80.png';
-import image5 from './images/icons8-neutral-80.png';
+import image1 from '../../../../../../assets/Thumbs/face/Neutral.png';
+import image2 from '../../../../../../assets/Thumbs/face/Smile.png';
+import image3 from '../../../../../../assets/Thumbs/face/Snarl.png';
+import image4 from '../../../../../../assets/Thumbs/face/Cocky.png';
+import image5 from '../../../../../../assets/Thumbs/face/Confused.png';
 
 
 

@@ -56,6 +56,12 @@
     color: #FFA500 ;
 }
 
+.socialMedia {
+    width: 8.25rem;
+    margin-left: -4.125rem;
+    left: 50%;
+}
+
 .toolbarItem :hover,
 .toolbarItem :active,
 .toolbarItem .active,

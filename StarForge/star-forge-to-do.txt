@@ -2,15 +2,16 @@
 
 Model Builder
    Implement color scenes
+   zoom head
 
 UI
 Styling:
 	Remove background for all images
-        Apply halo to selected image   
+        Apply halo to selected image 
+	remove all outstanding place holder images
    
 
 Editor
-	apply shipping
         Remove buttons that don't do anything.
         Add all the images
 	Make race always two column with male and female side
@@ -31,11 +32,9 @@ Shopping cart
 Auth
    Update the database rules code
    Change header for Auth log in
-   Send welcome email on first login
 
 
 Checkout
-   Make the shopping cart close on checkout	
    Make sure that price validation happens server side
 	in the charge function, add logic that checks the cart
    Get order complete modal on successful checkout
@@ -53,6 +52,6 @@ Site security
 Known bugs
 	Need to make the editor example to file entire viewport dynamically
 	fix the selection/state setting for accordion items
-	G
+	
 
 	

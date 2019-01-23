@@ -157,7 +157,7 @@ class ModelBuilder extends Component {
             matType: 'Standard Plastic',
             price: 19.99
         },
-        modelName: 'Unnamed',
+        modelName: '',
         loading: true,
         coloringEnabled: false,
         RESOURCES_LOADED: false
@@ -524,6 +524,8 @@ class ModelBuilder extends Component {
    }
 
    renderScene = () => {
+    console.log(this.objectHolder);
+    console.log(this.state);
      this.renderer.render(this.scene, this.camera)
      if(this.state.loading){
          this.props.finishedLoading();
@@ -1364,6 +1366,30 @@ class ModelBuilder extends Component {
         return clone;
     }
 
+
+    // All the bottom bar functions are below
+    resetHero = () => {
+        alert("Resetting hero");
+    }
+
+    clearItem = (item) => {
+
+    }
+
+    shareHero = () => {
+        alert("Share hero");
+    }
+
+    saveHero = () => {
+        alert("Save hero");
+    }
+
+    openSavedHeroModal = () => {
+        alert("Opening Saved hero modal");
+    }
+
+
+
     nameChangeHandler = name => event => {
         this.setState({
           ...this.state,
@@ -1431,6 +1457,10 @@ class ModelBuilder extends Component {
                 addToCart={this.addModelToCart} />  
             <BottomDrawer
                 name={this.state.modelName}
+                resetHero={this.resetHero}
+                saveHero={this.saveHero}
+                shareHero={this.shareHero}
+                openSavedHeroModal={this.openSavedHeroModal}
                 changeName={(name) => this.nameChangeHandler(name)}/>  
         </Aux>
 

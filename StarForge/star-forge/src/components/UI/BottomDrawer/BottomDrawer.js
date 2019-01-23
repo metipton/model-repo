@@ -7,18 +7,23 @@ import IconButton from '@material-ui/core/IconButton';
 import UpIcon from '@material-ui/icons/KeyboardArrowUp';
 import DownIcon from '@material-ui/icons/KeyboardArrowDown';
 import TextField from '@material-ui/core/TextField';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 
 
 const styles = theme => ({
   paper: {
+
+      borderWidth: '.125rem',
+      borderStyle: 'solid',
+      borderColor: '#FFA500',
       display: 'inline-block',
-      width: '40%',
-      marginLeft:'-20%',
+      width: '35rem',
+      marginLeft:'-17.5rem',
       left: '50%',
       opacity: .8,
-      backgroundColor: '#5d809d',
+      backgroundColor: '#d9dbde',
       overflow: 'hidden',
       borderRadius: '10px'
   },
@@ -48,16 +53,45 @@ const styles = theme => ({
     right: 0
   },
   drawer: {
-    display: 'inline-block',
+    display: 'flex',
+    justifyContent: 'flex-start',
     zIndex: 9999999
   },
   textField: {
-    padding: 5,
+    color: '#FFA500',
+    padding: '.3rem',
+    marginTop: '.5rem',
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 150,
+    width: '6rem',
+  },
+  textFieldColor: {
+    color: '#06437A'
+  },
+  innerButtons: {
+    cursor: 'pointer',
+    boxSizing: 'border-box',
+    width: '4rem',
+    textAlign: 'center',
+    color: '#06437A',
+    padding: '.3rem',
+    marginLeft: 0,
+    marginRight: 0,
+    width: '6.25rem',
+    '&:hover':{
+      backgroundColor: '#FFA500',
+      color: '#06437A'
+    },
+  },
+  icon: {
+    marginTop: '.3rem'
+  },
+  innerSpan: {
+    display: 'block',
+    margin: '.4rem',
   },
   label:{
+    color: '#06437A',
     fontWeight: 'bold',
     height: '.66rem'
   }
@@ -95,9 +129,43 @@ class TemporaryDrawer extends React.Component {
                 id="standard-name"
                 label=" Hero Name"
                 className={classes.textField}
+                InputProps={{
+                  classes: {
+                    input: classes.textFieldColor,
+                  },
+                }}
                 value={this.props.name}
                 onChange={this.props.changeName('modelName')}
                 />
+            <div className={classes.innerButtons}
+              onClick={this.props.saveHero}>
+              <FontAwesomeIcon className={classes.icon} icon={['fas', 'save']} size="1x" />
+              <span className={classes.innerSpan}>
+                Save
+              </span>
+            </div >
+            <div className={classes.innerButtons}
+              onClick={this.props.shareHero}>
+              <FontAwesomeIcon className={classes.icon} icon={['fas', 'share']} size="1x" />
+               <span className={classes.innerSpan}>
+                Share
+              </span>   
+            </div>
+            <div className={classes.innerButtons}
+              onClick={this.props.openSavedHeroModal}>     
+              <FontAwesomeIcon className={classes.icon} icon={['fas', 'folder']} size="1x" />
+              <span className={classes.innerSpan}>
+                Heroes
+              </span>  
+            </div> 
+            <div 
+              className={classes.innerButtons}
+              onClick={this.props.resetHero}>
+              <FontAwesomeIcon className={classes.icon} icon={['fas', 'user']} size="1x" />
+              <span className={classes.innerSpan}>
+                New
+              </span>
+            </div>          
         </div>
     );
 

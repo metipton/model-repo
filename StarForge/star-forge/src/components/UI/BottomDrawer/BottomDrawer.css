@@ -15,6 +15,7 @@ html {
     float:right;
 }
 .drawer {
+    display: flex;
     position:fixed;
     bottom:0;
     right:0;
