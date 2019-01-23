@@ -157,7 +157,7 @@ class ModelBuilder extends Component {
             matType: 'Standard Plastic',
             price: 19.99
         },
-        modelName: 'Nameless Hero',
+        modelName: 'Nameless',
         loading: true,
         coloringEnabled: false,
         RESOURCES_LOADED: false
@@ -236,13 +236,6 @@ class ModelBuilder extends Component {
         }
     }
 
-    updateBodyMorphs = (trait, percent) => {
-        var convPercent = percent / 100;
-        var objList = this.morphables.body[trait];
-        for(var obj in objList){
-            objList[obj].morphTargetInfluences[0] = convPercent;
-        }
-    }
 
     //object picking functions
     setPickPosition = (event) => {
@@ -274,6 +267,7 @@ class ModelBuilder extends Component {
 
     init = () => {
 
+        this.resetState = {};
         this.skyBox = null;
         this.raycaster = new THREE.Raycaster();
         this.mouse = new THREE.Vector2();
@@ -298,7 +292,7 @@ class ModelBuilder extends Component {
         this.morphTargets = {
             body: {
                Height: {
-                   percent: 20
+                   percent: 0
                 },
                Weight: {percent: 0},
                Build: {percent: 0},
@@ -309,7 +303,7 @@ class ModelBuilder extends Component {
                Booty: {percent: 0} 
             },
             expression: {
-                Smile: {percent: 20},
+                Smile: {percent: 0},
                 Cocky: {percent: 0},
                 Snarl: {percent: 0},
                 Confused: {percent: 0},
@@ -317,27 +311,6 @@ class ModelBuilder extends Component {
             }
         }
 
-        this.morphables = {
-            body: {
-               Height: {
-                   
-                },
-               Weight: {},
-               Build: {},
-               Muscularity: {},
-               Bust: {},
-               Waist: {},
-               Curves: {},
-               Booty: {} 
-            },
-            expression: {
-                Smile: {},
-                Cocky: {},
-                Snarl: {},
-                Confused: {},
-                Embarrassed: {}
-            }
-        }
 
         //create materials for different printing mats
         const metalMat = new THREE.MeshStandardMaterial( {
@@ -524,8 +497,8 @@ class ModelBuilder extends Component {
    }
 
    renderScene = () => {
-    console.log(this.objectHolder);
-    console.log(this.state);
+    // console.log(this.objectHolder);
+    // console.log(this.state);
      this.renderer.render(this.scene, this.camera)
      if(this.state.loading){
          this.props.finishedLoading();
@@ -571,6 +544,8 @@ class ModelBuilder extends Component {
                 ...this.state,
                 RESOURCES_LOADED: true
             })});
+            this.resetState = this.state;
+            console.log(this.resetState);
    }
 
  
@@ -1368,8 +1343,63 @@ class ModelBuilder extends Component {
 
 
     // All the bottom bar functions are below
-    resetHero = () => {
-        alert("Resetting hero");
+    resetHero = async () => {
+        for(let i = this.objectHolder.children.length - 1; i >= 0; i--){
+            let name = this.objectHolder.children[i].name;
+            if(name !== 'Race' && name !== 'Base' && name !== 'Chest' && name !== 'LegsWearable'){
+                this.removeObjectFromScene(name);
+            } else {
+                let selection = name + '1';
+                if(selection !== this.state.currentName[name]){
+                    await this.updateObjectHandler(name, selection, false );
+                }
+            }
+        }
+        this.setPoseHandler('Pose1');
+
+        //set the correct state
+        this.resetMorphTargets();
+        //correct morph targets
+        this.setState({
+            ...this.state,
+            currentName: this.resetState.currentName,
+            currentObject: this.resetState.currentObject,
+            links: this.resetState.links,
+            materials: this.resetState.materials
+        })
+    }
+
+    resetMorphTargets = () => {
+        this.morphTargets = {
+            body: {
+               Height: {
+                   percent: 0
+                },
+               Weight: {percent: 0},
+               Build: {percent: 0},
+               Muscularity: {percent: 0},
+               Bust: {percent: 0},
+               Waist: {percent: 0},
+               Curves: {percent: 0},
+               Booty: {percent: 0} 
+            },
+            expression: {
+                Smile: {percent: 0},
+                Cocky: {percent: 0},
+                Snarl: {percent: 0},
+                Confused: {percent: 0},
+                Embarrassed: {percent: 0}
+            }
+        }
+
+        for(var part in this.morphTargets.body){
+            console.log(part);
+            this.updateBodyPercent(part, 0);
+        }
+        for(var expression in this.morphTargets.expression){
+            this.updateExpressionPercent(expression, 0);
+        }
+
     }
 
     clearItem = (item) => {
