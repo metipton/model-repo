@@ -157,7 +157,7 @@ class ModelBuilder extends Component {
             matType: 'Standard Plastic',
             price: 19.99
         },
-        modelName: '',
+        modelName: 'Nameless Hero',
         loading: true,
         coloringEnabled: false,
         RESOURCES_LOADED: false

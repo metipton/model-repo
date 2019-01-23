@@ -168,7 +168,7 @@ class FloatCart extends Component {
                 {cartTotals.productQuantity}
               </span>
             </span>
-            <span className={classes['header-title']}>Bag</span>
+            <span className={classes['header-title']}>Cart</span>
           </div>
 
           <div className={classes['float-cart__shelf-container']}>

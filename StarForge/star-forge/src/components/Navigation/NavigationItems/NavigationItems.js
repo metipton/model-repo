@@ -20,7 +20,7 @@ const navigationItems = ( props ) => (
         </div>
         <Divider/>
         <div className={classes.NavigationItem}>
-            <NavigationItem link="/shipping" exact>Shipping and Return</NavigationItem>
+            <NavigationItem link="/shipping" exact>Shipping and Returns</NavigationItem>
         </div>
         <Divider/>
         <div className={classes.NavigationItem}>

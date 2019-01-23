@@ -11,9 +11,9 @@ const drawerToggle = (props) => (
             <div></div>
             <div></div>
         </div>
-        <span className={classes.Menu} onClick={props.clicked}>
+        <div className={classes.Menu} onClick={props.clicked}>
             MENU
-        </span>
+        </div>
     </Aux>
 );
 
