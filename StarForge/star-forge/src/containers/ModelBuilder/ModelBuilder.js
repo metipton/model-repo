@@ -415,7 +415,7 @@ class ModelBuilder extends Component {
         controls.enablePan = false;
         controls.minDistance = 4;
         controls.maxDistance = 6.5;
-        controls.target = new THREE.Vector3(0, 1, 0);
+        controls.target = new THREE.Vector3(0, 1.25, 0);
         controls.update();
         // How far you can orbit vertically, upper and lower limits.
         // Range is 0 to Math.PI radians.
