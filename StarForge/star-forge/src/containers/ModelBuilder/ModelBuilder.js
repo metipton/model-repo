@@ -6,6 +6,7 @@ import 'firebase/storage';
 import axios from '../../axios-orders.js';
 import GLTFLoader from 'three-gltf-loader';
 import GLTFExporter from 'three-gltf-exporter';
+import STLExporter from '../../assets/utility/STLExporter';
 
 import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
@@ -292,6 +293,7 @@ class ModelBuilder extends Component {
         this.THREE = THREE;
         this.gltfLoader = new GLTFLoader();
         this.exporter = new GLTFExporter();
+        this.stlExporter = new STLExporter();
         this.mixer = null;
         this.animationScene = null;
         this.subclips = {};
@@ -1159,7 +1161,7 @@ class ModelBuilder extends Component {
 
             vertices.fromBufferAttribute(meshVertices, i); // the vertex to transform
             if(morphTargetArray){
-                for ( var t = 0; t < morphTargetArray.length; t ++ ) {
+                for ( var t = 0; t < morphTargetArray.length; t++ ) {
             
                     var influence = morphInfluences[ t ];
             
@@ -1230,7 +1232,22 @@ class ModelBuilder extends Component {
        return file;
      }
 
-     exportModel = (cartNumber) => {
+     exportModelSTL = (cartNumber) => {
+
+        this.stlExporter.parse(this.objectHolder.children, (object)=> {
+
+            return new Promise( ( resolve, reject ) => {
+                firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.stl' ).put(object).then(() => {
+                    console.log("Model upload complete");
+                    this.props.finishedAdd();
+                    resolve();
+                }).catch( error => {
+                    reject(error);
+                });
+            })});
+     }
+
+     exportModelGLTF = (cartNumber) => {
         let objects = [];
 
         //morph geometry of all objects to match the pose
@@ -1240,11 +1257,10 @@ class ModelBuilder extends Component {
                 let clone;
                 if(child.isSkinnedMesh){
                     clone = this.createPosedClone(this.objectHolder.children[i]);
-                    console.log(clone);
                 } else {
                     clone = this.objectHolder.children[i].clone();
+                    console.log(clone);
                 }
-                console.log(objects);
                 objects.push(clone);
             }
         }
@@ -1306,7 +1322,8 @@ class ModelBuilder extends Component {
         var cartNum = this.getCartNumber();
         var dataURL = this.takeScreenshot();
 
-        this.exportModel(cartNum);
+        this.exportModelGLTF(cartNum);
+        this.exportModelSTL(cartNum);
         await this.exportScreenshot(cartNum, dataURL);
         const timeStamp = new Date().getTime();
         let payload = {

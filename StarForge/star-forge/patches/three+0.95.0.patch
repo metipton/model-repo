@@ -1,0 +1,572 @@
+patch-package
+--- a/node_modules/three/build/three.js
++++ b/node_modules/three/build/three.js
+@@ -34947,9 +34947,96 @@
+ 
+ 			}
+ 
+-		}
++		},
+ 
+-	};
++		subclip: function ( sourceClip, name, startFrame, endFrame) {
++	 		let fps =  30;
++	 		var clip = sourceClip.clone();
++	 		clip.name = name;
++	 		var tracks = [];
++	 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++	 			var track = clip.tracks[ i ];
++				var valueSize = track.getValueSize();
++	 			var times = [];
++				var values = [];
++	 			for ( var j = 0; j < track.times.length; ++ j ) {
++	 				var frame = track.times[ j ] * fps;
++	 				if ( frame < startFrame || frame >= endFrame ) continue;
++	 				times.push( track.times[ j ] );
++	 				for ( var k = 0; k < valueSize; ++ k ) {
++	 					values.push( track.values[ j * valueSize + k ] );
++	 				}
++	 			}
++	 			if ( times.length === 0 ) continue;
++	 			track.times = AnimationUtils.convertArray( times, track.times.constructor );
++				track.values = AnimationUtils.convertArray( values, track.values.constructor );
++	 			tracks.push( track );
++	 		}
++	 		clip.tracks = tracks;
++	 		// find minimum .times value across all tracks in the trimmed clip
++	 		var minStartTime = Infinity;
++	 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++	 			if ( minStartTime > clip.tracks[ i ].times[ 0 ] ) {
++	 				minStartTime = clip.tracks[ i ].times[ 0 ];
++	 			}
++	 		}
++	 		// shift all tracks such that clip begins at t=0
++	 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++	 			clip.tracks[ i ].shift( -1 * minStartTime );
++	 		}
++	 		clip.resetDuration();
++	 		return clip;
++	 	},
++		clone: function ( source ) {
++
++			var cloneLookup = new Map();
++	
++			var clone = source.clone();
++	
++			parallelTraverse( source, clone, function ( sourceNode, clonedNode ) {
++	
++				cloneLookup.set( sourceNode, clonedNode );
++	
++			} );
++	
++			source.traverse( function ( sourceMesh ) {
++	
++				if ( ! sourceMesh.isSkinnedMesh ) return;
++				
++				var sourceBones = sourceMesh.skeleton.bones;
++				var clonedMesh = cloneLookup.get( sourceMesh );
++				clonedMesh.skeleton = sourceMesh.skeleton.clone();
++	
++				// clonedMesh.skeleton.bones = sourceBones.map( function ( sourceBone ) {
++	
++				// 	if ( ! cloneLookup.has( sourceBone ) ) {
++	
++				// 		throw new Error( 'THREE.AnimationUtils: Required bones are not descendants of the given object.' );
++					
++				// 	}
++				// 	return cloneLookup.get( sourceBone );
++				// } );
++	
++				clonedMesh.bind( clonedMesh.skeleton, sourceMesh.bindMatrix );
++	
++			} );
++	
++			return clone;
++		},
++	
++};
++
++function parallelTraverse ( a, b, callback ) {
++	
++	callback( a, b );
++
++	for ( var i = 0; i < a.children.length; i ++ ) {
++
++		parallelTraverse( a.children[ i ], b.children[ i ], callback );
++
++	}
++
++}
+ 
+ 	/**
+ 	 * Abstract base class of interpolants over parametric samples.
+@@ -35863,7 +35950,23 @@
+ 
+ 			return this;
+ 
+-		}
++		},
++
++
++		clone: function () {
++	 		var times = AnimationUtils.arraySlice( this.times, 0 );
++
++			var values = AnimationUtils.arraySlice( this.values, 0 );
++
++	 		var TypedKeyframeTrack = this.constructor;
++
++			var track = new TypedKeyframeTrack( this.name, times, values );
++
++	 		// Interpolant argument to constructor is not saved, so copy the factory method directly.
++			track.createInterpolant = this.createInterpolant;
++
++	 		return track;
++	 	}
+ 
+ 	} );
+ 
+@@ -36528,6 +36631,14 @@
+ 
+ 			return this;
+ 
++		},
++
++		clone: function () {
++			var tracks = [];
++			for ( var i = 0; i < this.tracks.length; i ++ ) {
++				tracks.push( this.tracks[ i ].clone() );
++			}
++			return new AnimationClip( this.name, this.duration, tracks );
+ 		}
+ 
+ 	} );
+@@ -46914,21 +47025,35 @@
+ 
+ 	var SceneUtils = {
+ 
+-		createMultiMaterialObject: function ( /* geometry, materials */ ) {
++		createMultiMaterialObject: function ( geometry, materials ) {
+ 
+-			console.error( 'THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js' );
++			var group = new THREE.Group();
++
++			for ( var i = 0, l = materials.length; i < l; i ++ ) {
++
++				group.add( new THREE.Mesh( geometry, materials[ i ] ) );
++
++			}
++
++			return group;
+ 
+ 		},
+ 
+-		detach: function ( /* child, parent, scene */ ) {
++		detach: function ( child, parent, scene ) {
+ 
+-			console.error( 'THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js' );
++			child.applyMatrix( parent.matrixWorld );
++			parent.remove( child );
++			scene.add( child );
+ 
+ 		},
+ 
+-		attach: function ( /* child, scene, parent */ ) {
++		attach: function ( child, scene, parent ) {
++
++			child.applyMatrix( new Matrix4().getInverse( parent.matrixWorld ) );
+ 
+-			console.error( 'THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js' );
++			scene.remove( child );
++			parent.add( child );
++			parent.updateMatrixWorld(true);
+ 
+ 		}
+ 
+--- a/node_modules/three/build/three.module.js
++++ b/node_modules/three/build/three.module.js
+@@ -34941,10 +34941,96 @@ var AnimationUtils = {
+ 
+ 		}
+ 
+-	}
++	},
++
++	subclip: function ( sourceClip, name, startFrame, endFrame) {
++	 		let fps =  30;
++	 		var clip = sourceClip.clone();
++	 		clip.name = name;
++	 		var tracks = [];
++	 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++	 			var track = clip.tracks[ i ];
++				var valueSize = track.getValueSize();
++	 			var times = [];
++				var values = [];
++	 			for ( var j = 0; j < track.times.length; ++ j ) {
++	 				var frame = track.times[ j ] * fps;
++	 				if ( frame < startFrame || frame >= endFrame ) continue;
++	 				times.push( track.times[ j ] );
++	 				for ( var k = 0; k < valueSize; ++ k ) {
++	 					values.push( track.values[ j * valueSize + k ] );
++	 				}
++	 			}
++	 			if ( times.length === 0 ) continue;
++	 			track.times = AnimationUtils.convertArray( times, track.times.constructor );
++				track.values = AnimationUtils.convertArray( values, track.values.constructor );
++	 			tracks.push( track );
++	 		}
++	 		clip.tracks = tracks;
++	 		// find minimum .times value across all tracks in the trimmed clip
++	 		var minStartTime = Infinity;
++	 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++	 			if ( minStartTime > clip.tracks[ i ].times[ 0 ] ) {
++	 				minStartTime = clip.tracks[ i ].times[ 0 ];
++	 			}
++	 		}
++	 		// shift all tracks such that clip begins at t=0
++	 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++	 			clip.tracks[ i ].shift( -1 * minStartTime );
++	 		}
++	 		clip.resetDuration();
++	 		return clip;
++		 },
++		 clone: function ( source ) {
++
++			var cloneLookup = new Map();
++	
++			var clone = source.clone();
++	
++			parallelTraverse( source, clone, function ( sourceNode, clonedNode ) {
++	
++				cloneLookup.set( sourceNode, clonedNode );
++	
++			} );
++	
++			source.traverse( function ( sourceMesh ) {
++	
++				if ( ! sourceMesh.isSkinnedMesh ) return;
++				
++				var sourceBones = sourceMesh.skeleton.bones;
++				var clonedMesh = cloneLookup.get( sourceMesh );
++				clonedMesh.skeleton = sourceMesh.skeleton.clone();
++	
++				// clonedMesh.skeleton.bones = sourceBones.map( function ( sourceBone ) {
++	
++				// 	if ( ! cloneLookup.has( sourceBone ) ) {
++	
++				// 		throw new Error( 'THREE.AnimationUtils: Required bones are not descendants of the given object.' );
++					
++				// 	}
++				// 	return cloneLookup.get( sourceBone );
++				// } );
++	
++				clonedMesh.bind( clonedMesh.skeleton, sourceMesh.bindMatrix );
++	
++			} );
++	
++			return clone;
++		},
+ 	
+ };
+ 
++function parallelTraverse ( a, b, callback ) {
++	
++	callback( a, b );
++
++	for ( var i = 0; i < a.children.length; i ++ ) {
++
++		parallelTraverse( a.children[ i ], b.children[ i ], callback );
++
++	}
++
++}
+ /**
+  * Abstract base class of interpolants over parametric samples.
+  *
+@@ -35857,6 +35943,21 @@ Object.assign( KeyframeTrack.prototype, {
+ 
+ 		return this;
+ 
++	},
++
++	clone: function () {
++		var times = AnimationUtils.arraySlice( this.times, 0 );
++
++		var values = AnimationUtils.arraySlice( this.values, 0 );
++
++		var TypedKeyframeTrack = this.constructor;
++
++		var track = new TypedKeyframeTrack( this.name, times, values );
++
++		// Interpolant argument to constructor is not saved, so copy the factory method directly.
++		track.createInterpolant = this.createInterpolant;
++
++		return track;
+ 	}
+ 
+ } );
+@@ -36522,6 +36623,14 @@ Object.assign( AnimationClip.prototype, {
+ 
+ 		return this;
+ 
++	},
++
++	clone: function () {
++		var tracks = [];
++		for ( var i = 0; i < this.tracks.length; i ++ ) {
++			tracks.push( this.tracks[ i ].clone() );
++		}
++		return new AnimationClip( this.name, this.duration, tracks );
+ 	}
+ 
+ } );
+@@ -46908,24 +47017,39 @@ function CanvasRenderer() {
+ 
+ var SceneUtils = {
+ 
+-	createMultiMaterialObject: function ( /* geometry, materials */ ) {
++	createMultiMaterialObject: function ( geometry, materials ) {
++
++		var group = new THREE.Group();
++
++		for ( var i = 0, l = materials.length; i < l; i ++ ) {
+ 
+-		console.error( 'THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js' );
++			group.add( new THREE.Mesh( geometry, materials[ i ] ) );
++
++		}
++
++		return group;
+ 
+ 	},
+ 
+-	detach: function ( /* child, parent, scene */ ) {
++	detach: function ( child, parent, scene ) {
+ 
+-		console.error( 'THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js' );
++		child.applyMatrix( parent.matrixWorld );
++		parent.remove( child );
++		scene.add( child );
+ 
+ 	},
+ 
+-	attach: function ( /* child, scene, parent */ ) {
++	attach: function ( child, scene, parent ) {
+ 
+-		console.error( 'THREE.SceneUtils has been moved to /examples/js/utils/SceneUtils.js' );
++		child.applyMatrix( new Matrix4().getInverse( parent.matrixWorld ) );
++
++		scene.remove( child );
++		parent.add( child );
++		parent.updateMatrixWorld(true);
+ 
+ 	}
+ 
++
+ };
+ 
+ //
+--- a/node_modules/three/src/animation/AnimationClip.js
++++ b/node_modules/three/src/animation/AnimationClip.js
+@@ -445,6 +445,14 @@ Object.assign( AnimationClip.prototype, {
+ 
+ 		return this;
+ 
++	},
++
++	clone: function () {
++		var tracks = [];
++		for ( var i = 0; i < this.tracks.length; i ++ ) {
++			tracks.push( this.tracks[ i ].clone() );
++		}
++		return new AnimationClip( this.name, this.duration, tracks );
+ 	}
+ 
+ } );
+--- a/node_modules/three/src/animation/AnimationUtils.js
++++ b/node_modules/three/src/animation/AnimationUtils.js
+@@ -158,9 +158,122 @@ var AnimationUtils = {
+ 
+ 		}
+ 
+-	}
++	},
++
++ 	subclip: function ( sourceClip, name, startFrame, endFrame ) {
++
++ 		fps = 30;
++
++ 		var clip = sourceClip.clone();
++
++ 		clip.name = name;
++
++ 		var tracks = [];
++
++ 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++
++ 			var track = clip.tracks[ i ];
++
++			var valueSize = track.getValueSize();
++
++ 			var times = [];
++
++			var values = [];
++
++ 			for ( var j = 0; j < track.times.length; ++ j ) {
++ 				var frame = track.times[ j ] * fps;
++
++ 				if ( frame < startFrame || frame >= endFrame ) continue;
++ 				times.push( track.times[ j ] );
++
++ 				for ( var k = 0; k < valueSize; ++ k ) {
++ 					values.push( track.values[ j * valueSize + k ] );
++ 				}
++
++ 			}
++
++ 			if ( times.length === 0 ) continue;
++
++ 			track.times = AnimationUtils.convertArray( times, track.times.constructor );
++
++			track.values = AnimationUtils.convertArray( values, track.values.constructor );
++
++ 			tracks.push( track );
++
++ 		}
++
++ 		clip.tracks = tracks;
++ 		// find minimum .times value across all tracks in the trimmed clip
++ 		var minStartTime = Infinity;
++
++ 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++
++ 			if ( minStartTime > clip.tracks[ i ].times[ 0 ] ) {
++
++ 				minStartTime = clip.tracks[ i ].times[ 0 ];
++ 			}
++ 		}
++
++ 		// shift all tracks such that clip begins at t=0
++ 		for ( var i = 0; i < clip.tracks.length; ++ i ) {
++
++ 			clip.tracks[ i ].shift( -1 * minStartTime );
++
++ 		}
++
++ 		clip.resetDuration();
++
++ 		return clip;
++	 },
++
++	 clone: function ( source ) {
++
++		var cloneLookup = new Map();
++
++		var clone = source.clone();
++
++		parallelTraverse( source, clone,  ( sourceNode, clonedNode ) => {
++
++			cloneLookup.set( sourceNode, clonedNode );
++
++		} );
++
++		source.traverse( ( sourceMesh ) => {
++
++			if ( ! sourceMesh.isSkinnedMesh ) return;
++			
++			var sourceBones = sourceMesh.skeleton.bones;
++			var clonedMesh = cloneLookup.get( sourceMesh );
++			clonedMesh.skeleton = sourceMesh.skeleton.clone();
++
++			// clonedMesh.skeleton.bones = sourceBones.map( function ( sourceBone ) {
++
++			// 	if ( ! cloneLookup.has( sourceBone ) ) {
++
++			// 		throw new Error( 'THREE.AnimationUtils: Required bones are not descendants of the given object.' );
++				
++			// 	}
++			// 	return cloneLookup.get( sourceBone );
++			// } );
++
++			clonedMesh.bind( clonedMesh.skeleton, sourceMesh.bindMatrix );
++
++		} );
++
++		return clone;
++	},
+ 
+ };
++function parallelTraverse ( a, b, callback ) {
++
++	callback( a, b );
++
++	for ( var i = 0; i < a.children.length; i ++ ) {
++
++		parallelTraverse( a.children[ i ], b.children[ i ], callback );
++
++	}
+ 
++}
+ 
+ export { AnimationUtils };
+--- a/node_modules/three/src/animation/KeyframeTrack.js
++++ b/node_modules/three/src/animation/KeyframeTrack.js
+@@ -447,6 +447,21 @@ Object.assign( KeyframeTrack.prototype, {
+ 
+ 		return this;
+ 
++	},
++	
++	clone: function () {
++		var times = AnimationUtils.arraySlice( this.times, 0 );
++
++		var values = AnimationUtils.arraySlice( this.values, 0 );
++
++		var TypedKeyframeTrack = this.constructor;
++
++		var track = new TypedKeyframeTrack( this.name, times, values );
++
++		// Interpolant argument to constructor is not saved, so copy the factory method directly.
++		track.createInterpolant = this.createInterpolant;
++
++		return track;
+ 	}
+ 
+ } );
+new file mode 100644
+--- /dev/null
++++ b/node_modules/three/src/loaders/MaterialUIButton.js
+@@ -0,0 +1,34 @@
++import React from 'react';
++import PropTypes from 'prop-types';
++import { withStyles } from '@material-ui/core/styles';
++import Button from '@material-ui/core/Button';
++
++const styles = theme => ({
++  button: {
++    margin: theme.spacing.unit,
++  },
++  input: {
++    display: 'none',
++  },
++});
++
++function ContainedButtons(props) {
++  const { classes } = props;
++  return (
++    <div>
++      <Button
++          variant={props.variant}
++          color={props.color} 
++          className={classes.button}
++          onClick={props.clicked}>
++        {props.children}
++      </Button>
++    </div>
++  );
++}
++
++ContainedButtons.propTypes = {
++  classes: PropTypes.object.isRequired,
++};
++
++export default withStyles(styles)(ContainedButtons);
