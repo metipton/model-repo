@@ -32,14 +32,17 @@ class Auth {
     scope: 'openid email profile',
   });
 
-  login = () => {
+  login = (callback) => {
     var that = this;
+    that.callback = callback;
     this.auth0.popup.authorize({
         redirectUri: 'http://localhost:3000/callback',
         owp: true
     }, function(err, authResult) {
         if (authResult && authResult.accessToken && authResult.idToken) {
             that.setSession(authResult);
+            console.log(that.callback);
+            typeof callback === 'function' && callback();
           } else if (err) {
             console.log(err);
             alert(`Error: ${err.error}. Check the console for further details.`);

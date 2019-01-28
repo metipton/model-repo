@@ -7,6 +7,7 @@ import axios from '../../axios-orders.js';
 import GLTFLoader from 'three-gltf-loader';
 import GLTFExporter from 'three-gltf-exporter';
 import STLExporter from '../../assets/utility/STLExporter';
+import OBJExporter from '../../assets/utility/OBJExporter';
 
 import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
@@ -24,6 +25,7 @@ import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor
 import LoadingScreen from './LoadingScreen/LoadingScreen';
 import BottomDrawer from '../../components/UI/BottomDrawer/BottomDrawer';
 import GPUPickHelper from './GPUPicker/GPUPicker';
+import Auth from '../../containers/auth0/Auth';
 
 
 
@@ -178,6 +180,12 @@ class ModelBuilder extends Component {
     componentDidMount() {
        this.init();
        this.loadInitialModelAndObjects();
+       const auth = new Auth();
+       this.auth = auth;
+    }
+
+    authLogin = (callback) => {
+        this.auth.login(callback);
     }
 
     componentWillUnmount() {
@@ -294,6 +302,7 @@ class ModelBuilder extends Component {
         this.gltfLoader = new GLTFLoader();
         this.exporter = new GLTFExporter();
         this.stlExporter = new STLExporter();
+        this.objExporter = new OBJExporter();
         this.mixer = null;
         this.animationScene = null;
         this.subclips = {};
@@ -1182,9 +1191,8 @@ class ModelBuilder extends Component {
         return clone;
     }
 
-    takeScreenshot = () => {
-        var height = 140;
-        var width = 140;
+    takeScreenshot = (height, width) => {
+
         //remove the skybox and ground
         this.scene.remove(this.skyBox);
         this.scene.remove(this.ground);
@@ -1230,6 +1238,20 @@ class ModelBuilder extends Component {
        this.scene.add(this.ground);
 
        return file;
+     }
+
+     exportModelOBJ = (cartNumber) => {
+        this.objExporter.parseAll(this.objectHolder.children, (object)=> {
+
+            return new Promise( ( resolve, reject ) => {
+                firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.obj' ).put(object).then(() => {
+                    console.log("Model upload complete");
+                    this.props.finishedAdd();
+                    resolve();
+                }).catch( error => {
+                    reject(error);
+                });
+        })});
      }
 
      exportModelSTL = (cartNumber) => {
@@ -1290,9 +1312,20 @@ class ModelBuilder extends Component {
         }, DEFAULT_OPTIONS);
     }
 
-    exportScreenshot = (cartNumber, url) => {
+    exportScreenshotToCart = (cartNumber, size, image) => {
         return new Promise( ( resolve, reject ) => {
-            firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot.png' ).put(url).then(() => {
+            firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot-' + size + '.png' ).put(image).then(() => {
+                console.log("Screenshot upload complete");
+                resolve();
+            }).catch( error => {
+                reject(error);
+            });
+        });
+    }
+
+    exportScreenshotToSaved = (identifier, size, image) => {
+        return new Promise( ( resolve, reject ) => {
+            firebase.storage().ref( '/Saved/' + this.props.userId + identifier + '/screenshot-' + size + '.png' ).put(image).then(() => {
                 console.log("Screenshot upload complete");
                 resolve();
             }).catch( error => {
@@ -1318,13 +1351,21 @@ class ModelBuilder extends Component {
     }
 
    addModelToCart = async () => {
+        let func = this.addModelToCart;
+        if(!this.props.userId){
+            this.authLogin();
+            return;
+        }
         this.props.addInProgress();
         var cartNum = this.getCartNumber();
-        var dataURL = this.takeScreenshot();
+        var smallImage = this.takeScreenshot(140, 140);
+        var largeImage = this.takeScreenshot(350, 350);
 
         this.exportModelGLTF(cartNum);
-        this.exportModelSTL(cartNum);
-        await this.exportScreenshot(cartNum, dataURL);
+        //this.exportModelSTL(cartNum);
+        //this.exportModelOBJ(cartNum);
+        await this.exportScreenshotToCart(cartNum, "sm", smallImage);
+        await this.exportScreenshotToCart(cartNum, "lg", largeImage);
         const timeStamp = new Date().getTime();
         let payload = {
             cartNumber: cartNum,
@@ -1440,6 +1481,15 @@ class ModelBuilder extends Component {
     }
 
     saveHero = () => {
+        let func = this.saveHero;
+        if(!this.props.userId){
+            this.authLogin(func);
+            return;
+        }
+        const timestamp = new Date().getTime();
+        console.log(timestamp);
+        var largeImage = this.takeScreenshot(350, 350);
+        this.exportScreenshotToSaved(timestamp, "lg", largeImage);
         alert("Save hero");
     }
 

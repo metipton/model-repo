@@ -55,6 +55,7 @@ class FloatCart extends Component {
       for(let i = 0; i < product.length; i++){
         this.addProduct(product[i]);
       }
+      
     });
   }
 
@@ -70,13 +71,6 @@ class FloatCart extends Component {
     const { cartProducts, updateCart } = this.props;
     let productAlreadyInCart = false;
 
-    // cartProducts.forEach(cp => {
-    //   if (cp.id === product.id) {
-    //     cp.quantity += product.quantity;
-    //     productAlreadyInCart = true;
-    //   }
-    // });
-
     if (!productAlreadyInCart) {
       cartProducts.push(product);
     }
@@ -90,7 +84,8 @@ class FloatCart extends Component {
 
     //remove 
     const storage = firebase.storage().ref();
-    await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot.png' ).delete();
+    await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot-sm.png' ).delete();
+    await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot-lg.png' ).delete();
     await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/model.glb' ).delete();
     const database = firebase.database().ref('users/' + this.props.userId + '/Cart/' + product.cartNumber );
     await database.set(null);
@@ -103,6 +98,7 @@ class FloatCart extends Component {
   }
 
   resetShoppingCart = async () => {
+    console.log("resetting shopping cart");
     for( let i = this.props.cartProducts.length - 1; i >= 0; i--){
       this.removeProduct(this.props.cartProducts[i]);
     }

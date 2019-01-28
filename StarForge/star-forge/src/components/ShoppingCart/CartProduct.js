@@ -31,7 +31,7 @@ class CartProduct extends Component {
 
   getThumbnail = () => {
     const storage = firebase.storage().ref();
-    storage.child('/Carts/' + this.props.userId + '/CartItem' + this.props.product.cartNumber + '/screenshot.png').getDownloadURL().then((url) => {
+    storage.child('/Carts/' + this.props.userId + '/CartItem' + this.props.product.cartNumber + '/screenshot-sm.png').getDownloadURL().then((url) => {
       this.setState({
         ...this.state,
         thumbnail: url

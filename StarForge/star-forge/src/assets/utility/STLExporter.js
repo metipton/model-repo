@@ -22,7 +22,7 @@ class STLExporter {
                 var matrixWorld = object.matrixWorld;
                 var mesh = object;
 
-                if (geometry instanceof THREE.BufferGeometry) {
+                if (geometry instanceof THREE.Geometry) {
 
                     var vertices = geometry.vertices;
                     var faces = geometry.faces;

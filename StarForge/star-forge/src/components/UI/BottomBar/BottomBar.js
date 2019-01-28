@@ -9,21 +9,14 @@ import Auth from '../../../containers/auth0/Auth';
 class BottomBar extends Component {
 
     componentDidMount  () {
-        const auth = new Auth();
-        this.auth = auth;
+        // const auth = new Auth();
+        // this.auth = auth;
     }
 
     handleAddToCart = () => {
-        if( !this.props.isAuthenticated){
-            this.authLogin();
-        } else {
-            this.props.addToCart();
-        }
+        this.props.addToCart();
     }
 
-    authLogin = () => {
-        this.auth.login();
-    }
 
     render (){
 
