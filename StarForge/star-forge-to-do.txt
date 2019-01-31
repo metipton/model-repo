@@ -40,8 +40,6 @@ Auth
 
 
 Checkout
-   Make sure that price validation happens server side
-	in the charge function, add logic that checks the cart
    Get order complete modal on successful checkout
    Send an order confirmation email when done
    Population RTDB with order details
@@ -49,16 +47,25 @@ Checkout
 	
    Populate customer subtree with order details
    clear customer source /save shipping info when complete
-   tap into voodoo api to send order info and models
+   tap into shapeway api to send order info and models
 
 Site security
    Get SSL cert and set up HTTPS
+   need new firebase API as the old one is compromised due to upload to github
+
+Backend
+   Shift as much logic to backend as possible
+	empty cart on checkout using cloud function
+	assign cart number using cloud function
+        verify shopping cart and price on checkout
 
 Known bugs
 	Need to make the editor example to file entire viewport dynamically
 	morph targets are not properly applied to non-race items on export
 	update to v100 threejs
+	cart number collision when adding to cart when not logged in
+
+
 
 	
 
-	

@@ -10,12 +10,14 @@ import PAYMENT_SERVER_URL from './constants/server';
 class Checkout extends React.Component {
 
   getCheckoutAmount = () => {
-
-    return 10 * 100;
+    //generate checkout amount from firebase
   }
 
-  successPayment = data => {
-    console.log("payment complete");
+  successPayment = (token) => {
+    console.log(token);
+    let id = token.id;
+    console.log(id);
+    firebase.database().ref(`/users/${this.props.userId}/charges/`).push({amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)});
     this.props.resetCart();
     this.props.closeCart();
   };
@@ -25,8 +27,8 @@ class Checkout extends React.Component {
   };
 
   onToken = token => {
-    firebase.database().ref(`/stripe_customers/${this.props.userId}/sources`).push({token: token.id})
-      .then(this.successPayment)
+    firebase.database().ref(`/users/${this.props.userId}/sources`).push({token: token.id, amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)})
+      .then(this.successPayment(token))
       .catch(this.errorPayment);
   }
   // ...

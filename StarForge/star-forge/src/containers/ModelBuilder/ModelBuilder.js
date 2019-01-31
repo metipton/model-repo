@@ -175,6 +175,7 @@ class ModelBuilder extends Component {
      this.animate = this.animate.bind(this)
      this.setObjectStateHandler = this.setObjectStateHandler.bind(this)
      this.loadModelFromCache = this.loadModelFromCache.bind(this);
+     this.loadModelFromMemory = this.loadModelFromMemory.bind(this);
     }
 
     componentDidMount() {
@@ -316,6 +317,42 @@ class ModelBuilder extends Component {
         this.poseTime = new Date().getTime();
         this.updateAABBTrue = false;
         this.aabbDelay = 50;
+
+        this.objectPool = {
+            Race: {},
+            Face: {},
+            Expression: {},
+            Ears: {},
+            Hair: {},
+            Beard: {},
+            Eyebrows: {},
+            Eyes: {},
+            Teeth: {},
+            Horns: {},
+            Forehead: {},
+            Torso: {},
+            Legs: {},
+            Headwear: {},
+            Shoulders: {},
+            Chest: {},
+            GloveLeft: {},
+            GloveRight: {},
+            Gloves: {},
+            Feet: {},
+            FootLeft: {},
+            FootRight: {},
+            LegsWearable: {},
+            HandRight: {},
+            HandLeft: {},
+            Back: {},
+            Mask: {},
+            UpperFace: {},
+            LowerFace: {},
+            Base: {},
+            BaseItem: {},
+            Pet: {},
+            Pose: {},
+        }
 
         this.morphTargets = {
             body: {
@@ -512,7 +549,6 @@ class ModelBuilder extends Component {
    }
 
    animate = () => {
-
         requestAnimationFrame( this.animate );
         var delta = this.clock.getDelta();
         if (this.mixer !== null && this.mixer !== undefined) {
@@ -569,7 +605,6 @@ class ModelBuilder extends Component {
                 RESOURCES_LOADED: true
             })});
             this.resetState = this.state;
-            console.log(this.resetState);
    }
 
  
@@ -582,6 +617,7 @@ class ModelBuilder extends Component {
            try {
 
                const downloadedFile = await this.downloadObjectFromStorage(category, selection);
+               await this.loadModelToMemory(category, selection, downloadedFile);
                await this.setObjectStateHandler(category, selection, downloadedFile, true, fromInit);
 
            } catch (error) {
@@ -618,6 +654,30 @@ class ModelBuilder extends Component {
        });
    }
 
+   loadModelToMemory = (category, selection, file) => {
+    return new Promise((resolve, reject) => {
+        const url = window.URL.createObjectURL(file);
+        this.gltfLoader.load(
+            url,
+            async (object) => {
+                this.objectPool= {
+                    ...this.objectPool,
+                    [category] : {
+                        ...this.objectPool[category],
+                        [selection]: object
+                    }
+                }
+
+                resolve();
+            },
+             null,
+            (error) => {
+                reject(error);
+            }
+        )
+    });
+   }
+
 
     async setObjectStateHandler (category, selection, downloadedFile, fromDownload, fromInit) {
         return new Promise(async (resolve, reject) => {
@@ -645,7 +705,7 @@ class ModelBuilder extends Component {
                                 [category]: url
                             },
                         }, async update => {
-                            await this.updateSceneObject(category, selection, prevName);
+                            await this.updateSceneObject(category, selection, fromDownload, prevName);
                             resolve();
                         })
                     } else {
@@ -660,7 +720,7 @@ class ModelBuilder extends Component {
                                 [category]: this.state.cache[category][selection]
                             }
                         }, async update => {
-                            await this.updateSceneObject(category,selection, prevName);
+                            await this.updateSceneObject(category,selection, fromDownload, prevName);
                             resolve();
                         })
                     }
@@ -688,13 +748,14 @@ class ModelBuilder extends Component {
         })
     }
 
-    async updateSceneObject ( category, selection, prevName ) {
+    async updateSceneObject ( category, selection, fromDownload, prevName ) {
         return new Promise( async (resolve, reject ) => {
             try{
 
                if( selection && this.state.currentObject[category] !== null ){
                    try {
-                       const object = await this.loadModelFromCache(category,  this.state.currentObject[ category ] );
+                       //const object = await this.loadModelFromCache(category,  this.state.currentObject[ category ] );
+                       const object = this.loadModelFromMemory(category, selection, fromDownload);
                        if( prevName !== "''" ){
                            this.removeObjectFromScene( prevName );
                        }
@@ -711,7 +772,7 @@ class ModelBuilder extends Component {
                             this.armatureLoaded = true;
                             
                        } else {
-                        this.setupObjectImport(category, selection, object)
+                        this.setupObjectImport(category, selection, fromDownload, object)
                        }
                    } catch ( error ) {
                        console.log( error );
@@ -723,6 +784,44 @@ class ModelBuilder extends Component {
        }})
    }
 
+
+
+   loadModelFromMemory = (category, selection, fromDownload) => {
+       let object = this.objectPool[category][selection];
+       if( category === 'Race' && !this.armatureLoaded ){
+            this.animationScene = object;
+
+            this.mixer = new THREE.AnimationMixer(object.scene);
+            var allAction = this.mixer.clipAction( object.animations[ 0 ] );
+
+            for( let i = 0; i < object.animations[0].tracks[0].times.length; i++) {
+                let poseNum = "Pose" + ( i + 1 );
+                this.subclips = {
+                    ...this.subclips,
+                    [poseNum]: THREE.AnimationUtils.subclip( allAction._clip, poseNum, i, i + 1  )
+                };
+
+            }
+            object.scene.children[0].children[0].castShadow = true;
+            this.skeleton = object.scene.children[0].children[0].skeleton;
+            this.bones = this.skeleton.bones;
+
+            for( let clip in this.subclips ) {
+                this.mixer.clipAction( this.subclips[clip]);
+                this.actions[clip] = this.mixer.clipAction( this.subclips[clip]);
+            }
+
+            
+            //set the pose to current selected pose if not select, else set to pose 1
+            this.setPoseByName(this.state.currentName['Pose']);
+        }
+        if(fromDownload){
+            return object.scene;
+        } else {
+            return object;
+        }
+    
+   }
 
     loadModelFromCache = (category, url) => {
         return new Promise((resolve, reject) => {
@@ -759,6 +858,7 @@ class ModelBuilder extends Component {
                         //this.createNewAABB( object.scene.children[0].children[0]);
                         
                     }
+
                     resolve(object.scene);
                 },
                  null,
@@ -1070,14 +1170,27 @@ class ModelBuilder extends Component {
 
 
 
-   setupObjectImport(category, selection, object) {
-        let child = object.children[0].children[0];
+   setupObjectImport(category, selection, fromDownload, object) {
+       let child;
+       if(fromDownload){
+            child = object.children[0].children[0];
+            child.frustumCulled = false;
+            child.castShadow = true;
+            child.category = category;
+            child.selection = selection;
+            this.objectPool= {
+                ...this.objectPool,
+                [category] : {
+                    ...this.objectPool[category],
+                    [selection]: child
+                }
+            }
+
+       } else {
+            child = object;
+       }
+
         let bone = this.getBoneByCategory(category);
-        child.name = category;
-        child.frustumCulled = false;
-        child.castShadow = true;
-        child.category = category;
-        child.selection = selection;
         this.activeObjects.push(child.name);
        //imported heirachy scene->object3D->skinnedmesh
         try {
@@ -1085,9 +1198,17 @@ class ModelBuilder extends Component {
             child.skeleton = this.skeleton;
             child.bind(child.skeleton, bone.matrixWorld);
         } catch (error){
-
+            //console.log(error);
         }
-        THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
+        if(fromDownload){
+            THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
+            console.log(this.objectPool);
+        } else {
+            this.objectHolder.add(child);
+            console.log(child);
+            console.log(this.objectPool);
+        }
+
         this.applyMorphTargetsOnImport(child);
         child.name = category;
    }
@@ -1335,29 +1456,49 @@ class ModelBuilder extends Component {
     }
 
     getCartNumber = () => {
-        let currentCartNums = [];
-        for( let i = 0; i < this.props.currentCart.length; i++ ){
-            currentCartNums.push(this.props.currentCart[i].cartNumber);
-        }
-        currentCartNums.sort();
-        let cartNum = 0;
-        for(let i = 0; i < currentCartNums.length; i++ ){
-            if( cartNum !== currentCartNums[i]){
-                break;
-            }
-            cartNum++;
-        }
-        return cartNum;
+        const url = "https://us-central1-starforge-153cc.cloudfunctions.net/getCartNumber?userid=" + this.props.userId;
+        return new Promise( ( resolve, reject ) => {
+            fetch(url)
+                .then((response) => {
+                    resolve(response.json())
+                })
+                .catch(() => {
+                    try{
+                        let currentCartNums = [];
+                        for( let i = 0; i < this.props.currentCart.length; i++ ){
+                            currentCartNums.push(this.props.currentCart[i].cartNumber);
+                        }
+                        currentCartNums.sort();
+                        let cartNum = 0;
+                        for(let i = 0; i < currentCartNums.length; i++ ){
+                            if( cartNum !== currentCartNums[i]){
+                                break;
+                            }
+                            cartNum++;
+                        }
+                        resolve(cartNum);
+                    } catch(error){
+                        reject(error);
+                    };
+                });
+            })
     }
+    
 
    addModelToCart = async () => {
         let func = this.addModelToCart;
         if(!this.props.userId){
-            this.authLogin();
+            this.authLogin(func);
             return;
         }
         this.props.addInProgress();
-        var cartNum = this.getCartNumber();
+
+        var cartNum = await this.getCartNumber();
+        if(!Number.isInteger(cartNum)){
+            cartNum = cartNum["cartNumber"];
+            console.log(cartNum);
+        }
+        console.log(cartNum);
         var smallImage = this.takeScreenshot(140, 140);
         var largeImage = this.takeScreenshot(350, 350);
 
