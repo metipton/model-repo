@@ -34,6 +34,42 @@ import Auth from '../../containers/auth0/Auth';
 class ModelBuilder extends Component {
 
     state = {
+        selected: {
+            Genre: 'Sci-fi',
+            Race: '',
+            Face: '',
+            Expression: '',
+            Ears: '',
+            Hair: '',
+            Beard: '',
+            Eyebrows: '',
+            Eyes: '',
+            Teeth: '',
+            Horns: '',
+            Forehead: '',
+            Torso: '',
+            Legs: '',
+            Headwear: '',
+            Shoulders: '',
+            Chest: '',
+            GloveLeft: '',
+            GloveRight: '',
+            Gloves: '',
+            FootLeft: '',
+            FootRight: '',
+            LegsWearable: '',
+            HandRight: '',
+            HandLeft: '',
+            Back: '',
+            Mask: '',
+            UpperFace: '',
+            LowerFace: '',
+            Base: '',
+            BaseItem: '',
+            Pet: '',
+            Pose: '',
+            Material: ''
+        },
         currentName: {
             Genre: 'Sci-fi',
             Race: '',
@@ -610,6 +646,14 @@ class ModelBuilder extends Component {
  
 
    async updateObjectHandler(category, selection, fromInit) {
+        this.setState({
+            ...this.state,
+            selected: {
+                ...this.state.selected,
+                [category] : selection
+            }}, () => {
+                console.log(this.state);
+            });
 
        const alreadyInCache = this.isObjectInCache(category, selection);
 
@@ -621,7 +665,10 @@ class ModelBuilder extends Component {
                await this.setObjectStateHandler(category, selection, downloadedFile, true, fromInit);
 
            } catch (error) {
-               console.log(error);
+               this.setState({
+                   ...this.state,
+                   selected: this.state.currentName
+               });
            }
         } else {
             try {
@@ -629,7 +676,10 @@ class ModelBuilder extends Component {
                 await this.setObjectStateHandler(category, selection, this.state.cache[category][selection], false, fromInit);
 
             } catch (error) {
-                console.log(error);
+                this.setState({
+                    ...this.state,
+                    selected: this.state.currentName
+                });
             }
        }
    }
@@ -649,7 +699,11 @@ class ModelBuilder extends Component {
                    xhr.send();
                })
                .catch(error => {
-                   reject(error);
+                    console.log(error);
+                    this.setState({
+                        ...this.state,
+                        selected: this.state.currentName
+                    });
                })
        });
    }
@@ -672,6 +726,11 @@ class ModelBuilder extends Component {
             },
              null,
             (error) => {
+                console.log(error);
+                this.setState({
+                    ...this.state,
+                    selected: this.state.currentName
+                });
                 reject(error);
             }
         )
@@ -689,6 +748,10 @@ class ModelBuilder extends Component {
                         const url = window.URL.createObjectURL(downloadedFile);
                         this.setState({
                             ...this.state,
+                            selected: {
+                                ...this.state.selected,
+                                [category] : selection
+                            },
                             currentName: {
                                 ...this.state.currentName,
                                 [category] : selection
@@ -711,6 +774,10 @@ class ModelBuilder extends Component {
                     } else {
                         this.setState({
                             ...this.state,
+                            selected: {
+                                ...this.state.selected,
+                                [category] : selection
+                            },
                             currentName: {
                                 ...this.state.currentName,
                                 [category] : selection
@@ -729,6 +796,10 @@ class ModelBuilder extends Component {
                         this.removeObjectFromScene(category);
                         this.setState({
                             ...this.state,
+                            selected: {
+                                ...this.state.currentName,
+                                [category] : "''"
+                            },
                             currentName: {
                                 ...this.state.currentName,
                                 [category] : "''"
@@ -743,7 +814,11 @@ class ModelBuilder extends Component {
                     }
                 }
             } catch (error) {
-                reject(error);
+                console.log(error);
+                this.setState({
+                    ...this.state,
+                    selected: this.state.currentName
+                });
             }
         })
     }
@@ -775,11 +850,20 @@ class ModelBuilder extends Component {
                         this.setupObjectImport(category, selection, fromDownload, object)
                        }
                    } catch ( error ) {
-                       console.log( error );
+                    console.log(error);
+                    this.setState({
+                        ...this.state,
+                        selected: this.state.currentName
+                    });
                    }
                };
                resolve();
        } catch ( error ) {
+            console.log(error);
+            this.setState({
+                ...this.state,
+                selected: this.state.currentName
+            });
            reject( error );
        }})
    }
@@ -863,6 +947,11 @@ class ModelBuilder extends Component {
                 },
                  null,
                 (error) => {
+                    console.log(error);
+                    this.setState({
+                        ...this.state,
+                        selected: this.state.currentName
+                    });
                     reject(error);
                 }
             )
@@ -896,6 +985,10 @@ class ModelBuilder extends Component {
          }
          this.setState({
              ...this.state,
+             selected: {
+                ...this.state.selected,
+                Pose : pose
+            },
              currentName: {
                  ...this.state.currentName,
                  Pose : pose
@@ -1063,6 +1156,10 @@ class ModelBuilder extends Component {
         if(modelPrice && !this.state.materials.matType !== material){
             this.setState({
                 ...this.state,
+                selected: {
+                    ...this.state.selected,
+                    Material: material
+                },
                 currentName: {
                     ...this.state.currentName,
                     Material: material
@@ -1202,11 +1299,8 @@ class ModelBuilder extends Component {
         }
         if(fromDownload){
             THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
-            console.log(this.objectPool);
         } else {
             this.objectHolder.add(child);
-            console.log(child);
-            console.log(this.objectPool);
         }
 
         this.applyMorphTargetsOnImport(child);
@@ -1574,6 +1668,7 @@ class ModelBuilder extends Component {
         //correct morph targets
         this.setState({
             ...this.state,
+            selected: this.resetState.selected,
             currentName: this.resetState.currentName,
             currentObject: this.resetState.currentObject,
             links: this.resetState.links,

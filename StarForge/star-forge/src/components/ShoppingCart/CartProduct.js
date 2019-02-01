@@ -6,6 +6,7 @@ import 'firebase/storage';
 
 import classes from './FloatCart.css';
 
+import Tooltip from '../UI/Tooltip/Tooltip';
 import Thumb from "./Thumb";
 import util from './util';
 
@@ -15,6 +16,7 @@ class CartProduct extends Component {
   state = {
     isMouseOver: false,
     thumbnail: null,
+    largeThumbnail: null
   }
 
   handleMouseOver = () => {
@@ -27,6 +29,7 @@ class CartProduct extends Component {
 
   componentDidMount() {
     this.getThumbnail();
+    this.getLargeThumbnail();
  }
 
   getThumbnail = () => {
@@ -35,6 +38,16 @@ class CartProduct extends Component {
       this.setState({
         ...this.state,
         thumbnail: url
+      })
+    })
+  }
+
+  getLargeThumbnail = () => {
+    const storage = firebase.storage().ref();
+    storage.child('/Carts/' + this.props.userId + '/CartItem' + this.props.product.cartNumber + '/screenshot-lg.png').getDownloadURL().then((url) => {
+      this.setState({
+        ...this.state,
+        largeThumbnail: url
       })
     })
   }
@@ -53,7 +66,9 @@ class CartProduct extends Component {
                 classes={classes["shelf-item__thumb"]}
                 src={this.state.thumbnail}
                 alt={product.title}
-              />
+                lgSrc={this.state.largeThumbnail}
+                cartNum={this.props.product.cartNumber}
+                />
     }
 
     return (
