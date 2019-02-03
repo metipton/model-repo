@@ -15,6 +15,8 @@ Color Editor
 	Figure out the UI and functionality required 
 
 Editor
+	Update selected for all editors
+	figure out how to load feet concurrently
 	Fix sizing of bar when category is selected (make it smaller)
 	Move add to cart to other side
         Remove buttons that don't do anything.
@@ -31,7 +33,7 @@ Bottom toolbar -  save character, my characters, screenshot,
 
 
 Shopping cart
-	Add a larger image that pops up when scrolling over
+	Add cloud function that takes thumbnails, model, and payload data as parameters and then puts them in the right place.  				If any fail, 	abort
 
    
 Auth
@@ -56,14 +58,12 @@ Site security
 Backend
    Shift as much logic to backend as possible
 	empty cart on checkout using cloud function
-	assign cart number using cloud function
         verify shopping cart and price on checkout
 
 Known bugs
 	Need to make the editor example to file entire viewport dynamically
 	morph targets are not properly applied to non-race items on export
 	update to v100 threejs
-	cart number collision when adding to cart when not logged in
 
 
 

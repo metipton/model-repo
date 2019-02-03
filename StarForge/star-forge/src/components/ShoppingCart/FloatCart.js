@@ -82,11 +82,6 @@ class FloatCart extends Component {
   removeProduct = async (product) => {
     const { cartProducts, updateCart } = this.props;
 
-    //remove 
-    const storage = firebase.storage().ref();
-    await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot-sm.png' ).delete();
-    await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/screenshot-lg.png' ).delete();
-    await storage.child( '/Carts/' + this.props.userId + '/CartItem' + product.cartNumber + '/model.glb' ).delete();
     const database = firebase.database().ref('users/' + this.props.userId + '/Cart/' + product.cartNumber );
     await database.set(null);
 
@@ -98,10 +93,12 @@ class FloatCart extends Component {
   }
 
   resetShoppingCart = async () => {
-    console.log("resetting shopping cart");
-    for( let i = this.props.cartProducts.length - 1; i >= 0; i--){
-      this.removeProduct(this.props.cartProducts[i]);
-    }
+    const { cartProducts, updateCart } = this.props;
+    const database = firebase.database().ref('users/' + this.props.userId + '/Cart');
+    await database.set(null);
+    cartProducts.splice(0, this.props.cartProducts.length);
+    await updateCart(cartProducts);
+
 
   }
 

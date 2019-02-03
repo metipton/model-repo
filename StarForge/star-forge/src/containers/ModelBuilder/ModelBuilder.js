@@ -1590,13 +1590,11 @@ class ModelBuilder extends Component {
         var cartNum = await this.getCartNumber();
         if(!Number.isInteger(cartNum)){
             cartNum = cartNum["cartNumber"];
-            console.log(cartNum);
         }
-        console.log(cartNum);
         var smallImage = this.takeScreenshot(140, 140);
         var largeImage = this.takeScreenshot(350, 350);
 
-        this.exportModelGLTF(cartNum);
+        await this.exportModelGLTF(cartNum);
         //this.exportModelSTL(cartNum);
         //this.exportModelOBJ(cartNum);
         await this.exportScreenshotToCart(cartNum, "sm", smallImage);
