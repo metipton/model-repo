@@ -193,8 +193,9 @@ class ModelBuilder extends Component {
             }
         },
         materials: {
-            matType: 'Standard Plastic',
-            price: 19.99
+            matType: 'Standard',
+            price: 0,
+            prices: null
         },
         modelName: 'Nameless',
         loading: true,
@@ -214,8 +215,10 @@ class ModelBuilder extends Component {
      this.loadModelFromMemory = this.loadModelFromMemory.bind(this);
     }
 
+
     componentDidMount() {
        this.init();
+       this.getPriceFromServer();
        this.loadInitialModelAndObjects();
        const auth = new Auth();
        this.auth = auth;
@@ -228,6 +231,32 @@ class ModelBuilder extends Component {
     componentWillUnmount() {
      this.stop()
      this.mount.removeChild(this.renderer.domElement)
+    }
+
+    getPriceFromServer = () => {
+        let prices = {};
+        const database = firebase.database().ref('Prices' );
+        database.once("value").then((snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+              // childData will be the actual contents of the child
+
+              prices = {
+                  ...prices,
+                  [childSnapshot.key] : childSnapshot.val()
+                };   
+            })
+        }).then( () => {
+            this.setState({
+                ...this.state,
+                materials: {
+                    ...this.state.materials,
+                    "price": prices.Standard,
+                    "prices": prices
+                }
+
+            })
+        })
+        
     }
 
     
@@ -651,9 +680,7 @@ class ModelBuilder extends Component {
             selected: {
                 ...this.state.selected,
                 [category] : selection
-            }}, () => {
-                console.log(this.state);
-            });
+            }});
 
        const alreadyInCache = this.isObjectInCache(category, selection);
 
@@ -1151,8 +1178,7 @@ class ModelBuilder extends Component {
 
     setMaterialHandler = (material) => {
         this.updateMaterialSelectionOnModels(material);
-        var priceDict = {'Standard': 19.99, 'Premium': 29.99, 'Steel': 34.99, 'Bronze': 99.99, 'Digital': 9.99};
-        const modelPrice = priceDict[material];
+        const modelPrice = this.state.materials.prices[material];
         if(modelPrice && !this.state.materials.matType !== material){
             this.setState({
                 ...this.state,
@@ -1165,6 +1191,7 @@ class ModelBuilder extends Component {
                     Material: material
                 },
                 materials: {
+                    ...this.state.materials,
                     matType: material,
                     price: modelPrice
                 }
@@ -1616,7 +1643,7 @@ class ModelBuilder extends Component {
 
         //push payload to firebase database
         //const database = firebase.database().ref('Carts/' + this.props.userId + '/Cart' + cartNum + '/');
-        const database = firebase.database().ref('users/' + this.props.userId + '/Cart/' + cartNum + '/' );
+        const database = firebase.database().ref('users/' + this.props.userId + '/Cart/Items/' + cartNum + '/' );
         database.set(payload);
 
         this.props.addToCart(payload);
@@ -1797,7 +1824,8 @@ class ModelBuilder extends Component {
                 toggleColor={this.toggleColorHandler} 
                 setColor={(color) => this.setHexColor(color)} />
             <BottomBar 
-                addToCart={this.addModelToCart} />  
+                addToCart={this.addModelToCart}
+                materialPrice={this.state.materials.price} />  
             <BottomDrawer
                 name={this.state.modelName}
                 resetHero={this.resetHero}

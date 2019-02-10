@@ -19,7 +19,7 @@ class BottomBar extends Component {
 
 
     render (){
-
+        let addText = "Add to Cart     ($" + this.props.materialPrice + ")";
         let bottomBar = (
             <div className={classes.BottomBar}>
                 <div className={classes.Checkout}>
@@ -27,7 +27,7 @@ class BottomBar extends Component {
                         disabled={false}
                         variant="contained"
                         color="primary"
-                        clicked={this.handleAddToCart}>Add to Cart</MaterialUIButton>
+                        clicked={this.handleAddToCart}>{addText}</MaterialUIButton>
                 </div>
             </div>
         );

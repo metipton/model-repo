@@ -9,8 +9,23 @@ import PAYMENT_SERVER_URL from './constants/server';
 
 class Checkout extends React.Component {
 
-  getCheckoutAmount = () => {
-    //generate checkout amount from firebase
+  getCheckoutAmount = async () => {
+    // let shipping;
+    // let cartTotal;
+    // let that = this;
+    // return new Promise( ( resolve, reject ) => {
+    //   firebase.database().ref(`/Prices`).once('value')
+    //     .then(function(snapshot) {
+    //       shipping = snapshot.val().Shipping;
+    //       return firebase.database().ref(`/users/${that.props.userId}/Cart`).once('value');
+    //     }).then(function(snapshot) {
+    //       cartTotal = snapshot.val().cartTotal;
+    //       let total = shipping + cartTotal;
+    //       total = total * 100;
+    //       total = total.toFixed(2);
+    //       console.log(total);
+    //       resolve(total);
+    //     })  
   }
 
   successPayment = (token) => {
@@ -35,7 +50,14 @@ class Checkout extends React.Component {
 
   render() {
     const CURRENCY = 'USD';
-
+    // let checkoutAmount; 
+    // this.getCheckoutAmount().then((res) => {
+    //   checkoutAmount = res.val;
+    // })
+    // console.log(checkoutAmount);
+    // if(typeof checkoutAmount !== 'number'){
+    //   checkoutAmount = 0;
+    // }
     return (
       <div >
         <StripeCheckout

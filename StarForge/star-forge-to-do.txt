@@ -1,10 +1,8 @@
-3d modeling
-
 Model Builder
-   Implement color scenes
-   zoom head when clicking on the head
-
-UI
+   	Implement color scenes
+   	zoom head when clicking on the head
+	When changing multiple items, have items added to pool and add at same time
+	
 Styling:
 	Remove background for all images
         Apply halo to selected image 
@@ -24,7 +22,6 @@ Editor
 	Make race always two column with male and female side
 	Make two handed/sided things always two column with a selector between them
 	Material - Card w/ buttons and images - Retextures the model
-	Have the material selection update the price on the add to cart button
 	Abstract out the gridList component
 	add a clear button to the bar
    
@@ -33,38 +30,35 @@ Bottom toolbar -  save character, my characters, screenshot,
 
 
 Shopping cart
-	Add cloud function that takes thumbnails, model, and payload data as parameters and then puts them in the right place.  				If any fail, 	abort
+	figure out rollback if model fails to upload
 
    
 Auth
-   Update the database rules code
-   Change header for Auth log in
+	Update the database rules code
+	Change header for Auth log in
 
 
 Checkout
-   Get order complete modal on successful checkout
-   Send an order confirmation email when done
-   Population RTDB with order details
-   execute cloud function to move all models to user -> orders -> order#
-	
-   Populate customer subtree with order details
-   clear customer source /save shipping info when complete
-   tap into shapeway api to send order info and models
+	Get order complete modal on successful checkout
+	Send an order confirmation email when done	
+	tap into shapeway api to send order info and models
 
 Site security
-   Get SSL cert and set up HTTPS
-   need new firebase API as the old one is compromised due to upload to github
+	Get SSL cert and set up HTTPS
+	need new firebase API as the old one is compromised due to upload to github
 
 Backend
-   Shift as much logic to backend as possible
-	empty cart on checkout using cloud function
+
+	have transaction for adding files to shopping cart
         verify shopping cart and price on checkout
+Make charge happen after source is created
 
 Known bugs
-	Need to make the editor example to file entire viewport dynamically
+	Need to make the editor example to fill entire viewport dynamically
 	morph targets are not properly applied to non-race items on export
 	update to v100 threejs
-
+	Race fails when changing
+	wrong pants when clicking new ->
 
 
 	

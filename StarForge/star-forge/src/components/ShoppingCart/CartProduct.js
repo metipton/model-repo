@@ -6,8 +6,7 @@ import 'firebase/storage';
 
 import classes from './FloatCart.css';
 
-import Tooltip from '../UI/Tooltip/Tooltip';
-import Thumb from "./Thumb";
+import Thumb from "./Thumb/Thumb";
 import util from './util';
 
 

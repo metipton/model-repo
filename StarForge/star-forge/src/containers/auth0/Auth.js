@@ -41,7 +41,6 @@ class Auth {
     }, function(err, authResult) {
         if (authResult && authResult.accessToken && authResult.idToken) {
             that.setSession(authResult);
-            console.log(that.callback);
             typeof callback === 'function' && callback();
           } else if (err) {
             console.log(err);
@@ -51,8 +50,7 @@ class Auth {
   }
 
   getProfile = (idToken) => {
-    this.email = decode(idToken).email;
-    console.log(this.email);
+    this.email = decode(idToken).email;;
   }
 
   logout() {
@@ -106,7 +104,6 @@ class Auth {
     const decodedResult = decode(authResult.idToken);
     this.email = decodedResult.email;
     this.userId = decodedResult.sub;
-    console.log(decode(authResult.idToken));
     this.store.dispatch(actions.socialAuth(this.accessToken, this.userId, this.idToken, this.expiresAt, this.email));
 
   }

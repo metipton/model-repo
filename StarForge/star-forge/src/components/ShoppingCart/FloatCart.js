@@ -45,17 +45,15 @@ class FloatCart extends Component {
    pullCartFromFirebase = () => {
     let product = [];
     const cart = firebase.database().ref();
-    const json = cart.child('users/' + this.props.userId + '/Cart');
+    const json = cart.child('users/' + this.props.userId + '/Cart/Items');
     json.once("value").then((snapshot) => {
       snapshot.forEach((childSnapshot) => {
         // childData will be the actual contents of the child
-        product.push(childSnapshot.val());
+        product.push(childSnapshot.val()); 
       })
-      console.log()
       for(let i = 0; i < product.length; i++){
         this.addProduct(product[i]);
-      }
-      
+      }   
     });
   }
 
@@ -82,7 +80,7 @@ class FloatCart extends Component {
   removeProduct = async (product) => {
     const { cartProducts, updateCart } = this.props;
 
-    const database = firebase.database().ref('users/' + this.props.userId + '/Cart/' + product.cartNumber );
+    const database = firebase.database().ref('users/' + this.props.userId + '/Cart/Items/' + product.cartNumber );
     await database.set(null);
 
     const index = cartProducts.findIndex(p => p.id === product.id);
@@ -94,12 +92,10 @@ class FloatCart extends Component {
 
   resetShoppingCart = async () => {
     const { cartProducts, updateCart } = this.props;
-    const database = firebase.database().ref('users/' + this.props.userId + '/Cart');
-    await database.set(null);
+    // const database = firebase.database().ref('users/' + this.props.userId + '/Cart/Items');
+    // await database.set(null);
     cartProducts.splice(0, this.props.cartProducts.length);
     await updateCart(cartProducts);
-
-
   }
 
   proceedToCheckout = () => {
