@@ -1,0 +1,39 @@
+.Toolbar {
+    color: #06437A;
+    height: 3rem;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.25rem;
+    box-sizing: border-box;
+    z-index: 90;
+    overflow: hidden;
+    background-color: #d9dbde;
+}
+
+.Toolbar span {
+    color : #06437A;
+    text-decoration: none;
+    opacity: 1.0;
+}
+
+
+.toolbarItem{
+    font-size: 1.25rem;
+    vertical-align: center;
+    cursor: pointer;
+}
+
+.shoppingCart {
+    color: #FFA500 ;
+}
+
+.socialMedia {
+    width: 8.25rem;
+    margin-left: -4.125rem;
+    left: 50%;
+}
