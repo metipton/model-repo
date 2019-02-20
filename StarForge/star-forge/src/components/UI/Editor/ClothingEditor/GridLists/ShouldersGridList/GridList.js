@@ -86,7 +86,7 @@ class ImageGridList extends Component {
           <GridList cellHeight={150} className={classes.gridList} cols={3}>
             {tileData.map(tile => (
               <GridListTile
-                  className={(this.props.state.currentName.Shoulders === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                  className={(this.props.state.selected.Shoulders === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                   key={tile.img}
                   cols={tile.cols || 1}
                   onClick={() => this.clickHandler('Shoulders', tile.name, tile.name)}>

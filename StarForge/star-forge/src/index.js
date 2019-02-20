@@ -9,7 +9,7 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import newStore from './store';
-import { normalize } from 'path';
+
 
 
 const store = newStore;

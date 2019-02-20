@@ -106,7 +106,7 @@ class ImageGridList extends Component {
             {tileDataRight.map((tile, index) => (
                 <div className={classes.container} key = {index}>
                   <GridListTile
-                      className={(this.props.state.currentName.HandRight === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      className={(this.props.state.selected.HandRight === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tile.cols || 1}
                       onClick={() => this.clickHandler('HandRight', tile.name)}>
                     <img className={classes.image}  src={tileDataRight[index].img} alt={tileDataRight[index].title} />

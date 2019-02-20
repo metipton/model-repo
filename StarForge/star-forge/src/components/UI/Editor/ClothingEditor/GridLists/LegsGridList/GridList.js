@@ -75,7 +75,7 @@ const styles = theme => ({
 class ImageGridList extends Component {
 
 
-    clickHandler = (category, selection, panel) => {
+    clickHandler = (category, selection) => {
         this.props.updateSelection(category, selection);
     };
 
@@ -87,7 +87,7 @@ class ImageGridList extends Component {
           <GridList cellHeight={150} className={classes.gridList} cols={3}>
             {tileData.map(tile => (
               <GridListTile
-                  className={(this.props.state.currentName.LegsWearable === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                  className={(this.props.state.selected.LegsWearable === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                   key={tile.img}
                   cols={tile.cols || 1}
                   onClick={() => this.clickHandler('LegsWearable', tile.name, tile.name)}>

@@ -4,12 +4,12 @@ html {
 }
 .button {
     background-color: #a11544;
-    width: 150px;
-    height: 45px;
-    -moz-border-radius-topleft: 25px 25px;
-    -moz-border-radius-topright: 25px 25px;
-    border-top-left-radius: 25px 25px;
-    border-top-right-radius: 25px 25px;
+    width: 9.375rem;
+    height: 2.8125rem;
+    -moz-border-radius-topleft: 1.5625rem 1.5625rem;
+    -moz-border-radius-topright: 1.5625rem 1.5625rem;
+    border-top-left-radius: 1.5625rem 1.5625rem;
+    border-top-right-radius: 1.5625rem 1.5625rem;
     color:#fff;
     text-align: center;
     float:right;
@@ -31,6 +31,6 @@ html {
     background: #c3c3c3;
 }
 .drawer-inside.openup {
-    height: 210px;
+    height: 13.125rem;
     transition: height .7s ease;
 }

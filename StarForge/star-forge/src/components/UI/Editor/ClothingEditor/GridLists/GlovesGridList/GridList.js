@@ -91,7 +91,7 @@ class ImageGridList extends Component {
             {tileDataRight.map((tile, index) => (
                 <div className={classes.container} key = {index}>
                   <GridListTile
-                      className={(this.props.state.currentName.GloveRight === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      className={(this.props.state.selected.GloveRight === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tile.cols || 1}
                       onClick={() => this.clickHandler('GloveRight', tile.name)}>
                      <img className={classes.image}  src={tileDataRight[index].img} alt={tileDataRight[index].title} />
@@ -108,7 +108,7 @@ class ImageGridList extends Component {
                           onClick={() => this.props.gloveLink(index)}/>}
 
                   <GridListTile
-                      className={(this.props.state.currentName.GloveLeft === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      className={(this.props.state.selected.GloveLeft === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tileDataRight[index].cols || 1}
                       onClick={() => this.clickHandler('GloveLeft', tileDataRight[index].name)}>
                     <img className={classes.image}  src={tileDataLeft[index].img} alt={tileDataLeft[index].title} />

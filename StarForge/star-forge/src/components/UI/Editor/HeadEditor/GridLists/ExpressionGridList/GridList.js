@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import tileData from './TileData';
@@ -79,26 +80,23 @@ const styles = theme => ({
 });
 
 
-/**
- * The example data is structured as follows:
- *
- * import image from 'path/to/image.jpg';
- * [etc...]
- *
- * const tileData = [
- *   {
- *     img: image,
- *     title: 'Image',
- *     author: 'author',
- *     cols: 2,
- *   },
- *   {
- *     [etc...]
- *   },
- * ];
- */
 class ImageGridList extends Component {
 
+    getGridListCols = () => {
+        if (isWidthUp('xl', this.props.width)) {
+          return 6;
+        }
+    
+        if (isWidthUp('lg', this.props.width)) {
+          return 3;
+        }
+    
+        if (isWidthUp('md', this.props.width)) {
+          return 2;
+        }
+    
+        return 1;
+      }
 
     clickHandler = (category, selection, panel) => {
         this.props.updateSelection(category, selection);
@@ -119,7 +117,7 @@ class ImageGridList extends Component {
               <GridList cellHeight={80} className={classes.gridList} cols={6}>
                 {tileData.map(tile => (
                       <GridListTile
-                          className={(this.props.state.currentName.Expression === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                          className={(this.props.state.selected.Expression === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                           key={tile.img}
                           cols={tile.cols || 1}
                           onClick={() => this.clickHandler('Expression', tile.name, tile.name)}>
@@ -197,4 +195,4 @@ ImageGridList.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ImageGridList);
+export default withWidth()(withStyles(styles)(ImageGridList));

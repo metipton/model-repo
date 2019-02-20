@@ -32,22 +32,22 @@ class RaceEditor extends Component {
         return (
             <div className={classes.Container}>
                 <div
-                    className={(this.props.state.currentName.Pose === 'Pose1') ? classes.ImageSelected : classes.Image}
+                    className={(this.props.state.selected.Pose === 'Pose1') ? classes.ImageSelected : classes.Image}
                     onClick={() => this.clickHandler('Pose', 'Pose1', 'image1')}>
                     <img className={classes.ImageActual} src={image1} alt="race_1" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Pose === 'Pose2') ? classes.ImageSelected : classes.Image}
+                    className={(this.props.state.selected.Pose === 'Pose2') ? classes.ImageSelected : classes.Image}
                     onClick={() => this.clickHandler('Pose', 'Pose2', 'image2')}>
                     <img className={classes.ImageActual} src={image2} alt="race_2" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Pose === 'Pose3') ? classes.ImageSelected : classes.Image}
+                    className={(this.props.state.selected.Pose === 'Pose3') ? classes.ImageSelected : classes.Image}
                     onClick={() => this.clickHandler('Pose', 'Pose3', 'image3')}>
                     <img className={classes.ImageActual} src={image3} alt="race_3" />
                 </div>
                 <div
-                    className={(this.props.state.currentName.Pose === 'Pose4') ? classes.ImageSelected : classes.Image}
+                    className={(this.props.state.selected.Pose === 'Pose4') ? classes.ImageSelected : classes.Image}
                     onClick={() => this.clickHandler('Pose', 'Pose4', 'image4')}>
                     <img className={classes.ImageActual} src={image4} alt="race_4" />
                 </div>

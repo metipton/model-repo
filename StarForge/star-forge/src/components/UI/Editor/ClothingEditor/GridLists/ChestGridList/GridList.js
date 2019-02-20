@@ -75,7 +75,7 @@ const styles = theme => ({
 class ImageGridList extends Component {
 
 
-    clickHandler = (category, selection, panel) => {
+    clickHandler = (category, selection) => {
         this.props.updateSelection(category, selection);
     };
 

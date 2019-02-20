@@ -14,18 +14,33 @@ class Modal extends Component {
         return (
             <Aux>
                 <Backdrop show={this.props.show} clicked={this.props.modalClosed} />
-                <div
-                    className={classes.Modal}
-                    style={{
-                        zIndex: this.props.show ? '500' : '-1',
-                        transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',
-                        opacity: this.props.show ? '1' : '0'
-                    }}>
-                    {this.props.children}
+                <div className="outer">
+                    <div className="middle">
+                        <div className="inner"                    
+                            style={{
+                            zIndex: this.props.show ? '500' : '-1',
+                            transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',
+                            opacity: this.props.show ? '1' : '0'
+                        }}>
+                            {this.props.children}
+                        </div>
+                    </div>
                 </div>
+
             </Aux>
         )
     }
 }
 
 export default Modal;
+
+
+{/* <div
+className={classes.Modal}
+style={{
+    zIndex: this.props.show ? '500' : '-1',
+    transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',
+    opacity: this.props.show ? '1' : '0'
+}}>
+{this.props.children}
+</div> */}

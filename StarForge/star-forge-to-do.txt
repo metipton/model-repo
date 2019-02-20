@@ -8,35 +8,22 @@ Styling:
         Apply halo to selected image 
 	remove all outstanding place holder images
 
- 
 Color Editor
 	Figure out the UI and functionality required 
 
 Editor
-	Update selected for all editors
-	figure out how to load feet concurrently
 	Fix sizing of bar when category is selected (make it smaller)
-	Move add to cart to other side
         Remove buttons that don't do anything.
-        Add all the images
 	Make race always two column with male and female side
 	Make two handed/sided things always two column with a selector between them
 	Material - Card w/ buttons and images - Retextures the model
-	Abstract out the gridList component
-	add a clear button to the bar
-   
+	add a clear button to the bar  
 
 Bottom toolbar -  save character, my characters, screenshot,
 
 
 Shopping cart
 	figure out rollback if model fails to upload
-
-   
-Auth
-	Update the database rules code
-	Change header for Auth log in
-
 
 Checkout
 	Get order complete modal on successful checkout
@@ -46,14 +33,20 @@ Checkout
 Site security
 	Get SSL cert and set up HTTPS
 	need new firebase API as the old one is compromised due to upload to github
+	require authentication to write to database and delete from database
 
 Backend
-
 	have transaction for adding files to shopping cart
         verify shopping cart and price on checkout
-Make charge happen after source is created
+	Make charge happen after source is created
+
+Nice to haves
+	figure out how to load feet concurrently
+	Abstract out the gridList component
+	Change header for Auth log in
 
 Known bugs
+	clear all warnings
 	Need to make the editor example to fill entire viewport dynamically
 	morph targets are not properly applied to non-race items on export
 	update to v100 threejs

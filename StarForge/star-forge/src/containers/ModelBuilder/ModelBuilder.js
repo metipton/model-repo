@@ -26,6 +26,8 @@ import LoadingScreen from './LoadingScreen/LoadingScreen';
 import BottomDrawer from '../../components/UI/BottomDrawer/BottomDrawer';
 import GPUPickHelper from './GPUPicker/GPUPicker';
 import Auth from '../../containers/auth0/Auth';
+import Modal from '../../components/UI/Modal/Modal';
+import SavedModelsEditor from '../../components/UI/SavedModelsEditor/SavedModelsEditor';
 
 
 
@@ -1567,7 +1569,7 @@ class ModelBuilder extends Component {
 
     exportScreenshotToSaved = (identifier, size, image) => {
         return new Promise( ( resolve, reject ) => {
-            firebase.storage().ref( '/Saved/' + this.props.userId + identifier + '/screenshot-' + size + '.png' ).put(image).then(() => {
+            firebase.storage().ref( '/Saved/' + this.props.userId + '/' + identifier + '/screenshot-' + size + '.png' ).put(image).then(() => {
                 console.log("Screenshot upload complete");
                 resolve();
             }).catch( error => {
@@ -1701,6 +1703,7 @@ class ModelBuilder extends Component {
         })
     }
 
+
     resetMorphTargets = () => {
         this.morphTargets = {
             body: {
@@ -1737,6 +1740,8 @@ class ModelBuilder extends Component {
 
     }
 
+
+
     shareHero = () => {
         alert("Share hero");
     }
@@ -1748,14 +1753,31 @@ class ModelBuilder extends Component {
             return;
         }
         const timestamp = new Date().getTime();
-        console.log(timestamp);
+        let payload = {
+            objects: {
+                ...this.state.currentName,
+
+            },
+            links: {
+                ...this.state.links
+            },
+            name: this.state.modelName,
+          };
+        console.log(payload);
+        const database = firebase.database().ref('users/' + this.props.userId + '/SavedHeroes/' + timestamp);
+        database.set(payload);
         var largeImage = this.takeScreenshot(350, 350);
         this.exportScreenshotToSaved(timestamp, "lg", largeImage);
         alert("Save hero");
     }
 
     openSavedHeroModal = () => {
-        alert("Opening Saved hero modal");
+        let func = this.saveHero;
+        if(!this.props.userId){
+            this.authLogin(func);
+            return;
+        }
+        this.props.openSavedModal();
     }
 
 
@@ -1795,15 +1817,23 @@ class ModelBuilder extends Component {
     let morphTargetsProp = this.morphTargets;
     let screen = null;
 
+
     if(!this.state.RESOURCES_LOADED){
         screen = (
             <LoadingScreen/>
         );
     }
 
+    let savedModal = (
+        <Modal 
+            show={this.props.savedModalOpen}
+            modalClosed={this.props.closeSavedModal}>
+            <SavedModelsEditor/>
+        </Modal>);
     
      return (
         <Aux className={classes.ModelBuilder}>
+            {savedModal}
             {screen}
             <div
                 style={{ width: '100vw', height: '100vh', position: 'absolute', top: '3rem'}}
@@ -1842,7 +1872,8 @@ const mapStateToProps = state => {
     return {
         currentCart: state.shoppingCart.cartProducts.items,
         userId: state.auth.userId,
-        addInProgress: state.shoppingCart.cartProducts.addInProgress
+        addInProgress: state.shoppingCart.cartProducts.addInProgress,
+        savedModalOpen: state.savedModal.modalOpen
     };
 };
 
@@ -1851,7 +1882,9 @@ const mapDispatchToProps = dispatch => {
         finishedLoading: () => dispatch(actions.modelFinishedLoading()),
         addToCart: (payload) => dispatch(actions.addProduct(payload)),
         finishedAdd: () => dispatch(actions.completedAddToCart()),
-        addInProgress: () => dispatch(actions.addInProgress())
+        addInProgress: () => dispatch(actions.addInProgress()),
+        openSavedModal: () => dispatch(actions.openSavedModal()),
+        closeSavedModal: () => dispatch(actions.closeSavedModal()),
     };
 };
 

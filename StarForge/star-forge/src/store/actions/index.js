@@ -32,5 +32,9 @@ export {
 export {
    fetchProducts 
 } from './shoppingCart/productActions';
+export {
+    openSavedModal,
+    closeSavedModal
+ } from './saved';
 
 

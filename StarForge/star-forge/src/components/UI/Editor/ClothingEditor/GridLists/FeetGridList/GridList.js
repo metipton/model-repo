@@ -115,7 +115,7 @@ class ImageGridList extends Component {
             {tileDataRight.map((tile, index) => (
                 <div className={classes.container} key = {index}>
                   <GridListTile
-                      className={(this.props.state.currentName.FootRight === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      className={(this.props.state.selected.FootRight === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tile.cols || 1}
                       onClick={() => this.clickHandler('FootRight', tile.name)}>
                     <img className={classes.image}  src={tileDataRight[index].img} alt={tileDataRight[index].title} />
@@ -130,7 +130,7 @@ class ImageGridList extends Component {
                           src={unlock}
                           onClick={() => this.props.feetLink(index)}/>}
                   <GridListTile
-                      className={(this.props.state.currentName.FootLeft === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
+                      className={(this.props.state.selected.FootLeft === tile.name) ? classes.gridListTileSelected : classes.gridListTile}
                       cols={tileDataRight[index].cols || 1}
                       onClick={() => this.clickHandler('FootLeft', tileDataRight[index].name)}>
                     <img className={classes.image}  src={tileDataLeft[index].img} alt={tileDataLeft[index].title} />
