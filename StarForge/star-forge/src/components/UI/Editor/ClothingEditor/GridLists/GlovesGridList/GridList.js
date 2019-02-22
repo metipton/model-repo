@@ -6,72 +6,7 @@ import GridListTile from '@material-ui/core/GridListTile';
 import {tileDataLeft, tileDataRight} from './TileData';
 import lock from '../locks/lock_24px.png';
 import unlock from '../locks/unlock_24px.png';
-
-const styles = theme => ({
-  root: {
-    position: 'relative',
-    left: 0,
-    top: 0,
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    overflow: 'auto',
-    backgroundColor: theme.palette.background.paper,
-  },
-  container: {
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'nowrap',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#ddd',
-      height: 200,
-      width: '100%',
-  },
-  gridList: {
-    boxSizing: 'border-box',
-    display: 'block',
-    // flexWrap: 'wrap',
-    // alignItems: 'center',
-    // justifyContent: 'space-between',
-    // paddingLeft: '70px',
-    // paddingRight: '70px',
-    // backgroundColor: '#ddd',
-    height: 200,
-    width: '100%',
-  },
-  subheader: {
-    width: '100%',
-  },
-  gridListTile: {
-      height: '100px',
-      width: '100px',
-      margin: '3px',
-      padding: '3px',
-      '&:hover': {
-        border: 'solid 2px',
-        borderColor: '#FFA500'
-      },
-  },
-  gridListTileSelected: {
-      height: '100px',
-      width: '100px',
-      margin: '3px',
-      padding: '3px',
-      border: 'solid 2px',
-      borderColor: '#FFA500',
-  },
-  image: {
-      height: '100%',
-      width: '100%'
-  },
-  lock: {
-      opacity: '.4',
-      '&:hover': {
-          opacity: '.9'
-      }
-  }
-});
+import styles from '../../../PictureStyle';
 
 
 class ImageGridList extends Component {

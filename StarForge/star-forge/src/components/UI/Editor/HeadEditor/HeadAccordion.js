@@ -42,6 +42,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -58,6 +59,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -78,6 +80,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -94,6 +97,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -110,6 +114,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -126,6 +131,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -142,6 +148,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -158,6 +165,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -174,6 +182,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -190,6 +199,7 @@ class HeadAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -216,27 +226,30 @@ const styles = theme => ({
         backgroundColor: '#FFA500',
       },
     border: 'solid',
-    minHeight: '2rem',
     height: '2rem',
     borderRadius: '10',
     backgroundColor: '#06437A',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
+    minHeight: '2rem',
   },
   headingExpanded: {
-    minHeight: '2rem',
-    height: '2.25rem',
     backgroundColor: '#FFA500',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
   },
   typography: {
-      opacity: 1,
+    margin: 0,
+    opacity: 1,
     fontWeight: 'normal',
     color: 'white',
   },
+  expandIcon: {
+    backgroundColor: 'transparent',
+    height: '.25rem',
+  }
 });
 
 

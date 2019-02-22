@@ -38,9 +38,12 @@ class ItemsAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded,
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
-                <Typography className={classes.typography}>
+                <Typography 
+                  className={classes.typography}
+                  align="center">
                   Base
                 </Typography>
               </ExpansionPanelSummary>
@@ -54,6 +57,7 @@ class ItemsAccordion extends Component {
                   classes={{
                     root: classes.heading, // class name, e.g. `classes-nesting-root-x`
                     expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
                 <Typography className={classes.typography}>
@@ -68,12 +72,16 @@ class ItemsAccordion extends Component {
             <ExpansionPanel expanded={expanded === 'panel3'} onChange={this.handleChange('panel3')}>
               <ExpansionPanelSummary
                   classes={{
-                    root: classes.heading, // class name, e.g. `classes-nesting-root-x`
-                    expanded: classes.headingExpanded, // class name, e.g. `classes-nesting-label-x`
+                    root: classes.heading,
+                    expanded: classes.headingExpanded, 
+                    expandIcon: classes.expandIcon
                     }}
                 expandIcon={<ExpandMoreIcon className={classes.typography} />}>
-                <Typography className={classes.typography}>
-                  Pets
+                <Typography 
+                  classes={{
+                    root: classes.typography, // class name, e.g. `classes-nesting-root-x`
+                    }}>
+                    Pets
                 </Typography>
               </ExpansionPanelSummary>
                   <PetsGridList state={this.props.state} updateSelection={this.props.updateSelection}/>
@@ -96,27 +104,30 @@ const styles = theme => ({
         backgroundColor: '#FFA500',
       },
     border: 'solid',
-    minHeight: '2rem',
     height: '2rem',
     borderRadius: '10',
     backgroundColor: '#06437A',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
+    minHeight: '2rem',
   },
   headingExpanded: {
-    minHeight: '2rem',
-    height: '2.25rem',
     backgroundColor: '#FFA500',
     fontSize: theme.typography.pxToRem(15),
     flexBasis: '33.33%',
     flexShrink: 0,
   },
   typography: {
-      opacity: 1,
+    margin: 0,
+    opacity: 1,
     fontWeight: 'normal',
     color: 'white',
   },
+  expandIcon: {
+    backgroundColor: 'transparent',
+    height: '.25rem',
+  }
 });
 
 

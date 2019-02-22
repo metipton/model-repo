@@ -1,8 +1,8 @@
-import image1 from '../../../../../../assets/Thumbs/face/Neutral.png';
-import image2 from '../../../../../../assets/Thumbs/face/Smile.png';
-import image3 from '../../../../../../assets/Thumbs/face/Snarl.png';
-import image4 from '../../../../../../assets/Thumbs/face/Cocky.png';
-import image5 from '../../../../../../assets/Thumbs/face/Confused.png';
+import image1 from '../../../../../../assets/Thumbs/face/Face.Neutral.png';
+import image2 from '../../../../../../assets/Thumbs/face/Face.Smile.png';
+import image3 from '../../../../../../assets/Thumbs/face/Face.Snarl.png';
+import image4 from '../../../../../../assets/Thumbs/face/Face.Cocky.png';
+import image5 from '../../../../../../assets/Thumbs/face/Face.Confused.png';
 
 
 

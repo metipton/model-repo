@@ -4,16 +4,12 @@ Model Builder
 	When changing multiple items, have items added to pool and add at same time
 	
 Styling:
-	Remove background for all images
         Apply halo to selected image 
-	remove all outstanding place holder images
 
 Color Editor
 	Figure out the UI and functionality required 
 
 Editor
-	Fix sizing of bar when category is selected (make it smaller)
-        Remove buttons that don't do anything.
 	Make race always two column with male and female side
 	Make two handed/sided things always two column with a selector between them
 	Material - Card w/ buttons and images - Retextures the model
@@ -36,7 +32,6 @@ Site security
 	require authentication to write to database and delete from database
 
 Backend
-	have transaction for adding files to shopping cart
         verify shopping cart and price on checkout
 	Make charge happen after source is created
 

@@ -4,74 +4,8 @@ import { withStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import tileData from './TileData';
+import styles from '../../../PictureStyle';
 
-const styles = theme => ({
-  root: {
-    position: 'relative',
-    left: 0,
-    top: 0,
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    overflow: 'auto',
-    backgroundColor: theme.palette.background.paper,
-  },
-  gridList: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingLeft: '70px',
-    paddingRight: '70px',
-    backgroundColor: '#ddd',
-    height: 200,
-    width: '100%',
-  },
-  subheader: {
-    width: '100%',
-  },
-  gridListTile: {
-      height: 'auto',
-      width: 'auto',
-      margin: '3px',
-      padding: '3px',
-      '&:hover': {
-        border: 'solid 2px',
-        borderColor: '#FFA500'
-      },
-  },
-  gridListTileSelected: {
-      margin: '3px',
-      padding: '3px',
-      border: 'solid 2px',
-      borderColor: '#FFA500',
-  },
-  image: {
-      height: '100%',
-      width: '100%'
-  },
-});
-
-
-/**
- * The example data is structured as follows:
- *
- * import image from 'path/to/image.jpg';
- * [etc...]
- *
- * const tileData = [
- *   {
- *     img: image,
- *     title: 'Image',
- *     author: 'author',
- *     cols: 2,
- *   },
- *   {
- *     [etc...]
- *   },
- * ];
- */
 class ImageGridList extends Component {
 
 
