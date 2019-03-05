@@ -1,22 +1,27 @@
+.buttonHolder {
+    width: 50%;
+    height: 100%;
+    display: inline-block;
+}
+
 .Toolbar {
-    color: #06437A;
+    color: white;
     height: 3rem;
     width: 100%;
-    position: fixed;
+    position: absolute;
     top: calc(100% - 3rem);
     left: 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 0 1.25rem;
     box-sizing: border-box;
     z-index: 90;
     overflow: hidden;
-    background-color: #d9dbde;
+    background-color: rgba(15, 15, 15, 0.315);
 }
 
 .Toolbar span {
-    color : #06437A;
     text-decoration: none;
     opacity: 1.0;
 }
@@ -28,12 +33,4 @@
     cursor: pointer;
 }
 
-.shoppingCart {
-    color: #FFA500 ;
-}
 
-.socialMedia {
-    width: 8.25rem;
-    margin-left: -4.125rem;
-    left: 50%;
-}

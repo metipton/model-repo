@@ -30,9 +30,6 @@ import Modal from '../../components/UI/Modal/Modal';
 import SavedModelsEditor from '../../components/UI/SavedModelsEditor/SavedModelsEditor';
 
 
-
-
-
 class ModelBuilder extends Component {
 
     state = {
@@ -380,10 +377,10 @@ class ModelBuilder extends Component {
         this.currentMesh = null;
         this.skeleton = null;
         this.activeObjects = [];
+        this.exportHolder = {};
         this.armatureLoaded = false;
-        this.poseTime = new Date().getTime();
-        this.updateAABBTrue = false;
-        this.aabbDelay = 50;
+
+
 
         this.objectPool = {
             Race: {},
@@ -621,7 +618,6 @@ class ModelBuilder extends Component {
         if (this.mixer !== null && this.mixer !== undefined) {
             this.mixer.update(delta);
         };
-
         this.renderScene();
    }
 
@@ -929,11 +925,56 @@ class ModelBuilder extends Component {
             this.setPoseByName(this.state.currentName['Pose']);
         }
         if(fromDownload){
+            console.log(object.scene);
             return object.scene;
         } else {
             return object;
         }
     
+   }
+
+   loadModelForExport = (category, url) => {
+    return new Promise((resolve, reject) => {
+        this.gltfLoader.load(
+            url,
+            async (object) => {
+                var actions = {};
+                if( category === 'Race'){
+
+                    var mixer = new THREE.AnimationMixer(object.scene);
+                     var allAction = this.mixer.clipAction( object.animations[ 0 ] );
+
+                     for( let i = 0; i < object.animations[0].tracks[0].times.length; i++) {
+                         let poseNum = "Pose" + ( i + 1 );
+                         var subclips = {
+                             ...this.subclips,
+                             [poseNum]: THREE.AnimationUtils.subclip( allAction._clip, poseNum, i, i + 1  )
+                         };
+
+                     }
+                     object.scene.children[0].children[0].castShadow = true;
+
+                     for( let clip in subclips ) {
+                        mixer.clipAction( subclips[clip]);
+                         actions[clip] = mixer.clipAction( subclips[clip]);
+                     }
+                    var pose = this.state.currentName['Pose'];
+
+                    if (actions[pose]) {
+                        mixer.stopAllAction();
+                        actions[pose].clampWhenFinished = true;
+                        actions[pose].setLoop(this.THREE.LoopOnce);
+                        actions[pose].play();
+                    }
+                }
+                resolve(object.scene);
+            },
+             null,
+            (error) => {
+                reject(error);
+            }
+        )
+    });
    }
 
     loadModelFromCache = (category, url) => {
@@ -968,10 +1009,10 @@ class ModelBuilder extends Component {
                         
                         //set the pose to current selected pose if not select, else set to pose 1
                         this.setPoseByName(this.state.currentName['Pose']);
-                        //this.createNewAABB( object.scene.children[0].children[0]);
+
                         
                     }
-
+                    console.log(object.scene);
                     resolve(object.scene);
                 },
                  null,
@@ -991,20 +1032,9 @@ class ModelBuilder extends Component {
      setPoseByName = (pose) => {
          if (this.actions[pose]) {
              this.mixer.stopAllAction();
-             //var finished = false;
-             // this.mixer.addEventListener('finished', (e) => {
-             //     if(this.bones[0] !== null && this.bones[0] !== undefined){
-             //
-             //        this.setBoneCurrentPosit(this.bones[0]);
-             //        console.log(this.bonesPositCurrent);
-             //    }
-             // });
              this.actions[pose].clampWhenFinished = true;
              this.actions[pose].setLoop(this.THREE.LoopOnce);
-             //this.actions[pose].loop(THREE.LoopOnce);
              this.actions[pose].play();
-             this.updateAABBTrue = true;
-             this.poseTime = new Date().getTime();
          }
      }
 
@@ -1351,15 +1381,67 @@ class ModelBuilder extends Component {
        this.hexColor = color;
    }
 
+
+    cloneGltf = (gltf) => {
+
+        let newScene = new THREE.Scene();
+        newScene.add(gltf);
+        const clone = {
+        animations: gltf.animations,
+        scene: gltf.children[0].clone(true)
+        };
+    
+        const skinnedMeshes = {};
+    
+        gltf.children[0].traverse(node => {
+            if (node.isSkinnedMesh) {
+                skinnedMeshes[node.name] = node;
+            }
+        });
+    
+        const cloneBones = {};
+        const cloneSkinnedMeshes = {};
+    
+        clone.scene.traverse(node => {
+            if (node.isBone) {
+                cloneBones[node.name] = node;
+            }
+    
+            if (node.isSkinnedMesh) {
+                cloneSkinnedMeshes[node.name] = node;
+            }
+        });
+    
+        for (let name in skinnedMeshes) {
+            const skinnedMesh = skinnedMeshes[name];
+            const skeleton = skinnedMesh.skeleton;
+            const cloneSkinnedMesh = cloneSkinnedMeshes[name];
+        
+            const orderedCloneBones = [];
+    
+        for (let i = 0; i < skeleton.bones.length; ++i) {
+            const cloneBone = cloneBones[skeleton.bones[i].name];
+            orderedCloneBones.push(cloneBone);
+        }
+    
+        cloneSkinnedMesh.bind(
+            new THREE.Skeleton(orderedCloneBones, skeleton.boneInverses),
+            cloneSkinnedMesh.matrixWorld);
+        }
+    
+        return clone;
+    }
+
     createPosedClone = (skinnedMesh) => {
-            
+         
         let clone = skinnedMesh.clone();
         var boneMatrices = this.skeleton.boneMatrices;
         var geometry = skinnedMesh.geometry;
-        
+
+
         var position = geometry.attributes.position;
         var skinIndex = geometry.attributes.skinIndex;
-        var skinWeigth = geometry.attributes.skinWeight;
+        var skinWeight = geometry.attributes.skinWeight;
         
         var bindMatrix = skinnedMesh.bindMatrix;
         var bindMatrixInverse = skinnedMesh.bindMatrixInverse;
@@ -1379,7 +1461,7 @@ class ModelBuilder extends Component {
         
             vertex.fromBufferAttribute( position, i );
             skinIndices.fromBufferAttribute( skinIndex, i );
-            skinWeights.fromBufferAttribute( skinWeigth, i );
+            skinWeights.fromBufferAttribute( skinWeight, i );
             
             // the following code section is normally implemented in the vertex shader
 
@@ -1430,7 +1512,6 @@ class ModelBuilder extends Component {
 
             clone.geometry.attributes.position.setXYZ(i, skinned.x, skinned.y, skinned.z);  
         }
-
         //now iterate over all
         return clone;
     }
@@ -1443,9 +1524,13 @@ class ModelBuilder extends Component {
         // set camera and renderer to desired screenshot dimension
         this.camera.aspect = width / height;
         this.camera.updateProjectionMatrix();
-        this.renderer.setSize(  width, height );
-        var color = new THREE.Color(0xCBCFD2);
-        this.renderer.setClearColor( color, .5 );
+        var color = new THREE.Color(0x000000);
+        var imageRenderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } ); // init like this
+        imageRenderer.shadowMap.enabled = true;
+        imageRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        imageRenderer.gammaOutput = true;
+        imageRenderer.setClearColor( color, 0 );
+        imageRenderer.setSize(width, height);
         //put the camera to null position and copy current posit/rotation
         let currentCamPosit = this.camera.getWorldPosition();
         let currentCamRotation = this.camera.getWorldQuaternion();
@@ -1453,9 +1538,9 @@ class ModelBuilder extends Component {
         this.camera.setRotationFromQuaternion(this.initCameraRotation);
         this.camera.clearViewOffset();
         this.camera.setViewOffset(width, height, 0, height * .28, width, height );
-        this.renderer.render( this.scene, this.camera, null, false );
+        imageRenderer.render( this.scene, this.camera, null, false );
     
-        const dataURL = this.renderer.domElement.toDataURL( 'image/png' );
+        const dataURL = imageRenderer.domElement.toDataURL( 'image/png' );
 
         //convert datastring to file
         var arr = dataURL.split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -1469,7 +1554,6 @@ class ModelBuilder extends Component {
 
        this.camera.aspect = window.innerWidth / window.innerHeight;
        this.camera.updateProjectionMatrix();
-       this.renderer.setSize( window.innerWidth, window.innerHeight );
 
        // put the camera back to position when screenshot taken
        this.camera.position.set(currentCamPosit.x, currentCamPosit.y, currentCamPosit.z);
@@ -1516,16 +1600,19 @@ class ModelBuilder extends Component {
      exportModelGLTF = (cartNumber) => {
         let objects = [];
 
+
+        let newScene = this.cloneGltf(this.scene)['scene'];
+        console.log(newScene);
+        console.log(this.objectHolder);
         //morph geometry of all objects to match the pose
-        for(let i = 0; i < this.objectHolder.children.length; i++) {
-            let child = this.objectHolder.children[i];
+        for(let i = 0; i < newScene.children.length; i++) {
+            let child = newScene.children[i];
             if(child.name !== "rigcurrent"){
                 let clone;
                 if(child.isSkinnedMesh){
-                    clone = this.createPosedClone(this.objectHolder.children[i]);
+                    clone = this.createPosedClone(newScene.children[i]);
                 } else {
-                    clone = this.objectHolder.children[i].clone();
-                    console.log(clone);
+                    clone = newScene.children[i].clone();
                 }
                 objects.push(clone);
             }
@@ -1554,6 +1641,18 @@ class ModelBuilder extends Component {
                 });
             });
         }, DEFAULT_OPTIONS);
+    }
+
+    cycleRaceModel = () => {
+        //load full new race model
+
+        //remove old model
+
+        //remove old skeleton
+
+        //add new model
+        //rebind all objects to new skeleton
+        //update all morph
     }
 
     exportScreenshotToCart = (cartNumber, size, image) => {
@@ -1736,6 +1835,7 @@ class ModelBuilder extends Component {
 
     }
 
+
     clearItem = (item) => {
 
     }
@@ -1764,11 +1864,10 @@ class ModelBuilder extends Component {
             name: this.state.modelName,
           };
         console.log(payload);
-        const database = firebase.database().ref('users/' + this.props.userId + '/SavedHeroes/' + timestamp);
+        const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
         database.set(payload);
         var largeImage = this.takeScreenshot(350, 350);
         this.exportScreenshotToSaved(timestamp, "lg", largeImage);
-        alert("Save hero");
     }
 
     openSavedHeroModal = () => {
@@ -1777,7 +1876,33 @@ class ModelBuilder extends Component {
             this.authLogin(func);
             return;
         }
+
+        console.log("hi");
+        //query the RTDB to get the list of timestamps for the saved characters
+        let timestamps = [];
+        let payload = {};
+        const storage = firebase.storage().ref();
+        const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels' );
+        database.once("value").then( async (snapshot) => {
+            payload = snapshot.val();
+
+            console.log(snapshot.val());
+            for(var timestamp in payload){
+                timestamps.push(timestamp);
+                await storage.child('/Saved/' + this.props.userId + '/' + timestamp  + '/screenshot-lg.png').getDownloadURL().then((url) => {
+                    payload[timestamp].url = url;
+                })
+            }
+            this.props.addSavedModels(payload, timestamps);
+        })
+
+        //loop through firebase storage to download the image
+  
         this.props.openSavedModal();
+    }
+
+    loadSavedHero = () => {
+
     }
 
 
@@ -1885,6 +2010,7 @@ const mapDispatchToProps = dispatch => {
         addInProgress: () => dispatch(actions.addInProgress()),
         openSavedModal: () => dispatch(actions.openSavedModal()),
         closeSavedModal: () => dispatch(actions.closeSavedModal()),
+        addSavedModels: (payload, timestamps) => dispatch(actions.addSavedModels(payload, timestamps)),
     };
 };
 

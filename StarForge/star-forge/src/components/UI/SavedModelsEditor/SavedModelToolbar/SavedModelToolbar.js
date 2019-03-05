@@ -19,11 +19,9 @@ class SavedModelToolbar extends Component {
     render (){   
 
         return (
-            <div>
-                <header className={classes.Toolbar}>
+                <div className={classes.Toolbar}>
                     <span>My Saved Models</span>
-                 </header>
-            </div>
+                 </div>
         );
     };
 }

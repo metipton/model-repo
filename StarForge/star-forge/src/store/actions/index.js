@@ -34,7 +34,10 @@ export {
 } from './shoppingCart/productActions';
 export {
     openSavedModal,
-    closeSavedModal
+    closeSavedModal,
+    addSavedModels,
+    removeSavedModel,
+    updateSavedModel,
  } from './saved';
 
 

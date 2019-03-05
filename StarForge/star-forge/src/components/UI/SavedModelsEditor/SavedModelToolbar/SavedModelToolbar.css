@@ -1,8 +1,8 @@
 .Toolbar {
-    color: #06437A;
+    color: white;
     height: 3rem;
     width: 100%;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     display: flex;
@@ -12,11 +12,10 @@
     box-sizing: border-box;
     z-index: 90;
     overflow: hidden;
-    background-color: #d9dbde;
+    background-color: rgba(15, 15, 15, 0.315);
 }
 
 .Toolbar span {
-    color : #06437A;
     text-decoration: none;
     opacity: 1.0;
 }
