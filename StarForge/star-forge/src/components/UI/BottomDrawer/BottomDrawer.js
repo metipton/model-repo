@@ -155,7 +155,7 @@ class TemporaryDrawer extends React.Component {
               onClick={this.props.openSavedHeroModal}>     
               <FontAwesomeIcon className={classes.icon} icon={['fas', 'folder']} size="1x" />
               <span className={classes.innerSpan}>
-                Heroes
+                Models
               </span>  
             </div> 
             <div 

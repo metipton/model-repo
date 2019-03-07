@@ -3,28 +3,68 @@ import {updateObject} from '../utility';
 
 const initialState = {
     modalOpen: false,
+    modalSmallNameShow: false,
+    modalSmallDeleteShow: false,
+    selected: null,
 };
 
 
 const openSavedModal = (state) => {
     return updateObject(state, {
-
+            ...this.state,
             modalOpen: true
         });
 };
 
 const closeSavedModal = (state) => {
     return updateObject(state, {
+            ...this.state,
             modalOpen: false
+        });
+};
+
+const openNameModal = (state) => {
+    return updateObject(state, {
+            ...this.state,
+            modalSmallNameShow:  true
+        });
+};
+
+const closeNameModal = (state) => {
+    return updateObject(state, {
+            ...this.state,
+            modalSmallNameShow:  false
+        });
+};
+
+const openDeleteModal = (state) => {
+    return updateObject(state, {
+            ...this.state,
+            modalSmallDeleteShow: true
+        });
+};
+
+const closeDeleteModal = (state) => {
+    return updateObject(state, {
+            ...this.state,
+            modalSmallDeleteShow: false
         });
 };
 
 const addSavedModels = (state, action) => {
     return updateObject(state, {
+        ...this.state,
         modelById: [ ...action.timestamps],
         modelByTimestamp: {
             ...action.payload
         }
+      })
+}
+
+const selectModel = (state, action ) => {
+    return updateObject(state, {
+        ...this.state,
+        selected : action.payload
       })
 }
 
@@ -54,9 +94,14 @@ const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.OPEN_SAVED_MODAL: return openSavedModal(state);
         case actionTypes.CLOSE_SAVED_MODAL: return closeSavedModal(state);
+        case actionTypes.OPEN_NAME_MODAL: return openNameModal(state);
+        case actionTypes.CLOSE_NAME_MODAL: return closeNameModal(state);
+        case actionTypes.OPEN_DELETE_MODAL: return openDeleteModal(state);
+        case actionTypes.CLOSE_DELETE_MODAL: return closeDeleteModal(state);
         case actionTypes.ADD_SAVED_MODELS: return addSavedModels(state, action);
         case actionTypes.REMOVE_SAVED_MODEL: return removeSavedModel(state, action);
         case actionTypes.UPDATE_SAVED_MODEL: return updateSavedModel(state, action);
+        case actionTypes.SELECT_MODEL: return selectModel(state, action);
         default:
             return state;
     }

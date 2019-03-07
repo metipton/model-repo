@@ -6,6 +6,7 @@ Model Builder
 	
 Styling:
         Apply halo to selected image 
+	apply same changes for saved images to editor
 
 Color Editor
 	Figure out the UI and functionality required 

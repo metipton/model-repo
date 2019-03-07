@@ -12,11 +12,43 @@ export const closeSavedModal = () => {
     };
 };
 
+export const openNameModal = () => {
+    return {
+        type: actionTypes.OPEN_NAME_MODAL
+    };
+};
+
+export const closeNameModal = () => {
+    return {
+        type: actionTypes.CLOSE_NAME_MODAL
+    };
+};
+
+export const openDeleteModal = () => {
+    return {
+        type: actionTypes.OPEN_DELETE_MODAL
+    };
+};
+
+export const closeDeleteModal = () => {
+    return {
+        type: actionTypes.CLOSE_DELETE_MODAL
+    };
+};
+
 export const addSavedModels = (modelData, timestampArray) => {
     return {
         type: actionTypes.ADD_SAVED_MODELS,
         payload: modelData,
         timestamps: timestampArray
+    };
+}
+
+
+export const selectModel = (timestamp) => {
+    return {
+        type: actionTypes.SELECT_MODEL,
+        payload: timestamp
     };
 }
 

@@ -8,8 +8,10 @@ import { withStyles } from '@material-ui/core/styles';
 import SavedModelToolbar from '../SavedModelsEditor/SavedModelToolbar/SavedModelToolbar';
 import SavedModelFooter from './SavedModelFooter/SavedModelFooter';
 import GridList from '@material-ui/core/GridList';
-import GridListTile from '@material-ui/core/GridListTile';
+import ModalSmall from '../modalSmall/modalSmall';
 import PictureTile from './PictureTile';
+import SmallModalButton from '../Button/SmallModalButton'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 
 
@@ -54,7 +56,33 @@ const styles = theme => ({
   image: {
     height: '12.5rem',
     width: '12.5rem'
-  }
+  },
+  escape: {
+    color: '#696969',
+    top: '.3rem',
+    right: '.3rem',
+    position: 'absolute',
+    cursor: 'pointer',
+    zIndex: 101,
+    '&:hover': {
+        color: 'black',
+      }
+  },
+  smallModal: {
+    textAlign: 'left'
+  },
+  text: {
+    marginTop:'1rem',
+    marginBottom:'.4rem',
+    color: 'white',
+    fontWeight: 400,
+    fontSize: '1.2rem'
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 300,
+    fontSize: '1rem'
+  },
 });
 
 class SavedModelsEditor extends Component {
@@ -62,6 +90,9 @@ class SavedModelsEditor extends Component {
     state = {
         selected: null,
         width: 1000,
+        modalType: null,
+        modallNameShow: false,
+        modalDeleteShow: false
     }
 
   constructor(props){
@@ -78,6 +109,8 @@ class SavedModelsEditor extends Component {
     deleteSelected = () => {
 
     }
+
+
 
     onWindowResize = () => {
       let cWidth;
@@ -99,6 +132,7 @@ class SavedModelsEditor extends Component {
             ...this.state,
             selected: tile
         });
+        this.props.selectModel(tile);
     }
     render() {
         const { classes } = this.props;
@@ -114,7 +148,6 @@ class SavedModelsEditor extends Component {
                         key={tile}
                         tile={tile}
                         cols={1}
-                        selected={this.state.selected === tile}
                         clicked={() => this.clickHandler(tile)}
                         src={this.props.byTimestamp[tile].url}>
                     </PictureTile>
@@ -126,6 +159,42 @@ class SavedModelsEditor extends Component {
 
          return (
             <div ref={this.modal} className={classes.root}>
+              <ModalSmall
+                classes={classes.smallModal}
+                show={this.props.nameModalShow}
+                modalClosed={this.props.closeNameModal}>
+                  <FontAwesomeIcon 
+                    className={classes.escape} 
+                    icon={['fas', 'times-circle']} 
+                    size="1x" 
+                    onClick={this.props.closeNameModal}/>
+                    <div className={classes.text}>Model Name</div>
+                    <SmallModalButton variant="outlined" color="secondary">
+                      <div className={classes.buttonText}>Accept</div>
+                    </SmallModalButton>
+                    <SmallModalButton variant="outlined" color="primary">
+                      <div className={classes.buttonText}>Cancel</div>
+                    </SmallModalButton>
+              </ModalSmall>
+              <ModalSmall
+                classes={classes.smallModal}
+                show={this.props.deleteModalShow}
+                modalClosed={this.props.closeDeleteModal}>
+                  <FontAwesomeIcon 
+                    className={classes.escape} 
+                    icon={['fas', 'times-circle']} 
+                    size="1x" 
+                    onClick={this.props.closeDeleteModal}/>
+                    <div className={classes.text}> Are you sure you want to delete this model?</div>
+
+                    <SmallModalButton variant="outlined" color="secondary">
+                        <div className={classes.buttonText}>Delete</div>
+                    </SmallModalButton>
+                    <SmallModalButton variant="outlined" color="primary">
+                       <div className={classes.buttonText}>Cancel</div>
+                    </SmallModalButton>
+
+              </ModalSmall>
               <SavedModelToolbar/>
                 {cards}
               <SavedModelFooter/>
@@ -140,13 +209,18 @@ const mapStateToProps = state => {
     userId: state.auth.userId,
     byId: state.savedModal.modelById,
     byTimestamp: state.savedModal.modelByTimestamp,
-    savedModal: state.savedModal
+    savedModal: state.savedModal,
+    nameModalShow: state.savedModal.modalSmallNameShow,
+    deleteModalShow: state.savedModal.modalSmallDeleteShow
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     addSavedModels: (payload, timestamps) => dispatch(actions.addSavedModels(payload, timestamps)),
+    selectModel: (payload) => dispatch(actions.selectModel(payload)),
+    closeNameModal: () => dispatch(actions.closeNameModal()),
+    closeDeleteModal: () => dispatch(actions.closeDeleteModal())
   }
 }
 

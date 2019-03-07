@@ -35,9 +35,14 @@ export {
 export {
     openSavedModal,
     closeSavedModal,
+    openNameModal,
+    closeNameModal,
+    openDeleteModal,
+    closeDeleteModal,
     addSavedModels,
     removeSavedModel,
     updateSavedModel,
+    selectModel
  } from './saved';
 
 

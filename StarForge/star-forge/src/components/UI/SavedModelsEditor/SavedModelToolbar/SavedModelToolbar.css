@@ -31,6 +31,10 @@
     color: #FFA500 ;
 }
 
+.exit {
+    color: 'grey';
+    background-color: rgba(65, 64, 64, 0.315);
+}
 .socialMedia {
     width: 8.25rem;
     margin-left: -4.125rem;
