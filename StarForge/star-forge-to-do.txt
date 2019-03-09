@@ -50,6 +50,7 @@ Known bugs
 	Race fails when changing
 	wrong pants when clicking new ->
 	remove underline from email address and log out buttons
+	base doesnt come back when clicking new
 
 
 	
