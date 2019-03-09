@@ -37,6 +37,18 @@ Backend
 	send email after order complete
 	send orders to shapeway API on order
 
+TO do with export:
+
+        need to add items to the exportHolder object.
+        need to bind all items to the skeleton after they are all loaded
+        push all items into the objects array for export
+        clear the exportHolder object
+
+
+try cycling the race object
+
+
+
 Nice to haves
 	figure out how to load feet concurrently
 	Abstract out the gridList component

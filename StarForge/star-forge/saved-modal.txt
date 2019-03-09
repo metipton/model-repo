@@ -1,0 +1,27 @@
+TO do with export:
+
+need to add items to the exportHolder object.
+need to bind all items to the skeleton after they are all loaded
+push all items into the objects array for export
+clear the exportHolder object
+
+
+try cycling the race object
+
+
+
+to do with loading saved models:
+
+shift over logic to redux for selected
+add name to bottom of tile
+add spinning icon when saving
+Fill out the delete prompt
+	Are you sure you want to delete this model?
+	Delete and cancel buttons
+Fill out naming prompt
+	Character name span
+	text form with name
+	Accept and cancel buttons
+
+delete the info and picture when delete confirmed
+	first delete from DB, then use cloud function to delete the image from storage
