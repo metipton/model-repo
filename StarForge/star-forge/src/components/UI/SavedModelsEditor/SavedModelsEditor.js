@@ -34,29 +34,6 @@ const styles = theme => ({
     width: '100%',
     marginTop: '2rem'    
   },
-  gridListTile: {
-      boxSizing: 'border-box',
-      display: 'inline-block',
-      height: '12.5rem',
-      width: '12.5rem',
-      '&:hover': {
-        backgroundColor: '',
-        border: 'solid 2px',
-        borderColor: '#FFA500'
-      },
-  },
-  gridListTileSelected: {
-      boxSizing: 'border-box',
-      display: 'inline-block',
-      height: '12.5rem',
-      width: '12.5rem',
-      border: 'solid 2px',
-      borderColor: '#FFA500',
-  },
-  image: {
-    height: '12.5rem',
-    width: '12.5rem'
-  },
   escape: {
     color: '#696969',
     top: '.3rem',
@@ -146,7 +123,7 @@ class SavedModelsEditor extends Component {
               {this.props.byId.map( (tile) => (
                     <PictureTile
                         key={tile}
-                        tile={tile}
+                        timestamp={tile}
                         cols={1}
                         clicked={() => this.clickHandler(tile)}
                         src={this.props.byTimestamp[tile].url}>

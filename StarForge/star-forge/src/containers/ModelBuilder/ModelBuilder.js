@@ -1670,6 +1670,7 @@ class ModelBuilder extends Component {
         return new Promise( ( resolve, reject ) => {
             firebase.storage().ref( '/Saved/' + this.props.userId + '/' + identifier + '/screenshot-' + size + '.png' ).put(image).then(() => {
                 console.log("Screenshot upload complete");
+                this.props.saveComplete();
                 resolve();
             }).catch( error => {
                 reject(error);
@@ -2011,6 +2012,8 @@ const mapDispatchToProps = dispatch => {
         openSavedModal: () => dispatch(actions.openSavedModal()),
         closeSavedModal: () => dispatch(actions.closeSavedModal()),
         addSavedModels: (payload, timestamps) => dispatch(actions.addSavedModels(payload, timestamps)),
+        saveInProgress: ()=>dispatch(actions.saveInProgress()),
+        saveComplete: ()=>dispatch(actions.saveComplete())
     };
 };
 

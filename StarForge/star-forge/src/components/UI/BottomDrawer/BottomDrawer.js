@@ -1,4 +1,6 @@
 import React from 'react';
+import {connect} from 'react-redux';
+
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -8,13 +10,14 @@ import UpIcon from '@material-ui/icons/KeyboardArrowUp';
 import DownIcon from '@material-ui/icons/KeyboardArrowDown';
 import TextField from '@material-ui/core/TextField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import * as actions from '../../../store/actions/index';
 
 
 
 
 const styles = theme => ({
   paper: {
-
+      zIndex: 99,
       borderWidth: '.125rem',
       borderStyle: 'solid',
       borderColor: '#FFA500',
@@ -55,7 +58,7 @@ const styles = theme => ({
   drawer: {
     display: 'flex',
     justifyContent: 'flex-start',
-    zIndex: 9999999
+    zIndex: 99
   },
   textField: {
     color: '#FFA500',
@@ -78,13 +81,18 @@ const styles = theme => ({
     marginLeft: 0,
     marginRight: 0,
     width: '6.25rem',
+    transition: '.3s',
     '&:hover':{
       backgroundColor: '#FFA500',
       color: '#06437A'
     },
   },
   icon: {
-    marginTop: '.3rem'
+    marginTop: '.4rem'
+  },
+  saveInProgress: {
+    marginTop: '.4rem',
+    color: 'darkgrey'
   },
   innerSpan: {
     display: 'block',
@@ -101,10 +109,12 @@ class TemporaryDrawer extends React.Component {
   state = {
     bottom: false,
     name: '',
+    saving: false
   };
 
   handleChange = name => event => {
     this.setState({
+      ...this.state,
       bottom: true,
       [name]: event.target.value,
     });
@@ -112,12 +122,38 @@ class TemporaryDrawer extends React.Component {
 
   toggleDrawer = (side, open) => () => {
     this.setState({
+      ...this.state,
       [side]: open,
     });
   };
 
+  saveHero = () => {
+    this.props.saveInProgress();
+    this.props.saveHero();
+  }
+
   render() {
     const { classes } = this.props;
+    let saveImage = (
+        <div className={classes.innerButtons} onClick={this.saveHero}>
+          <FontAwesomeIcon className={classes.icon} icon={['fas', 'save']} size="1x" />
+          <span className={classes.innerSpan}>
+            Save
+          </span>
+        </div >
+        
+    );
+    if(this.props.savingModel){
+      saveImage = (
+        <div className={classes.innerButtons}>
+          <FontAwesomeIcon className={classes.saveInProgress} icon={['fas','sync']} spin size="1x" />
+          <span className={classes.innerSpan}>
+            Save
+          </span>
+        </div >  
+      );
+    }
+
     const fullList = (
         <div className={classes.drawer}>
             <div className={classes.closeButton}>
@@ -137,13 +173,7 @@ class TemporaryDrawer extends React.Component {
                 value={this.props.name}
                 onChange={this.props.changeName('modelName')}
                 />
-            <div className={classes.innerButtons}
-              onClick={this.props.saveHero}>
-              <FontAwesomeIcon className={classes.icon} icon={['fas', 'save']} size="1x" />
-              <span className={classes.innerSpan}>
-                Save
-              </span>
-            </div >
+            {saveImage}
             <div className={classes.innerButtons}
               onClick={this.props.shareHero}>
               <FontAwesomeIcon className={classes.icon} icon={['fas', 'share']} size="1x" />
@@ -203,4 +233,17 @@ TemporaryDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(TemporaryDrawer);
+
+const mapStateToProps = state => {
+  return {
+    savingModel: state.savedModal.saveInProgress
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    saveInProgress: ()=>dispatch(actions.saveInProgress())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(TemporaryDrawer));

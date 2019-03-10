@@ -2,12 +2,26 @@ import * as actionTypes from '../actions/actionTypes';
 import {updateObject} from '../utility';
 
 const initialState = {
+    saveInProgress: false,
     modalOpen: false,
     modalSmallNameShow: false,
     modalSmallDeleteShow: false,
     selected: null,
 };
 
+const saveInProgress = (state) => {
+    return updateObject(state, {
+            ...this.state,
+            saveInProgress: true
+        });
+};
+
+const saveComplete = (state) => {
+    return updateObject(state, {
+            ...this.state,
+            saveInProgress: false
+        });
+};
 
 const openSavedModal = (state) => {
     return updateObject(state, {
@@ -102,6 +116,8 @@ const reducer = (state = initialState, action) => {
         case actionTypes.REMOVE_SAVED_MODEL: return removeSavedModel(state, action);
         case actionTypes.UPDATE_SAVED_MODEL: return updateSavedModel(state, action);
         case actionTypes.SELECT_MODEL: return selectModel(state, action);
+        case actionTypes.SAVE_IN_PROGRESS: return saveInProgress(state);
+        case actionTypes.SAVE_COMPLETE: return saveComplete(state);
         default:
             return state;
     }

@@ -42,7 +42,9 @@ export {
     addSavedModels,
     removeSavedModel,
     updateSavedModel,
-    selectModel
+    selectModel,
+    saveInProgress,
+    saveComplete
  } from './saved';
 
 

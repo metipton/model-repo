@@ -15,15 +15,20 @@ class Modal extends Component {
         return (
             <Aux>
                 <Backdrop show={this.props.show} clicked={this.props.modalClosed} />
-                <div className={classes.outer}>
-                    <div className={classes.middle}>
+                <div className={classes.outer}                           style={{
+                    zIndex: this.props.show ? '500' : '-1',
+                    //transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',
+                    opacity: this.props.show ? '1' : '0'}}>
+                    <div className={classes.middle}                           style={{
+                            zIndex: this.props.show ? '500' : '-1',
+                            //transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',
+                            opacity: this.props.show ? '1' : '0'}}>
                         <div className={classes.inner}                    
                             style={{
                             zIndex: this.props.show ? '500' : '-1',
                             //transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',
-                            opacity: this.props.show ? '1' : '0'
-                        }}>
-                            {this.props.children}
+                            opacity: this.props.show ? '1' : '0'}}>
+                                {this.props.children}
                         </div>
                     </div>
                 </div>

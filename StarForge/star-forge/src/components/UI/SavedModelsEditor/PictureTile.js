@@ -16,8 +16,10 @@ const styles = theme => ({
         display: 'inline-block',
         height: '15rem',
         width: '12.5rem',
+        transition: '.3s',
         '&:hover': {
           backgroundColor: 'grey',
+          color: 'white !important'
         },
     },
     gridListTileSelected: {
@@ -28,7 +30,7 @@ const styles = theme => ({
         height: '15rem',
         width: '12.5rem',
         backgroundColor: '#b1b1af',
-        boxShadow: '0px 0px .4rem 1px black'
+        boxShadow: '0px 0px .4rem 1px black',
     },
     image: {
       height: '12.5rem',
@@ -71,8 +73,32 @@ const styles = theme => ({
         Zindex: 99,
         overflow: 'hidden',
         backgroundColor: '#06437A',
-        opacity: .8
-    }             
+        opacity: .8,
+        textAlign: 'center'
+    },
+    toolbarUnselected: {
+        color: '#65686c',
+        height: '1.7rem',
+        width: '100%',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '0 1.25rem',
+        boxSizing: 'border-box',
+        Zindex: 99,
+        overflow: 'hidden',
+        opacity: 1,
+        textAlign: 'center',
+    },
+    name : {
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        fontWeight: '400'
+    }
+
   });
 
 
@@ -85,11 +111,11 @@ class PictureTile extends Component {
     render() {
         const { classes } = this.props;
         let tile;
-        if(this.props.selected == this.props.tile){
+        if(this.props.selected == this.props.timestamp){
             tile = (
                 <GridListTile
                 classes={{root : classes.gridListTileSelected}}
-                key={this.props.tile}
+                key={this.props.timestamp}
                 cols={this.props.col}
                 onClick={this.props.clicked}>
                     <FontAwesomeIcon 
@@ -100,7 +126,9 @@ class PictureTile extends Component {
                         />
 
                     <img className={classes.image} key={this.props.key}  src={this.props.src} alt={this.props.key} />
-                    <div className={classes.toolbar}/>
+                    <div className={classes.toolbar}>
+                        <p className={classes.name}>{this.props.byTimestamp[this.props.timestamp]['name']}</p>
+                    </div>
                     <FontAwesomeIcon 
                         className={classes.edit} 
                         onClick={this.props.openNameModal} 
@@ -117,6 +145,10 @@ class PictureTile extends Component {
                     cols={this.props.col}
                     onClick={this.props.clicked}>
                         <img className={classes.image} key={this.props.key}  src={this.props.src} alt={this.props.key} />
+
+                    <div className={classes.toolbarUnselected}>
+                        <p className={classes.name}>{this.props.byTimestamp[this.props.timestamp]['name']}</p>
+                    </div>
                 </GridListTile> 
             )
         }

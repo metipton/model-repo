@@ -66,3 +66,15 @@ export const updateSavedModel = (modelData, modelTimestamp) => {
         timestamp: modelTimestamp
     }
 }
+
+export const saveInProgress = () => {
+    return {
+        type: actionTypes.SAVE_IN_PROGRESS,
+    }
+}
+
+export const saveComplete = () => {
+    return {
+        type: actionTypes.SAVE_COMPLETE,
+    }
+}
