@@ -78,3 +78,11 @@ export const saveComplete = () => {
         type: actionTypes.SAVE_COMPLETE,
     }
 }
+
+export const renameSavedModel = (modelTimestamp, newName) => {
+    return {
+        type: actionTypes.RENAME_SAVED_MODEL,
+        payload: newName,
+        timestamp: modelTimestamp
+    }
+}

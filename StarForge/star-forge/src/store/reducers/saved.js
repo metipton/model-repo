@@ -1,12 +1,15 @@
 import * as actionTypes from '../actions/actionTypes';
 import {updateObject} from '../utility';
 
+
 const initialState = {
     saveInProgress: false,
     modalOpen: false,
     modalSmallNameShow: false,
     modalSmallDeleteShow: false,
     selected: null,
+    modelByTimestamp: null,
+    modelById: null
 };
 
 const saveInProgress = (state) => {
@@ -104,6 +107,16 @@ const updateSavedModel = (state, action) => {
       })
 }
 
+const renameSavedModel = (state, action) => {
+    state.modelByTimestamp[action.timestamp] = {
+        ...state.modelByTimestamp[action.timestamp],
+        'name' : action.payload
+    }
+      return updateObject( state, {
+          ...state,
+      })
+}
+
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.OPEN_SAVED_MODAL: return openSavedModal(state);
@@ -118,6 +131,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.SELECT_MODEL: return selectModel(state, action);
         case actionTypes.SAVE_IN_PROGRESS: return saveInProgress(state);
         case actionTypes.SAVE_COMPLETE: return saveComplete(state);
+        case actionTypes.RENAME_SAVED_MODEL: return renameSavedModel(state, action);
         default:
             return state;
     }

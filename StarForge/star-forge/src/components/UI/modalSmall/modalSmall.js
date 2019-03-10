@@ -13,7 +13,7 @@ class ModalSmall extends Component {
 
 
     render () {
-
+        
         return (
             <Aux>
                 <Backdrop show={this.props.show} clicked={this.props.modalClosed} />
@@ -27,7 +27,7 @@ class ModalSmall extends Component {
                             zIndex: this.props.show ? '800' : '-1',
                             //transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',
                             opacity: this.props.show ? '1' : '0'}}>
-                        <div className={classes.inner}                    
+                        <div className={this.props.modalType==='name' ? classes.innerName : classes.inner}                    
                             style={{
                             zIndex: this.props.show ? '800' : '-1',
                             //transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',

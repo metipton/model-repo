@@ -1902,7 +1902,15 @@ class ModelBuilder extends Component {
         this.props.openSavedModal();
     }
 
-    loadSavedHero = () => {
+    renameSavedModel = (timestamp, newName) => {
+
+        const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp + '/name');
+
+        database.set(newName).then(this.props.renameModel(timestamp, newName)).then(this.props.closeNameModal);
+
+    }
+
+    loadSavedModel = () => {
 
     }
 
@@ -1954,7 +1962,8 @@ class ModelBuilder extends Component {
         <Modal 
             show={this.props.savedModalOpen}
             modalClosed={this.props.closeSavedModal}>
-            <SavedModelsEditor/>
+            <SavedModelsEditor
+                renameModel={(timestamp, newName) => this.renameSavedModel(timestamp, newName)}/>
         </Modal>);
     
      return (
@@ -2013,7 +2022,9 @@ const mapDispatchToProps = dispatch => {
         closeSavedModal: () => dispatch(actions.closeSavedModal()),
         addSavedModels: (payload, timestamps) => dispatch(actions.addSavedModels(payload, timestamps)),
         saveInProgress: ()=>dispatch(actions.saveInProgress()),
-        saveComplete: ()=>dispatch(actions.saveComplete())
+        saveComplete: ()=>dispatch(actions.saveComplete()),
+        renameModel: (timestamp, newName)=>dispatch(actions.renameSavedModel(timestamp, newName)),
+        closeNameModal: () => dispatch(actions.closeNameModal()),
     };
 };
 

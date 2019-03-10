@@ -29,5 +29,24 @@
     box-sizing: border-box;
     transition: all 0.3s ease-out;
     min-width: 26.25rem;
+    text-align: left;
+    /*whatever width you want*/
+  }
+
+  .innerName {
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: rgb(83, 83, 83);
+    width: 16rem;
+    height: 10rem;
+    max-height: 45.75rem;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 1px black;
+    padding: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease-out;
+    min-width: 16rem;
+    text-align: left;
     /*whatever width you want*/
   }
