@@ -157,6 +157,10 @@ class SavedModelsEditor extends Component {
       this.props.renameModel(this.state.selected, this.state.changeName);
     }
 
+    deleteModelHandler = () => {
+      this.props.deleteModel(this.state.selected);
+    }
+
     render() {
         const { classes } = this.props;
         let cards = null;
@@ -166,14 +170,14 @@ class SavedModelsEditor extends Component {
 
           cards = (  
             <GridList  cellHeight={picWidth} classes={{ root: classes.root}}  cols={ this.state.width / picWidth || 4}>
-              {this.props.byId.map( (tile) => (
+              {this.props.byId.map( (tile) => ( 
                     <PictureTile
                         key={tile}
                         timestamp={tile}
                         cols={1}
                         clicked={() => this.clickHandler(tile)}
                         src={this.props.byTimestamp[tile].url}>
-                    </PictureTile>
+                    </PictureTile> 
               ))}
             </GridList>
           )
@@ -244,7 +248,7 @@ class SavedModelsEditor extends Component {
                     onClick={this.props.closeDeleteModal}/>
                     <div className={classes.text}> Are you sure you want to delete this model?</div>          
                   <DeleteModelButton variant="outlined" color="secondary">
-                      <div className={classes.buttonText}>Delete</div>
+                      <div className={classes.buttonText} onClick={this.deleteModelHandler}>Delete</div>
                   </DeleteModelButton>
                   <DeleteModelButton variant="outlined" color="primary">
                       <div 
