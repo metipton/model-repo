@@ -259,7 +259,7 @@ class ModelBuilder extends Component {
     }
 
 
-    
+
 
     
     updateExpressionPercent = (trait, newPercent) => {
@@ -1979,6 +1979,8 @@ class ModelBuilder extends Component {
                     continue;
                 } else if (objects[category] ===  this.state.currentName[category]) {
                     continue;
+                } else if(objects[category] === "''" && this.state.currentName[category] !== "''") {
+                    this.updateObjectHandler(category, this.state.currentName[category], false)
                 } else {
                     this.updateObjectHandler(category, objects[category], false)
                 } 
@@ -1987,9 +1989,9 @@ class ModelBuilder extends Component {
 
         //pose the model
         if(objects['Pose'] !== this.state.currentName['Pose']){
-            this.setPoseByName(objects['Pose']);
+            this.setPoseHandler(objects['Pose']);
         }
-
+        console.log(this.state);
         //apply morph targets
 
     }
