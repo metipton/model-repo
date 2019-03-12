@@ -258,6 +258,9 @@ class ModelBuilder extends Component {
         
     }
 
+
+    
+
     
     updateExpressionPercent = (trait, newPercent) => {
         // let expCounter = 0;
@@ -670,7 +673,6 @@ class ModelBuilder extends Component {
             this.resetState = this.state;
    }
 
- 
 
    async updateObjectHandler(category, selection, fromInit) {
         this.setState({
@@ -733,6 +735,59 @@ class ModelBuilder extends Component {
        });
    }
 
+   loadMultipleModelsToMemory = async (categoryArr, selectionArr) => {
+       //set the selected at the beginning of the load
+       this.setState(prevState => {
+           let newSelect = prevState.selected;
+           for(let i = 0; i < categoryArr.length; i++){
+                newSelect = {
+                    ...newSelect,
+                    [categoryArr[i]]: selectionArr[i]
+                } 
+            }
+           return {
+                ...prevState.state,
+                selected: newSelect
+            }
+        });
+
+        //download all files at the same time, load them to the cache
+        const results = categoryArr.map(async (category, index) => {
+            if(category !== 'Pose' && !this.isObjectInCache( category, selectionArr[index])){
+                return this.downloadObjectFromStorage( category, selectionArr[index])
+                .then(async (file) => {
+                    return this.loadModelToMemory(category, selectionArr[index], file);
+                })
+            }
+        }) 
+        console.log(results);
+        //this makes sure all the above async calls are complete before editing scene
+        return Promise.all(results);
+    }
+
+    processMultipleModels = (categoryArr, selectionArr) => {
+        for(let i = 0; i < categoryArr.length; i++){
+            let category = categoryArr[i];
+            let selection = selectionArr[i];
+            let object = this.objectPool[categoryArr[i]][selectionArr[i]].scene;
+            let child = object.children[0].children[0];
+            child.frustumCulled = false;
+            child.castShadow = true;
+            child.category = category;
+            child.name = category;
+            child.selection = selection;
+            this.objectPool= {
+                ...this.objectPool,
+                [category] : {
+                    ...this.objectPool[category],
+                    [selection]: child
+                }
+            }
+        }
+
+        console.log(this.objectPool);
+    }
+
    loadModelToMemory = (category, selection, file) => {
     return new Promise((resolve, reject) => {
         const url = window.URL.createObjectURL(file);
@@ -746,7 +801,7 @@ class ModelBuilder extends Component {
                         [selection]: object
                     }
                 }
-
+                console.log(object);
                 resolve();
             },
              null,
@@ -925,7 +980,6 @@ class ModelBuilder extends Component {
             this.setPoseByName(this.state.currentName['Pose']);
         }
         if(fromDownload){
-            console.log(object.scene);
             return object.scene;
         } else {
             return object;
@@ -1250,10 +1304,8 @@ class ModelBuilder extends Component {
 
 
     isObjectInCache = (category, selection) => {
-        const cacheCategory = this.state.cache[category];
         let inCache = false;
-
-        for (var object in cacheCategory) {
+        for (var object in this.objectPool[category]) {
             if(object === selection) {
                 inCache = true;
                 break;
@@ -1836,12 +1888,9 @@ class ModelBuilder extends Component {
 
     }
 
-
     clearItem = (item) => {
 
     }
-
-
 
     shareHero = () => {
         alert("Share hero");
@@ -1863,6 +1912,7 @@ class ModelBuilder extends Component {
                 ...this.state.links
             },
             name: this.state.modelName,
+            morphTargets: this.morphTargets
           };
         console.log(payload);
         const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
@@ -1878,7 +1928,6 @@ class ModelBuilder extends Component {
             return;
         }
 
-        console.log("hi");
         //query the RTDB to get the list of timestamps for the saved characters
         let timestamps = [];
         let payload = {};
@@ -1887,7 +1936,6 @@ class ModelBuilder extends Component {
         database.once("value").then( async (snapshot) => {
             payload = snapshot.val();
 
-            console.log(snapshot.val());
             for(var timestamp in payload){
                 timestamps.push(timestamp);
                 await storage.child('/Saved/' + this.props.userId + '/' + timestamp  + '/screenshot-lg.png').getDownloadURL().then((url) => {
@@ -1902,6 +1950,50 @@ class ModelBuilder extends Component {
         this.props.openSavedModal();
     }
 
+    loadSavedModel = async (timestamp) => {
+        const savedState = this.props.byTimestamp[timestamp];
+        let name = savedState.name;
+        let links = savedState.links;
+        let morphTarget = savedState.morphTargets;
+        let objects = savedState.objects;
+
+        console.log(objects);
+        let categoryArr = [];
+        let selectionArr = [];
+        //load all items not already in memory into memory
+        for(var category in objects){
+            if( objects[category] !== "''" && !this.isObjectInCache(category, objects[category]) && category !== 'Pose' ){
+                categoryArr.push(category);
+                selectionArr.push(objects[category]);
+            }
+        }
+
+        await this.loadMultipleModelsToMemory(categoryArr, selectionArr);
+        this.processMultipleModels(categoryArr, selectionArr);
+        console.log(this.state);
+
+        //iterate through all items and switch to saved items
+        for(var category in objects){
+            if(category !== 'Pose'){
+                if(objects[category] === "''" && this.state.currentName[category] === "''"){
+                    continue;
+                } else if (objects[category] ===  this.state.currentName[category]) {
+                    continue;
+                } else {
+                    this.updateObjectHandler(category, objects[category], false)
+                } 
+            }
+        }
+
+        //pose the model
+        if(objects['Pose'] !== this.state.currentName['Pose']){
+            this.setPoseByName(objects['Pose']);
+        }
+
+        //apply morph targets
+
+    }
+
     renameSavedModel = (timestamp, newName) => {
 
         const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp + '/name');
@@ -1914,12 +2006,6 @@ class ModelBuilder extends Component {
         const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
         database.set(null).then(this.props.deleteSavedModel(timestamp)).then(this.props.closeDeleteModal);
     }
-
-    loadSavedModel = () => {
-
-    }
-
-
 
     nameChangeHandler = name => event => {
         this.setState({
@@ -1969,7 +2055,8 @@ class ModelBuilder extends Component {
             modalClosed={this.props.closeSavedModal}>
             <SavedModelsEditor
                 renameModel={(timestamp, newName) => this.renameSavedModel(timestamp, newName)}
-                deleteModel={timestamp => this.deleteSavedModel(timestamp)}/>
+                deleteModel={timestamp => this.deleteSavedModel(timestamp)}
+                loadSavedModel={timestamp => this.loadSavedModel(timestamp)}/>
         </Modal>);
     
      return (
@@ -2014,7 +2101,8 @@ const mapStateToProps = state => {
         currentCart: state.shoppingCart.cartProducts.items,
         userId: state.auth.userId,
         addInProgress: state.shoppingCart.cartProducts.addInProgress,
-        savedModalOpen: state.savedModal.modalOpen
+        savedModalOpen: state.savedModal.modalOpen,
+        byTimestamp: state.savedModal.modelByTimestamp,
     };
 };
 

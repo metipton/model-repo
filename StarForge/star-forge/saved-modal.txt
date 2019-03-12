@@ -9,21 +9,10 @@ clear the exportHolder object
 try cycling the race object
 
 
+pull saved models on login
+
 
 to do with loading saved models:
-
-   add name to bottom of tile
-
-   Fill out the delete prompt
-	Are you sure you want to delete this model?
-	Delete and cancel buttons
-
-   Fill out naming prompt
-	Character name span
-	text form with name
-	Accept and cancel buttons
-
-   Fix the smallmodal overlap	
-
-   delete the info and picture when delete confirmed
-	first delete from DB, then use cloud function to delete the image from storage
+   backdrops arent working
+   add load model functionality
+   add morph targets and expressions to the saved models

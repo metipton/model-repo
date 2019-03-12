@@ -116,11 +116,6 @@ class SavedModelsEditor extends Component {
       this.onWindowResize();
     }
 
-    deleteSelected = () => {
-
-    }
-
-
 
     onWindowResize = () => {
       let cWidth;
@@ -135,6 +130,13 @@ class SavedModelsEditor extends Component {
         ...this.state,
         width: cWidth
       })
+    }
+
+    keyPressHandler = (event ) => {
+      console.log(event.charCode);
+      if( event.charCode === 13){
+          this.props.renameModel(this.state.selected, this.state.changeName);
+      }
     }
 
     clickHandler = (tile) => {
@@ -159,6 +161,10 @@ class SavedModelsEditor extends Component {
 
     deleteModelHandler = () => {
       this.props.deleteModel(this.state.selected);
+    }
+
+    loadSavedHandler = () => {
+      this.props.loadSavedModel(this.state.selected);
     }
 
     render() {
@@ -191,6 +197,7 @@ class SavedModelsEditor extends Component {
                     id="bootstrap-input"
                     defaultValue={this.props.byTimestamp[this.state.selected]['name']}
                     onChange={this.nameInputHandler('changeName')}
+                    inputProps={{ onKeyPress: this.keyPressHandler }}
                     classes={{
                       root: classes.bootstrapRoot,
                       input: classes.bootstrapInput,
@@ -260,7 +267,8 @@ class SavedModelsEditor extends Component {
               </ModalSmall>
               <SavedModelToolbar/>
                 {cards}
-              <SavedModelFooter/>
+              <SavedModelFooter
+                loadSaved={this.loadSavedHandler}/>
             </div>
     
          )

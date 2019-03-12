@@ -25,6 +25,7 @@ class SavedModelToolbar extends Component {
         return (
             <div className={classes.Toolbar}>
                     <Button
+                        clicked={this.props.loadSaved}
                         variant="contained"
                         color="primary">Load Model</Button>
                     <Button
