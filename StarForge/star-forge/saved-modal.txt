@@ -1,5 +1,6 @@
 TO do with export:
 
+
 need to add items to the exportHolder object.
 need to bind all items to the skeleton after they are all loaded
 push all items into the objects array for export
@@ -9,10 +10,6 @@ clear the exportHolder object
 try cycling the race object
 
 
-pull saved models on login
-
-
 to do with loading saved models:
    backdrops arent working
-   add load model functionality
-   add morph targets and expressions to the saved models
+

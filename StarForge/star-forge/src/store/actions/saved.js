@@ -79,6 +79,18 @@ export const saveComplete = () => {
     }
 }
 
+export const loadInProgress = () => {
+    return {
+        type: actionTypes.LOAD_IN_PROGRESS,
+    }
+}
+
+export const loadComplete = () => {
+    return {
+        type: actionTypes.LOAD_COMPLETE,
+    }
+}
+
 export const renameSavedModel = (modelTimestamp, newName) => {
     return {
         type: actionTypes.RENAME_SAVED_MODEL,

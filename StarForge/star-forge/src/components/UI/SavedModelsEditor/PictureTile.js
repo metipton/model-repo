@@ -97,7 +97,17 @@ const styles = theme => ({
         marginLeft: 'auto',
         marginRight: 'auto',
         fontWeight: '400'
-    }
+    },
+    loadInProgress: {
+        zIndex: 1001,
+        position: 'absolute',
+        margin: 'auto',
+        top:0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        color: '#FFA500'
+      },
 
   });
 
@@ -110,6 +120,11 @@ class PictureTile extends Component {
 
     render() {
         const { classes } = this.props;
+
+        let loadIcon = (
+            <FontAwesomeIcon className={classes.loadInProgress} icon={['fas','spinner']} spin size="3x" />
+            );
+
         let tile;
         if(this.props.selected == this.props.timestamp){
             tile = (
@@ -124,7 +139,7 @@ class PictureTile extends Component {
                         icon={['fas', 'trash-alt']} 
                         size="1x" 
                         />
-
+                    {(this.props.loadInProgress && this.props.timestamp === this.props.selected) ? loadIcon : null}
                     <img className={classes.image} key={this.props.key}  src={this.props.src} alt={this.props.key} />
                     <div className={classes.toolbar}>
                         <p className={classes.name}>{this.props.byTimestamp[this.props.timestamp]['name']}</p>
@@ -167,7 +182,8 @@ const mapStateToProps = state => {
       byId: state.savedModal.modelById,
       byTimestamp: state.savedModal.modelByTimestamp,
       savedModal: state.savedModal,
-      selected: state.savedModal.selected
+      selected: state.savedModal.selected,
+      loadInProgress: state.savedModal.loadInProgress
     };
   };
   

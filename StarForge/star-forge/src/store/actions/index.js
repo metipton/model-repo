@@ -45,6 +45,8 @@ export {
     selectModel,
     saveInProgress,
     saveComplete,
+    loadInProgress,
+    loadComplete,
     renameSavedModel
  } from './saved';
 

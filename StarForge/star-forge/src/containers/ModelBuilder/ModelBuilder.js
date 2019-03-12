@@ -1921,43 +1921,67 @@ class ModelBuilder extends Component {
         this.exportScreenshotToSaved(timestamp, "lg", largeImage);
     }
 
-    openSavedHeroModal = () => {
-        let func = this.saveHero;
+    loadSavedHeroData = () => {
         if(!this.props.userId){
-            this.authLogin(func);
             return;
         }
 
         //query the RTDB to get the list of timestamps for the saved characters
         let timestamps = [];
         let payload = {};
-        const storage = firebase.storage().ref();
+
         const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels' );
         database.once("value").then( async (snapshot) => {
             payload = snapshot.val();
+            let promises = [];
 
             for(var timestamp in payload){
                 timestamps.push(timestamp);
-                await storage.child('/Saved/' + this.props.userId + '/' + timestamp  + '/screenshot-lg.png').getDownloadURL().then((url) => {
-                    payload[timestamp].url = url;
-                })
+                promises.push(this.getSavedModelImage(payload, timestamp));
             }
+
+            await Promise.all(promises);
+
             this.props.addSavedModels(payload, timestamps);
         })
 
-        //loop through firebase storage to download the image
-  
+    }
+
+    getSavedModelImage = (payload, timestamp) => {
+        const storage = firebase.storage().ref();
+        return new Promise( ( resolve, reject ) => {
+            storage.child('/Saved/' + this.props.userId + '/' + timestamp  + '/screenshot-lg.png').getDownloadURL()
+            .then( async (url) => {
+                payload[timestamp].url = url;
+                resolve();
+            }).catch( error => {
+                reject( error );
+            });
+    })}
+
+    openSavedHeroModal = () => {
+        let func = this.openSavedHeroModal;
+        if(!this.props.userId){
+            this.authLogin(func);
+            return;
+        }
+        this.loadSavedHeroData();
         this.props.openSavedModal();
     }
 
     loadSavedModel = async (timestamp) => {
+        this.props.loadInProgress();
         const savedState = this.props.byTimestamp[timestamp];
         let name = savedState.name;
         let links = savedState.links;
         let morphTarget = savedState.morphTargets;
         let objects = savedState.objects;
+        this.setState({
+            ...this.state,
+            links: links,
+            modelName: name
+        })
 
-        console.log(objects);
         let categoryArr = [];
         let selectionArr = [];
         //load all items not already in memory into memory
@@ -1992,7 +2016,19 @@ class ModelBuilder extends Component {
             this.setPoseHandler(objects['Pose']);
         }
         console.log(this.state);
+
         //apply morph targets
+        this.morphTargets = morphTarget;
+
+        for(var part in this.morphTargets.body){
+            this.updateBodyPercent(part, this.morphTargets.body[part]['percent']);
+        }
+        for(var expression in this.morphTargets.expression){
+            this.updateExpressionPercent(expression, this.morphTargets.expression[expression]['percent']);
+        }
+
+        this.props.closeSavedModal();
+        this.props.loadComplete();
 
     }
 
@@ -2119,6 +2155,8 @@ const mapDispatchToProps = dispatch => {
         addSavedModels: (payload, timestamps) => dispatch(actions.addSavedModels(payload, timestamps)),
         saveInProgress: ()=>dispatch(actions.saveInProgress()),
         saveComplete: ()=>dispatch(actions.saveComplete()),
+        loadInProgress: ()=>dispatch(actions.loadInProgress()),
+        loadComplete: ()=>dispatch(actions.loadComplete()),
         renameModel: (timestamp, newName)=>dispatch(actions.renameSavedModel(timestamp, newName)),
         closeNameModal: () => dispatch(actions.closeNameModal()),
         closeDeleteModal: () => dispatch(actions.closeDeleteModal()),

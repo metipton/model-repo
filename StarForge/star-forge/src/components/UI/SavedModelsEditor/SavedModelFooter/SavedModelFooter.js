@@ -26,6 +26,7 @@ class SavedModelToolbar extends Component {
             <div className={classes.Toolbar}>
                     <Button
                         clicked={this.props.loadSaved}
+                        disabled={this.props.loadInProgress}
                         variant="contained"
                         color="primary">Load Model</Button>
                     <Button
@@ -39,7 +40,7 @@ class SavedModelToolbar extends Component {
 
 const mapStateToProps = state => {
     return {
-
+        loadInProgress: state.savedModal.loadInProgress
     };
 };
 

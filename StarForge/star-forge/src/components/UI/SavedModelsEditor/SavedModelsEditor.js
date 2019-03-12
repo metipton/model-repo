@@ -282,7 +282,7 @@ const mapStateToProps = state => {
     byTimestamp: state.savedModal.modelByTimestamp,
     savedModal: state.savedModal,
     nameModalShow: state.savedModal.modalSmallNameShow,
-    deleteModalShow: state.savedModal.modalSmallDeleteShow
+    deleteModalShow: state.savedModal.modalSmallDeleteShow,
   };
 };
 
