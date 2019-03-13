@@ -14,6 +14,8 @@ const styles = theme => ({
   input: {
     display: 'none',
   },
+  label: {
+  }
 });
 
 function ContainedButtons(props) {
@@ -24,7 +26,9 @@ function ContainedButtons(props) {
           disabled={props.disabled}
           variant={props.variant}
           color={props.color} 
-          className={classes.button}
+          classes={{
+            root: classes.button,
+            label: classes.label}}
           onClick={props.clicked}>
         {props.children}
       </Button>

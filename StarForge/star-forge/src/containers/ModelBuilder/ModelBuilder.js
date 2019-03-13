@@ -6,8 +6,7 @@ import 'firebase/storage';
 import axios from '../../axios-orders.js';
 import GLTFLoader from 'three-gltf-loader';
 import GLTFExporter from 'three-gltf-exporter';
-import STLExporter from '../../assets/utility/STLExporter';
-import OBJExporter from '../../assets/utility/OBJExporter';
+
 
 import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
@@ -210,7 +209,6 @@ class ModelBuilder extends Component {
      this.stop = this.stop.bind(this)
      this.animate = this.animate.bind(this)
      this.setObjectStateHandler = this.setObjectStateHandler.bind(this)
-     this.loadModelFromCache = this.loadModelFromCache.bind(this);
      this.loadModelFromMemory = this.loadModelFromMemory.bind(this);
     }
 
@@ -331,23 +329,6 @@ class ModelBuilder extends Component {
     }
 
 
-    //object picking functions
-    setPickPosition = (event) => {
-        this.pickPosition.x = event.clientX;
-        this.pickPosition.y = event.clientY;
-      }
-
-      
-    
-    clearPickPosition = () => {
-        // unlike the mouse which always has a position
-        // if the user stops touching the screen we want
-        // to stop picking. For now we just pick a value
-        // unlikely to pick something
-        this.pickPosition.x = -100000;
-        this.pickPosition.y = -100000;
-      }
-
     resizeRendererToDisplaySize = (renderer) => {
         const canvas = renderer.domElement;
         const width = this.canvas.clientWidth;
@@ -369,8 +350,6 @@ class ModelBuilder extends Component {
         this.THREE = THREE;
         this.gltfLoader = new GLTFLoader();
         this.exporter = new GLTFExporter();
-        this.stlExporter = new STLExporter();
-        this.objExporter = new OBJExporter();
         this.mixer = null;
         this.animationScene = null;
         this.subclips = {};
@@ -379,8 +358,6 @@ class ModelBuilder extends Component {
         this.bones = [];
         this.currentMesh = null;
         this.skeleton = null;
-        this.activeObjects = [];
-        this.exportHolder = {};
         this.armatureLoaded = false;
 
 
@@ -457,19 +434,6 @@ class ModelBuilder extends Component {
         this.allScenes = [];
         this.allObjectHolders = [];
 
-        //Create all the picking scene holders
-        const pickingScene = new THREE.Scene();
-        this.pickingScene = pickingScene;
-        this.pickingScene.background = new THREE.Color(0);
-        const idToObject = {};
-        this.idToObject = idToObject;
-        this.pickingSceneObjHolder = new THREE.Object3D();
-        this.pickingScene.add(this.pickingSceneObjHolder);
-        const pickPosition = {x: 0, y: 0};
-        const pickHelper = new GPUPickHelper();
-        this.pickPosition = pickPosition;
-        this.pickHelper = pickHelper;
-        this.clearPickPosition();
 
         //add picking event listeners
         window.addEventListener('mousemove', this.setPickPosition);
@@ -492,11 +456,14 @@ class ModelBuilder extends Component {
         const width = this.mount.clientWidth;
         const height = this.mount.clientHeight;
         const scene = new THREE.Scene();
-        const objectHolder = new THREE.Object3D();
         this.scene = scene;
+        const objectHolder = new THREE.Object3D();
         this.objectHolder = objectHolder;
         this.objectHolder.name = "Object Holder";
         this.scene.add(this.objectHolder);
+        this.armatureHolder = new THREE.Object3D();
+        this.armatureHolder.name = "Armature Holder";
+        this.scene.add(this.armatureHolder);
 
 
         let camera = new THREE.PerspectiveCamera(
@@ -576,7 +543,7 @@ class ModelBuilder extends Component {
        ];
        var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
        this.skyBox = new THREE.Mesh(geometry, cubeMaterial);
-
+       this.skyBox.name = 'skybox';
        this.skyBox.receiveShadow = true;
        scene.add(this.skyBox);
 
@@ -660,7 +627,7 @@ class ModelBuilder extends Component {
        await this.updateObjectHandler('Race', this.state.currentName['Race'], true, this.setObjectStateHandler);
        const results = Object.keys(this.state.currentName).map(async( i ) => {
            if(this.state.currentName[i] !== "''" && i !== 'Pose' && i !== 'Race') {
-              await this.updateObjectHandler(i, this.state.currentName[i], true, this.setObjectStateHandler);
+              return this.updateObjectHandler(i, this.state.currentName[i], true, this.setObjectStateHandler);
           }
        });
 
@@ -784,13 +751,11 @@ class ModelBuilder extends Component {
                 }
             }
         }
-
-        console.log(this.objectPool);
     }
 
    loadModelToMemory = (category, selection, file) => {
     return new Promise((resolve, reject) => {
-        const url = window.URL.createObjectURL(file);
+        const url = (file !== null ? window.URL.createObjectURL(file) : this.state.cache[category][selection]);
         this.gltfLoader.load(
             url,
             async (object) => {
@@ -801,7 +766,6 @@ class ModelBuilder extends Component {
                         [selection]: object
                     }
                 }
-                console.log(object);
                 resolve();
             },
              null,
@@ -918,12 +882,15 @@ class ModelBuilder extends Component {
                        object.name = category;
 
                        if(category === 'Race' && !this.armatureLoaded){
-                            this.scene.add( object );
+                            this.scene.add( object);
+                            object.children[0].name = 'skeleton';
                             let model = object.children[0].children[0];
-                            //const clone = this.createPickingClone(model);
+
                             let parent = object.children[0];
                             model.name = category;
                             THREE.SceneUtils.attach(model, parent, this.objectHolder);
+                            THREE.SceneUtils.attach(parent, parent.parent, this.armatureHolder);
+                            this.scene.remove(object);
                             this.armatureLoaded = true;
                             
                        } else {
@@ -953,8 +920,8 @@ class ModelBuilder extends Component {
    loadModelFromMemory = (category, selection, fromDownload) => {
        let object = this.objectPool[category][selection];
        if( category === 'Race' && !this.armatureLoaded ){
+            object.scene.name = 'skeleton';
             this.animationScene = object;
-
             this.mixer = new THREE.AnimationMixer(object.scene);
             var allAction = this.mixer.clipAction( object.animations[ 0 ] );
 
@@ -967,6 +934,7 @@ class ModelBuilder extends Component {
 
             }
             object.scene.children[0].children[0].castShadow = true;
+            this.objectPool[category][selection] = object.scene.children[0].children[0]
             this.skeleton = object.scene.children[0].children[0].skeleton;
             this.bones = this.skeleton.bones;
 
@@ -1031,51 +999,44 @@ class ModelBuilder extends Component {
     });
    }
 
-    loadModelFromCache = (category, url) => {
+    loadNewArmatureFromMemory = ( url) => {
         return new Promise((resolve, reject) => {
             this.gltfLoader.load(
                 url,
                 async (object) => {
-                    if( category === 'Race' && !this.armatureLoaded ){
-                        this.animationScene = object;
-                        console.log(this.animationScene);
 
-                        this.mixer = new THREE.AnimationMixer(object.scene);
-         				var allAction = this.mixer.clipAction( object.animations[ 0 ] );
+                this.animationScene = object;
 
-                         for( let i = 0; i < object.animations[0].tracks[0].times.length; i++) {
-                             let poseNum = "Pose" + ( i + 1 );
-                             this.subclips = {
-                                 ...this.subclips,
-                                 [poseNum]: THREE.AnimationUtils.subclip( allAction._clip, poseNum, i, i + 1  )
-                             };
+                this.mixer = new THREE.AnimationMixer(object.scene);
+                var allAction = this.mixer.clipAction( object.animations[ 0 ] );
 
-                         }
-                         object.scene.children[0].children[0].castShadow = true;
-                         this.skeleton = object.scene.children[0].children[0].skeleton;
-                         this.bones = this.skeleton.bones;
+                    for( let i = 0; i < object.animations[0].tracks[0].times.length; i++) {
+                        let poseNum = "Pose" + ( i + 1 );
+                        this.subclips = {
+                            ...this.subclips,
+                            [poseNum]: THREE.AnimationUtils.subclip( allAction._clip, poseNum, i, i + 1  )
+                        };
 
-                         for( let clip in this.subclips ) {
-                            this.mixer.clipAction( this.subclips[clip]);
-         					this.actions[clip] = this.mixer.clipAction( this.subclips[clip]);
-         				}
-
-                        
-                        //set the pose to current selected pose if not select, else set to pose 1
-                        this.setPoseByName(this.state.currentName['Pose']);
-
-                        
                     }
-                    console.log(object.scene);
-                    resolve(object.scene);
+                    object.scene.children[0].children[0].castShadow = true;
+                    this.skeleton = object.scene.children[0].children[0].skeleton;
+                    this.bones = this.skeleton.bones;
+
+                    for( let clip in this.subclips ) {
+                    this.mixer.clipAction( this.subclips[clip]);
+                    this.actions[clip] = this.mixer.clipAction( this.subclips[clip]);
+                }
+
+                
+                //set the pose to current selected pose if not select, else set to pose 1
+                this.setPoseByName(this.state.currentName['Pose']);
+
+                    
+                resolve(object.scene.children[0]);
                 },
                  null,
                 (error) => {
                     console.log(error);
-                    this.setState({
-                        ...this.state,
-                        selected: this.state.currentName
-                    });
                     reject(error);
                 }
             )
@@ -1188,11 +1149,11 @@ class ModelBuilder extends Component {
          if(this.state.links.gloves.linked ||
              (!this.state.links.gloves.linked && (this.state.links.gloves.gloves.GloveLeft === this.state.links.gloves.gloves.GloveRight))) {
              this.setState(prevState => ({
-                 ...this.state,
+                 ...prevState,
                  links: {
-                     ...this.state.links,
+                     ...prevState.links,
                      gloves: {
-                         ...this.state.links.gloves,
+                         ...prevState.links.gloves,
                          linked: !prevState.links.gloves.linked
                      }
                  }
@@ -1200,9 +1161,9 @@ class ModelBuilder extends Component {
              })
          } else {
              this.setState(prevState => ({
-                 ...this.state,
+                 ...prevState,
                  links: {
-                     ...this.state.links,
+                     ...prevState.links,
                      gloves: {
                          linked: true,
                          gloves: {
@@ -1317,11 +1278,6 @@ class ModelBuilder extends Component {
    removeObjectFromScene = (category) => {
        var selectedObject = this.objectHolder.getObjectByName(category);
        this.objectHolder.remove(selectedObject);
-       for(let i = this.activeObjects.length - 1; i >= 0; i--){
-        if(this.activeObjects[i].category === category){
-            this.activeObjects.splice(i, 1);
-        }
-       }
    }
 
    getBoneByCategory = (category) => {
@@ -1365,19 +1321,6 @@ class ModelBuilder extends Component {
             }
    }
 
-   transferObjectsToNewModel( ) {
-        for(let i = this.activeObjects.length - 1; i >= 0; i--){
-            let obj = this.scene.getObjectByName(this.activeObjects[i]);
-            if( obj.category !== 'Race'){
-                let bone = this.getBoneByCategory(obj.category);
-                obj.skeleton = this.skeleton;
-                obj.bind(obj.skeleton, bone.matrixWorld);
-            }
-        }
-   }
-
-
-
    setupObjectImport(category, selection, fromDownload, object) {
        let child;
        if(fromDownload){
@@ -1399,7 +1342,6 @@ class ModelBuilder extends Component {
        }
 
         let bone = this.getBoneByCategory(category);
-        this.activeObjects.push(child.name);
        //imported heirachy scene->object3D->skinnedmesh
         try {
             child.material.skinning = true;
@@ -1413,7 +1355,7 @@ class ModelBuilder extends Component {
         } else {
             this.objectHolder.add(child);
         }
-
+        console.log(this.scene);
         this.applyMorphTargetsOnImport(child);
         child.name = category;
    }
@@ -1620,42 +1562,13 @@ class ModelBuilder extends Component {
        return file;
      }
 
-     exportModelOBJ = (cartNumber) => {
-        this.objExporter.parseAll(this.objectHolder.children, (object)=> {
 
-            return new Promise( ( resolve, reject ) => {
-                firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.obj' ).put(object).then(() => {
-                    console.log("Model upload complete");
-                    this.props.finishedAdd();
-                    resolve();
-                }).catch( error => {
-                    reject(error);
-                });
-        })});
-     }
-
-     exportModelSTL = (cartNumber) => {
-
-        this.stlExporter.parse(this.objectHolder.children, (object)=> {
-
-            return new Promise( ( resolve, reject ) => {
-                firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.stl' ).put(object).then(() => {
-                    console.log("Model upload complete");
-                    this.props.finishedAdd();
-                    resolve();
-                }).catch( error => {
-                    reject(error);
-                });
-            })});
-     }
-
-     exportModelGLTF = (cartNumber) => {
+     exportModelGLTF = async (cartNumber) => {
         let objects = [];
 
 
         let newScene = this.cloneGltf(this.scene)['scene'];
-        console.log(newScene);
-        console.log(this.objectHolder);
+
         //morph geometry of all objects to match the pose
         for(let i = 0; i < newScene.children.length; i++) {
             let child = newScene.children[i];
@@ -1669,7 +1582,8 @@ class ModelBuilder extends Component {
                 objects.push(clone);
             }
         }
-
+        await this.cycleRaceModel();
+        await this.cycleAllSkinnedMeshes();
         var DEFAULT_OPTIONS = {
             binary: true,
             trs: false,
@@ -1695,22 +1609,82 @@ class ModelBuilder extends Component {
         }, DEFAULT_OPTIONS);
     }
 
-    cycleRaceModel = () => {
-        //load full new race model
+    cycleRaceModel = async() => {
 
-        //remove old model
+        //get new armature
+        let newArmature = await this.getNewArmature(this.state.currentName['Race']);
+        this.armatureHolder.remove(this.skeleton);
+        this.armatureHolder.add(newArmature);
 
-        //remove old skeleton
+        //remove old race from object holder
+        this.removeObjectFromScene('Race');
 
-        //add new model
-        //rebind all objects to new skeleton
-        //update all morph
+        //add new race to object holder
+        newArmature.children[0].name = 'Race';
+        this.objectPool['Race']['Race1'] = newArmature.children[0];
+        THREE.SceneUtils.attach(newArmature.children[0], newArmature, this.objectHolder);
+
     }
+
+    getNewArmature = async ( race, modelNum) => {
+        const url = this.state.cache['Race'][race];
+        console.log(url);
+        let raceModel = await this.loadNewArmatureFromMemory(url);
+        return raceModel;
+
+    }
+
+    cycleAllSkinnedMeshes = async () => {
+        let current = this.state.currentName;
+
+        let child;
+        for(var category in current){
+            let selection = current[category];
+            if(current[category] !== "''" && category !== 'Race' && category !== 'Pose'){
+                await this.loadModelToMemory(category, selection, null);
+                let smesh = this.loadModelFromMemory(category, selection, true);
+
+                //remove the old object
+                this.removeObjectFromScene(category);
+
+                //make sure all miscellaneous attributes are assigned
+                child = smesh.children[0].children[0];
+                child.frustumCulled = false;
+                child.castShadow = true;
+                child.category = category;
+                child.selection = selection;
+                child.name = category;
+                this.objectPool= {
+                    ...this.objectPool,
+                    [category] : {
+                        ...this.objectPool[category],
+                        [selection]: child
+                    }
+                }
+
+                let bone = this.getBoneByCategory(category);
+
+                //bind to armature
+                try {
+                    child.material.skinning = true;
+                    child.skeleton = this.skeleton;
+                    child.bind(child.skeleton, bone.matrixWorld);
+                } catch (error){
+                    //console.log(error);
+                }
+                this.applyMorphTargetsOnImport(child);
+                //detach from parent and put in object holder
+                THREE.SceneUtils.attach(child, child.parent, this.objectHolder);            
+            }
+        }
+
+    }
+
+
 
     exportScreenshotToCart = (cartNumber, size, image) => {
         return new Promise( ( resolve, reject ) => {
             firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot-' + size + '.png' ).put(image).then(() => {
-                console.log("Screenshot upload complete");
                 resolve();
             }).catch( error => {
                 reject(error);
@@ -1802,29 +1776,6 @@ class ModelBuilder extends Component {
 
         this.props.addToCart(payload);
      }
-
-    createPickingClone = (skinnedMesh) => {
-        this.numObjects++;
-        const id = this.numObjects;
-
-        this.idToObject[id] = skinnedMesh;
-
-        const pickingMaterial = new THREE.MeshPhongMaterial({
-            emissive: new THREE.Color(id),
-            color: new THREE.Color(0, 0, 0),
-            specular: new THREE.Color(0, 0, 0),
-            transparent: true,
-            side: THREE.DoubleSide,
-            alphaTest: 0.5,
-            blending: THREE.NoBlending,
-        });
-  
-        const clone = THREE.AnimationUtils.clone(skinnedMesh);
-        clone.skinning = true;
-        clone.material = pickingMaterial;
-
-        return clone;
-    }
 
 
     // All the bottom bar functions are below

@@ -24,10 +24,6 @@
     height: 100%;
 }
 
-.Logo {
-    height: 80%;
-}
-
 .Toolbar span {
     color : #06437A;
     opacity: 1.0;
@@ -37,7 +33,6 @@
 .Toolbar span:active,
 .Toolbar span.active {
     color: #06437A;
-    text-decoration: underline;
 }
 
 .Login {
@@ -69,6 +64,7 @@
 .toolbarItem :active,
 .toolbarItem .active,{
     color: #FFA500 ;
-    text-decoration: underline;
     cursor: pointer;
 }
+
+

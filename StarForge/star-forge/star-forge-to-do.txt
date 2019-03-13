@@ -1,7 +1,7 @@
 Model Builder
-   	Implement color scenes
+	abstract all functions out to take a character number to know which model to affect
+	implement scaling -> size
    	zoom head when clicking on the head
-	When changing multiple items, have items added to pool and add at same time
 	switch export to collada, stl, or obj
 	
 Styling:
@@ -16,9 +16,6 @@ Editor
 	Make two handed/sided things always two column with a selector between them
 	Material - Card w/ buttons and images - Retextures the model
 	add a clear button to the bar  
-
-Bottom toolbar -  save character, my characters, screenshot,
-
 
 Shopping cart
 	figure out rollback if model fails to upload
@@ -53,17 +50,21 @@ Nice to haves
 	figure out how to load feet concurrently
 	Abstract out the gridList component
 	Change header for Auth log in
+	load multiple items at once to cache
+	remove references to cache in state.
+	change reset to be based off of initial state and not just the first items
+	optimize code to release things you are no longer using (https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects)
 
 Known bugs
+	replace all setStates that include call to this.state with functional form using prevState
 	clear all warnings
 	Need to make the editor example to fill entire viewport dynamically
-	morph targets are not properly applied to non-race items on export
+	Export fucks up the geometry for subsequent exports
 	update to v100 threejs
-	Race fails when changing
 	wrong pants when clicking new ->
-	remove underline from email address and log out buttons
 	base doesnt come back when clicking new
-
+	Race won't work when loading saved
+	Issues with posing when loading different races
 
 	
 

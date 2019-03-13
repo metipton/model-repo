@@ -15,8 +15,7 @@ import ShoppingCartIcon from '../../components/UI/ShoppingCartIcon/ShoppingCartI
 import SocialMedia from '../../components/Navigation/NavigationItems/SocialMedia/SocialMedia';
 
 import Auth from '../auth0/Auth';
-
-
+  
 
 class Toolbar extends Component {
 
@@ -66,13 +65,7 @@ class Toolbar extends Component {
     }
 
 
-
-//<img className={classes.toolbarItem} src={shoppingCartImage} alt='shopping_cart' onClick={this.ShoppingCartToggleHandler} />
-
     render (){   
-        let styles = {
-            borderRight: '0.02rem solid black', 
-        };
         
         let authSection = (
             <MaterialUIButton
@@ -86,7 +79,7 @@ class Toolbar extends Component {
                     <div>
                         <MaterialUIButton
                             color="primary">
-                             {this.props.authEmail}
+                            {this.props.authEmail}
                         </MaterialUIButton>
                     </div>
                     <div>
@@ -122,9 +115,6 @@ class Toolbar extends Component {
         return (
             <div>
                 {toolbar}
-                <Modal show={this.props.inCheckout} modalClosed={this.props.closeCheckout}>
-
-                </Modal>
             </div>
         );
     };
