@@ -66,7 +66,6 @@ class ModelBuilder extends Component {
             BaseItem: '',
             Pet: '',
             Pose: '',
-            Material: ''
         },
         currentName: {
             Genre: 'Sci-fi',
@@ -102,7 +101,6 @@ class ModelBuilder extends Component {
             BaseItem: '',
             Pet: '',
             Pose: '',
-            Material: ''
         },
         cache: {
             Race: {},
@@ -1233,10 +1231,6 @@ class ModelBuilder extends Component {
                     ...this.state.selected,
                     Material: material
                 },
-                currentName: {
-                    ...this.state.currentName,
-                    Material: material
-                },
                 materials: {
                     ...this.state.materials,
                     matType: material,
@@ -1640,7 +1634,7 @@ class ModelBuilder extends Component {
         let child;
         for(var category in current){
             let selection = current[category];
-            if(current[category] !== "''" && category !== 'Race' && category !== 'Pose'){
+            if(current[category] !== "''" && category !== 'Race' && category !== 'Pose' ){
                 await this.loadModelToMemory(category, selection, null);
                 let smesh = this.loadModelFromMemory(category, selection, true);
 
@@ -1673,6 +1667,7 @@ class ModelBuilder extends Component {
                     //console.log(error);
                 }
                 this.applyMorphTargetsOnImport(child);
+                //Need to apply facial expressions to the raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
                 //detach from parent and put in object holder
                 THREE.SceneUtils.attach(child, child.parent, this.objectHolder);            
             }
@@ -1766,7 +1761,8 @@ class ModelBuilder extends Component {
             currencyFormat: "$",
             quantity: 1,
             isFreeShipping: false,
-            timeStamp: timeStamp
+            timeStamp: timeStamp,
+            email: this.props.authEmail
           };
 
         //push payload to firebase database
@@ -2092,6 +2088,7 @@ const mapStateToProps = state => {
         addInProgress: state.shoppingCart.cartProducts.addInProgress,
         savedModalOpen: state.savedModal.modalOpen,
         byTimestamp: state.savedModal.modelByTimestamp,
+        authEmail: state.auth.email,
     };
 };
 

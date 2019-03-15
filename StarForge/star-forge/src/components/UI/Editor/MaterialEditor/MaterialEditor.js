@@ -16,20 +16,20 @@ class GenreEditor extends Component {
         return (
             <div className={classes.Container}>
                 <div
-                    className={(this.props.state.currentName.Material === 'Standard') ? classes.MaterialSelected : classes.Material}
+                    className={(this.props.state.selected.Material === 'Standard') ? classes.MaterialSelected : classes.Material}
                     onClick={() => this.clickHandler('Standard')}
                     style={{marginTop: '0px'}}>Standard Plastic</div>
                 <div
-                    className={(this.props.state.currentName.Material === 'Premium') ? classes.MaterialSelected : classes.Material}
+                    className={(this.props.state.selected.Material === 'Premium') ? classes.MaterialSelected : classes.Material}
                     onClick={() => this.clickHandler('Premium')}>Premium Plastic</div>
                 <div
-                    className={(this.props.state.currentName.Material === 'Steel') ? classes.MaterialSelected : classes.Material}
+                    className={(this.props.state.selected.Material === 'Steel') ? classes.MaterialSelected : classes.Material}
                     onClick={() => this.clickHandler('Steel')}>Steel</div>
                 <div
-                    className={(this.props.state.currentName.Material === 'Bronze') ? classes.MaterialSelected : classes.Material}
+                    className={(this.props.state.selected.Material === 'Bronze') ? classes.MaterialSelected : classes.Material}
                     onClick={() => this.clickHandler('Bronze')}>Bronze</div>
                 <div
-                    className={(this.props.state.currentName.Material === 'Digital') ? classes.MaterialSelected : classes.Material}
+                    className={(this.props.state.selected.Material === 'Digital') ? classes.MaterialSelected : classes.Material}
                     onClick={() => this.clickHandler('Digital')}>Digital Download</div>
             </div>
         );
