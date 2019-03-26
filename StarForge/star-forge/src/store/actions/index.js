@@ -12,7 +12,6 @@ export {
     fetchOrders,
 } from './order';
 export {
-    auth,
     socialAuth,
     authOpenModal,
     authCloseModal,

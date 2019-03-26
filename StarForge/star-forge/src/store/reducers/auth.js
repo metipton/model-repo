@@ -7,6 +7,8 @@ const initialState = {
     accessToken: null,
     expiresAt: 0,
     email: null,
+    fbToken: null,
+    fbExpiry: 0,
     error: null,
 }
 
@@ -21,6 +23,8 @@ const authSuccess = (state, action) => {
         idToken: action.idToken,
         expiresAt: action.expiresAt,
         email: action.email,
+        fbToken: action.fbToken,
+        fbExpiry: action.fbExpiry,
         error: null,
     });
 };
@@ -38,7 +42,9 @@ const authLogout = (state, action) => {
             userId: null,
             idToken: null,
             expiresAt: 0,
-            email: null
+            email: null,
+            fbToken: null,
+            fbExpiry: 0
         });
 };
 

@@ -12,7 +12,6 @@ import genre from '../../../assets/Icons/genre.png';
 import material from '../../../assets/Icons/material.png';
 import race from '../../../assets/Icons/race.png';
 import pose from '../../../assets/Icons/pose.png';
-import robot from '../../../assets/Icons/robot.png';
 
 class categorySelectors extends Component{
 
@@ -24,13 +23,13 @@ class categorySelectors extends Component{
       this.setState({
         'selected': panel
     }, update => {
-        console.log(this.state);
+
     });
     };
 
     clickHandler = (panel) => {
         this.handleChange(panel);
-        console.log(this.state.selected)
+
     };
 
 

@@ -11,7 +11,7 @@ import GLTFExporter from 'three-gltf-exporter';
 import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
 import Aux from '../../hoc/_Aux/_Aux';
-import OrbitControls from 'orbit-controls-es6';
+import OrbitControls from 'three-orbitcontrols';
 import Editor from '../../components/UI/Editor/Editor';
 import BottomBar from '../../components/UI/BottomBar/BottomBar';
 import px from './skybox/scifi-px.jpg';
@@ -23,7 +23,6 @@ import nz from './skybox/scifi-nz.jpg';
 import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
 import LoadingScreen from './LoadingScreen/LoadingScreen';
 import BottomDrawer from '../../components/UI/BottomDrawer/BottomDrawer';
-import GPUPickHelper from './GPUPicker/GPUPicker';
 import Auth from '../../containers/auth0/Auth';
 import Modal from '../../components/UI/Modal/Modal';
 import SavedModelsEditor from '../../components/UI/SavedModelsEditor/SavedModelsEditor';
@@ -725,7 +724,7 @@ class ModelBuilder extends Component {
                 })
             }
         }) 
-        console.log(results);
+
         //this makes sure all the above async calls are complete before editing scene
         return Promise.all(results);
     }
@@ -735,7 +734,11 @@ class ModelBuilder extends Component {
             let category = categoryArr[i];
             let selection = selectionArr[i];
             let object = this.objectPool[categoryArr[i]][selectionArr[i]].scene;
-            let child = object.children[0].children[0];
+            let child;
+            child = object.children[0].getObjectByProperty('type', 'SkinnedMesh');
+            if(child === undefined || child == null) {
+                child = object.children[0].getObjectByProperty('type', 'Mesh'); 
+            }
             child.frustumCulled = false;
             child.castShadow = true;
             child.category = category;
@@ -882,7 +885,8 @@ class ModelBuilder extends Component {
                        if(category === 'Race' && !this.armatureLoaded){
                             this.scene.add( object);
                             object.children[0].name = 'skeleton';
-                            let model = object.children[0].children[0];
+                            
+                            let model = object.children[0].getObjectByProperty('type', 'SkinnedMesh');
 
                             let parent = object.children[0];
                             model.name = category;
@@ -931,9 +935,10 @@ class ModelBuilder extends Component {
                 };
 
             }
-            object.scene.children[0].children[0].castShadow = true;
-            this.objectPool[category][selection] = object.scene.children[0].children[0]
-            this.skeleton = object.scene.children[0].children[0].skeleton;
+            let modelObj = object.scene.children[0].getObjectByProperty('type', 'SkinnedMesh');
+            modelObj.castShadow = true;
+            this.objectPool[category][selection] = modelObj;
+            this.skeleton = modelObj.skeleton;
             this.bones = this.skeleton.bones;
 
             for( let clip in this.subclips ) {
@@ -972,7 +977,7 @@ class ModelBuilder extends Component {
                          };
 
                      }
-                     object.scene.children[0].children[0].castShadow = true;
+                     object.scene.children[0].getObjectByName('Race').castShadow = true;
 
                      for( let clip in subclips ) {
                         mixer.clipAction( subclips[clip]);
@@ -1016,8 +1021,10 @@ class ModelBuilder extends Component {
                         };
 
                     }
-                    object.scene.children[0].children[0].castShadow = true;
-                    this.skeleton = object.scene.children[0].children[0].skeleton;
+                    let model = object.scene.children[0].getObjectByProperty('type', 'SkinnedMesh');
+
+                    model.castShadow = true;
+                    this.skeleton = model.skeleton;
                     this.bones = this.skeleton.bones;
 
                     for( let clip in this.subclips ) {
@@ -1237,7 +1244,7 @@ class ModelBuilder extends Component {
                     price: modelPrice
                 }
             }, () => {
-                console.log(this.state);
+
             });
         }
     }
@@ -1318,7 +1325,11 @@ class ModelBuilder extends Component {
    setupObjectImport(category, selection, fromDownload, object) {
        let child;
        if(fromDownload){
-            child = object.children[0].children[0];
+
+            child = object.children[0].getObjectByProperty('type', 'SkinnedMesh');
+            if(child === null || child === undefined){
+                child = object.children[0].getObjectByProperty('type', 'Mesh'); 
+            }
             child.frustumCulled = false;
             child.castShadow = true;
             child.category = category;
@@ -1349,7 +1360,7 @@ class ModelBuilder extends Component {
         } else {
             this.objectHolder.add(child);
         }
-        console.log(this.scene);
+
         this.applyMorphTargetsOnImport(child);
         child.name = category;
    }
@@ -1593,7 +1604,6 @@ class ModelBuilder extends Component {
 
             return new Promise( ( resolve, reject ) => {
                 firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
-                    console.log("Model upload complete");
                     this.props.finishedAdd();
                     resolve();
                 }).catch( error => {
@@ -1622,7 +1632,6 @@ class ModelBuilder extends Component {
 
     getNewArmature = async ( race, modelNum) => {
         const url = this.state.cache['Race'][race];
-        console.log(url);
         let raceModel = await this.loadNewArmatureFromMemory(url);
         return raceModel;
 
@@ -1642,7 +1651,11 @@ class ModelBuilder extends Component {
                 this.removeObjectFromScene(category);
 
                 //make sure all miscellaneous attributes are assigned
-                child = smesh.children[0].children[0];
+                child = smesh.children[0].getObjectByProperty('type', 'SkinnedMesh');
+
+                if(child === undefined || child === null){
+                    child = smesh.children[0].getObjectByProperty('type', 'Mesh');
+                }
                 child.frustumCulled = false;
                 child.castShadow = true;
                 child.category = category;
@@ -1679,8 +1692,10 @@ class ModelBuilder extends Component {
 
     exportScreenshotToCart = (cartNumber, size, image) => {
         return new Promise( ( resolve, reject ) => {
-            firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot-' + size + '.png' ).put(image).then(() => {
-                resolve();
+            firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot-' + size + '.png' ).put(image).then((snapshot) => {
+                snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                    resolve(downloadURL);
+                  });
             }).catch( error => {
                 reject(error);
             });
@@ -1690,7 +1705,6 @@ class ModelBuilder extends Component {
     exportScreenshotToSaved = (identifier, size, image) => {
         return new Promise( ( resolve, reject ) => {
             firebase.storage().ref( '/Saved/' + this.props.userId + '/' + identifier + '/screenshot-' + size + '.png' ).put(image).then(() => {
-                console.log("Screenshot upload complete");
                 this.props.saveComplete();
                 resolve();
             }).catch( error => {
@@ -1741,15 +1755,24 @@ class ModelBuilder extends Component {
         if(!Number.isInteger(cartNum)){
             cartNum = cartNum["cartNumber"];
         }
+
         var smallImage = this.takeScreenshot(140, 140);
         var largeImage = this.takeScreenshot(350, 350);
+        let imageURL;
+        try{
+            await this.exportModelGLTF(cartNum);
+            //this.exportModelSTL(cartNum);
+            //this.exportModelOBJ(cartNum);
+            await this.exportScreenshotToCart(cartNum, "sm", smallImage);
+            imageURL = await this.exportScreenshotToCart(cartNum, "lg", largeImage);
+        } catch(error){
+            console.log(error);
+            return;
+        }
 
-        await this.exportModelGLTF(cartNum);
-        //this.exportModelSTL(cartNum);
-        //this.exportModelOBJ(cartNum);
-        await this.exportScreenshotToCart(cartNum, "sm", smallImage);
-        await this.exportScreenshotToCart(cartNum, "lg", largeImage);
-        const timeStamp = new Date().getTime();
+        const date = new Date();
+        const dateString = date.toDateString();
+        const timestamp = date.getTime();
         let payload = {
             cartNumber: cartNum,
             id: cartNum,
@@ -1761,14 +1784,21 @@ class ModelBuilder extends Component {
             currencyFormat: "$",
             quantity: 1,
             isFreeShipping: false,
-            timeStamp: timeStamp,
-            email: this.props.authEmail
+            timeStamp: timestamp,
+            date: dateString,
+            email: this.props.authEmail,
+            image: imageURL
           };
 
+        try {
         //push payload to firebase database
         //const database = firebase.database().ref('Carts/' + this.props.userId + '/Cart' + cartNum + '/');
-        const database = firebase.database().ref('users/' + this.props.userId + '/Cart/Items/' + cartNum + '/' );
+        const database =  await firebase.database().ref('users/' + this.props.userId + '/Cart/Items/' + cartNum + '/' );
         database.set(payload);
+        } catch(error){
+            console.log(error);
+            return;
+        }
 
         this.props.addToCart(payload);
      }
@@ -1861,7 +1891,7 @@ class ModelBuilder extends Component {
             name: this.state.modelName,
             morphTargets: this.morphTargets
           };
-        console.log(payload);
+
         const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
         database.set(payload);
         var largeImage = this.takeScreenshot(350, 350);
@@ -1941,7 +1971,6 @@ class ModelBuilder extends Component {
 
         await this.loadMultipleModelsToMemory(categoryArr, selectionArr);
         this.processMultipleModels(categoryArr, selectionArr);
-        console.log(this.state);
 
         //iterate through all items and switch to saved items
         for(var category in objects){
@@ -1962,7 +1991,6 @@ class ModelBuilder extends Component {
         if(objects['Pose'] !== this.state.currentName['Pose']){
             this.setPoseHandler(objects['Pose']);
         }
-        console.log(this.state);
 
         //apply morph targets
         this.morphTargets = morphTarget;
@@ -2063,9 +2091,7 @@ class ModelBuilder extends Component {
                 updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
                 updateMaterial={(material) => this.setMaterialHandler(material)}
                 morphPercents={morphTargetsProp}/>
-            <SideDrawerColor 
-                toggleColor={this.toggleColorHandler} 
-                setColor={(color) => this.setHexColor(color)} />
+
             <BottomBar 
                 addToCart={this.addModelToCart}
                 materialPrice={this.state.materials.price} />  
@@ -2081,6 +2107,10 @@ class ModelBuilder extends Component {
      )
    }
 }
+
+{/* <SideDrawerColor 
+toggleColor={this.toggleColorHandler} 
+setColor={(color) => this.setHexColor(color)} /> */}
 const mapStateToProps = state => {
     return {
         currentCart: state.shoppingCart.cartProducts.items,

@@ -7,7 +7,6 @@ import classes from './Toolbar.css';
 import DrawerToggle from '../../components/Navigation/SideDrawer/DrawerToggle/DrawerToggle';
 import MaterialUIButton from '../../components/UI/Button/MaterialUIButton';
 //import AuthFormik from '../Auth/AuthFormik';
-import Modal from '../../components/UI/Modal/Modal';
 import * as actions from '../../store/actions/index';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import ShoppingCart from '../../components/ShoppingCart/FloatCart';
