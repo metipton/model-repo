@@ -3,6 +3,9 @@ import { updateObject } from '../utility';
 
 const initialState = {
     orders: [],
+    mostRecentId: null,
+    mostRecentCart: null,
+    mostrecentInfo: null,
     loading: false,
     purchased: false
 };
@@ -15,12 +18,14 @@ const purchaseModelStart = ( state, action ) => {
     return updateObject( state, { loading: false } );
 };
 
-const purchaseModelSuccess = ( state, action ) => {
-    const newOrder = updateObject( action.orderData, { id: action.orderId } );
+const passOrderData = ( state, action ) => {
+
     return updateObject( state, {
         loading: false,
         purchased: true,
-        orders: state.orders.concat( newOrder )
+        mostRecentId: action.orderId,
+        mostRecentCart: action.Cart,
+        mostrecentInfo: action.Info,
     } );
 };
 
@@ -47,7 +52,7 @@ const reducer = ( state = initialState, action ) => {
     switch ( action.type ) {
         case actionTypes.PURCHASE_INIT: return purchaseInit( state, action );
         case actionTypes.PURCHASE_MODEL_START: return purchaseModelStart( state, action );
-        case actionTypes.PURCHASE_MODEL_SUCCESS: return purchaseModelSuccess( state, action )
+        case actionTypes.PASS_ORDER_DATA: return passOrderData(state, action);
         case actionTypes.PURCHASE_MODEL_FAIL: return purchaseModelFail( state, action );
         case actionTypes.FETCH_ORDERS_START: return fetchOrdersStart( state, action );
         case actionTypes.FETCH_ORDERS_SUCCESS: return fetchOrdersSuccess( state, action );

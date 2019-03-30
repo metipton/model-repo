@@ -26,16 +26,11 @@ Checkout
 	tap into shapeway api to send order info and models
 
 Site security
-	Get SSL cert and set up HTTPS
 	need new firebase API as the old one is compromised due to upload to github
-	require authentication to write to database and delete from database
 
 Backend
 	send email after order complete
 	send orders to shapeway API on order
-
-
-try cycling the race object
 
 
 
@@ -43,7 +38,6 @@ Nice to haves
 	figure out how to load feet concurrently
 	Abstract out the gridList component
 	Change header for Auth log in
-	load multiple items at once to cache
 	remove references to cache in state.
 	change reset to be based off of initial state and not just the first items
 	optimize code to release things you are no longer using (https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects)
@@ -52,12 +46,12 @@ Known bugs
 	replace all setStates that include call to this.state with functional form using prevState
 	clear all warnings
 	Need to make the editor example to fill entire viewport dynamically
-	Export fucks up the geometry for subsequent exports
 	update to v100 threejs
 	wrong pants when clicking new ->
 	base doesnt come back when clicking new
 	Race won't work when loading saved
 	Issues with posing when loading different races
+	morph targets not hooked up to new race model following export replacement
 
 	
 

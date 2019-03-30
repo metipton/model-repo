@@ -1,13 +1,30 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
+import firebase from '../../Firebase';
 
-export const purchaseModelSuccess = (id, orderData) => {
-    return {
-        type: actionTypes.PURCHASE_MODEL_SUCCESS,
-        orderId: id,
-        orderData: orderData
+export const purchaseModelSuccess = (userId) => {
+    return  async dispatch => {
+        const database =  firebase.database().ref('users/' + userId + '/CompletedOrders');
+        let snapshot = await database.once("value");
+        var keys = Object.keys(snapshot.val());
+        var orderKey = keys[keys.length-1];
+        var orderData = snapshot.val()[orderKey];
+        var dataKey = Object.keys(orderData['Info']);
+        var orderInfo = orderData['Info'][dataKey[0]];
+        console.log(orderKey);
+        console.log(orderInfo);
+        dispatch(passOrderData(orderKey, orderData['Cart'], orderInfo))
     };
 };
+
+export const passOrderData = (orderKey, Cart, Info) => {
+    return {
+        type: actionTypes.PASS_ORDER_DATA,
+        orderKey: orderKey,
+        Cart: Cart,
+        Info: Info
+    }
+}
 
 export const purchaseModelFail = (error) => {
     return {
@@ -23,18 +40,6 @@ export const purchaseModelStart = () => {
     };
 };
 
-export const purchaseModel = (orderData, token) => {
-    return dispatch => {
-        dispatch(purchaseModelStart());
-        axios.post('/orders.json?auth=' + token, orderData)
-            .then(response => {
-                dispatch(purchaseModelSuccess(response.data.name, orderData));
-            })
-            .catch(error => {
-                dispatch(purchaseModelFail(error));
-            });
-    };
-};
 
 export const purchaseInit = () => {
     return {

@@ -6,6 +6,7 @@ import 'firebase/storage';
 import { connect } from 'react-redux';
 import { loadCart, removeProduct, enterCheckout } from '../../store/actions/shoppingCart/floatCartActions';
 import { updateCart } from '../../store/actions/shoppingCart/updateCartActions';
+import {purchaseModelSuccess, purchaseModelFail, purchaseModelStart} from '../../store/actions/order'
 import CheckoutStepper from '../../containers/Checkout/CheckoutStepper';
 
 import classes from './FloatCart.css';
@@ -82,7 +83,6 @@ class FloatCart extends Component {
 
     const database = firebase.database().ref('users/' + this.props.userId + '/Cart/Items/' + product.cartNumber );
     await database.set(null);
-
     const index = cartProducts.findIndex(p => p.id === product.id);
     if (index >= 0) {
       cartProducts.splice(index, 1);
@@ -94,6 +94,7 @@ class FloatCart extends Component {
     const { cartProducts, updateCart } = this.props;
     // const database = firebase.database().ref('users/' + this.props.userId + '/Cart/Items');
     // await database.set(null);
+    this.props.purchaseModelSuccess(this.props.userId);
     cartProducts.splice(0, this.props.cartProducts.length);
     await updateCart(cartProducts);
   }
@@ -213,8 +214,8 @@ const mapStateToProps = state => ({
   userId: state.auth.userId,
   inCheckout: state.shoppingCart.cart.inCheckout,
   cartEmpty: state.shoppingCart.cartTotals.item.productQuantity === 0,
-  shippingPrice: state.shoppingCart.cartTotals.shipping
+  shippingPrice: state.shoppingCart.cartTotals.shipping,
 });
 
 
-export default connect(mapStateToProps, { loadCart, updateCart, removeProduct, enterCheckout})(FloatCart);
+export default connect(mapStateToProps, { loadCart, updateCart, removeProduct, enterCheckout, purchaseModelStart, purchaseModelSuccess, purchaseModelFail})(FloatCart);

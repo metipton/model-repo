@@ -26,6 +26,7 @@ import BottomDrawer from '../../components/UI/BottomDrawer/BottomDrawer';
 import Auth from '../../containers/auth0/Auth';
 import Modal from '../../components/UI/Modal/Modal';
 import SavedModelsEditor from '../../components/UI/SavedModelsEditor/SavedModelsEditor';
+import CheckoutForm from '../Checkout/CheckoutForm/CheckoutForm';
 
 
 class ModelBuilder extends Component {
@@ -2071,9 +2072,16 @@ class ModelBuilder extends Component {
                 deleteModel={timestamp => this.deleteSavedModel(timestamp)}
                 loadSavedModel={timestamp => this.loadSavedModel(timestamp)}/>
         </Modal>);
+
+    let orderCompleteModal = (
+        <Modal 
+            show={this.props.orderCompleteModalOpen}
+            modalClosed={this.props.orderCompleteModalClose}>
+        </Modal>);
     
      return (
         <Aux className={classes.ModelBuilder}>
+            <CheckoutForm/>
             {savedModal}
             {screen}
             <div

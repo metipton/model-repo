@@ -7,7 +7,9 @@ export {
     modelFinishedLoading
 } from './modelBuilder';
 export {
-    purchaseModel,
+    purchaseModelSuccess,
+    passOrderData,
+    purchaseModelFail,
     purchaseInit,
     fetchOrders,
 } from './order';

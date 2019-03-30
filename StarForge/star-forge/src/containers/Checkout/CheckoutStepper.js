@@ -42,7 +42,7 @@ class Checkout extends React.Component {
   };
 
   onToken = token => {
-    firebase.database().ref(`/users/${this.props.userId}/sources`).push({token: token.id, amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)})
+    firebase.database().ref(`/users/${this.props.userId}/sources`).push({token: token.id,  amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)})
       .then(this.successPayment(token))
       .catch(this.errorPayment);
   }

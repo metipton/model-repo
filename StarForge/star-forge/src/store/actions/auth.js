@@ -101,10 +101,13 @@ export const authCheckState = () => {
                     const expirationTime = new Date(expiresAt);
                     const fbExpirationTime = new Date(fbExpiry);
                     const nowTime = new Date();
-                    console.log(fbExpirationTime.toDateString());
-                    console.log(fbExpirationTime.getTime() - nowTime.getTime());
                     if(fbExpirationTime < nowTime){
-                        fbExpiry =  await getFirebaseToken(idToken);
+                        try{
+                            fbExpiry =  await getFirebaseToken(idToken);
+                        } catch(error){
+                            dispatch(logout());
+                            return;
+                        }
                     }
                     const email = localStorage.getItem('email');
                     if(expirationTime > nowTime){    
