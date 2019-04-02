@@ -35,6 +35,7 @@ Backend
 
 
 Nice to haves
+	Add a backdrop and loading spinner when exporting the model
 	figure out how to load feet concurrently
 	Abstract out the gridList component
 	Change header for Auth log in
@@ -52,6 +53,7 @@ Known bugs
 	Race won't work when loading saved
 	Issues with posing when loading different races
 	morph targets not hooked up to new race model following export replacement
+	Correct if save model fails -> reset the save button
 
 	
 

@@ -57,7 +57,6 @@ class BottomBar extends Component {
 
 const mapStateToProps = state => {
     return {
-        inCheckoutScreen: state.modelBuilder.inCheckoutScreen === true,
         isAuthenticated: state.auth.idToken !== null,
         addInProgress: state.shoppingCart.cartProducts.addInProgress
     };
@@ -66,8 +65,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         openAuth: () => dispatch(actions.authOpenModal()),
-        openCheckout: () => dispatch(actions.checkoutOpenModal()),
-        closeCheckout: () => dispatch(actions.checkoutCloseModal()),
     }
 }
 

@@ -57,7 +57,7 @@
     left: 50%;
 }
 
-.toolbarItem :hover,
+/* .toolbarItem :hover,
 .toolbarItem :active,
 .toolbarItem .active,
 .toolbarItem :hover,
@@ -65,6 +65,6 @@
 .toolbarItem .active,{
     color: #FFA500 ;
     cursor: pointer;
-}
+} */
 
 

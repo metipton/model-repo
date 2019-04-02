@@ -1,25 +1,45 @@
-// index.js
-import React from 'react';
+import React from 'react'
+import {connect} from 'react-redux';
+import * as actions from '../../../store/actions/index';
 
-import STRIPE_PUBLISHABLE from '../constants/stripe';
-import PAYMENT_SERVER_URL from '../constants/server';
-import {StripeProvider, Elements} from 'react-stripe-elements';
-import Modal from '../../../components/UI/Modal/Modal';
+import OrderReviewForm from './OrderReviewForm/OrderReviewForm';
+import OrderCompleteForm from './OrderCompleteForm/OrderCompleteForm';
 
-import CheckoutStepper from './CheckoutStepper';
+class CheckoutForm extends React.Component {
 
-const CheckoutForm = () => {
-  return (
-    <StripeProvider apiKey={STRIPE_PUBLISHABLE}>
-      <Modal             
-        show={true}
-        ModalClosed={null}>
-          <Elements>
-            <CheckoutStepper />
-          </Elements>
-      </Modal>
-    </StripeProvider>
-  );
+
+  render() {
+    let screen;
+    if(this.props.orderState === 'Review'){
+        screen = (
+            <div>
+                <OrderReviewForm close={this.props.closeOrderModal}/>
+            </div>
+            );
+    } else {
+        screen = (
+            <div>
+                <OrderCompleteForm close={this.props.closeOrderModal}/>
+            </div>
+        );
+    }
+    return (
+      <div>
+          <OrderReviewForm close={this.props.closeOrderModal}/>
+      </div>
+    )
+  }
+}
+const mapStateToProps = state => {
+  return {
+      orderState: state.order.orderState
+  };
 };
 
-export default CheckoutForm;
+const mapDispatchToProps = dispatch => {
+  return {
+    closeOrderModal: () => dispatch(actions.closeOrderModal())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CheckoutForm);

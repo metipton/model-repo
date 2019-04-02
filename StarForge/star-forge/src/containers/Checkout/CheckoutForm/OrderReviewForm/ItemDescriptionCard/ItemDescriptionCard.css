@@ -1,0 +1,19 @@
+
+
+.Info {
+    border-right: 0.05rem solid black; 
+    display:block
+}
+
+.Image {
+    float: left;
+}
+
+.Price {
+    float: right;
+}
+
+.Name {
+    font-size: 1.5rem;
+    font-weight: bold;
+}

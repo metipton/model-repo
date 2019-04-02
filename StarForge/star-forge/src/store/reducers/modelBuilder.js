@@ -9,16 +9,6 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch(action.type) {
-        case actionTypes.CHECKOUT_OPEN_MODAL:
-            return {
-                ...state,
-                inCheckoutScreen: true
-            }
-        case actionTypes.CHECKOUT_CLOSE_MODAL:
-            return {
-                ...state,
-                inCheckoutScreen: false
-            }
         case actionTypes.MODEL_FINISHED_LOADING:
             return {
                 ...state,

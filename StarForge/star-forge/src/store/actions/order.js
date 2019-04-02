@@ -2,8 +2,22 @@ import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
 import firebase from '../../Firebase';
 
+export const openOrderModal = (token) => {
+    return {
+        type: actionTypes.OPEN_ORDER_MODAL,
+        cardData: token.card
+    }
+}
+
+export const closeOrderModal = () => {
+    return {
+        type: actionTypes.CLOSE_ORDER_MODAL,
+    }
+}
+
 export const purchaseModelSuccess = (userId) => {
     return  async dispatch => {
+        dispatch(purchaseModelSuccess());
         const database =  firebase.database().ref('users/' + userId + '/CompletedOrders');
         let snapshot = await database.once("value");
         var keys = Object.keys(snapshot.val());
@@ -11,8 +25,6 @@ export const purchaseModelSuccess = (userId) => {
         var orderData = snapshot.val()[orderKey];
         var dataKey = Object.keys(orderData['Info']);
         var orderInfo = orderData['Info'][dataKey[0]];
-        console.log(orderKey);
-        console.log(orderInfo);
         dispatch(passOrderData(orderKey, orderData['Cart'], orderInfo))
     };
 };

@@ -2,31 +2,13 @@ import React from 'react'
 import firebase from '../../Firebase';
 import StripeCheckout from 'react-stripe-checkout';
 import {connect} from 'react-redux';
+import * as actions from '../../store/actions/index';
 
 import STRIPE_PUBLISHABLE from './constants/stripe';
 import PAYMENT_SERVER_URL from './constants/server';
 
 
 class Checkout extends React.Component {
-
-  getCheckoutAmount = async () => {
-    // let shipping;
-    // let cartTotal;
-    // let that = this;
-    // return new Promise( ( resolve, reject ) => {
-    //   firebase.database().ref(`/Prices`).once('value')
-    //     .then(function(snapshot) {
-    //       shipping = snapshot.val().Shipping;
-    //       return firebase.database().ref(`/users/${that.props.userId}/Cart`).once('value');
-    //     }).then(function(snapshot) {
-    //       cartTotal = snapshot.val().cartTotal;
-    //       let total = shipping + cartTotal;
-    //       total = total * 100;
-    //       total = total.toFixed(2);
-    //       console.log(total);
-    //       resolve(total);
-    //     })  
-  }
 
   successPayment = (token) => {
     console.log(token);
@@ -42,22 +24,16 @@ class Checkout extends React.Component {
   };
 
   onToken = token => {
+    console.log(token);
     firebase.database().ref(`/users/${this.props.userId}/sources`).push({token: token.id,  amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)})
-      .then(this.successPayment(token))
+      .then(this.props.openOrderModal(token))
       .catch(this.errorPayment);
   }
-  // ...
+
 
   render() {
     const CURRENCY = 'USD';
-    // let checkoutAmount; 
-    // this.getCheckoutAmount().then((res) => {
-    //   checkoutAmount = res.val;
-    // })
-    // console.log(checkoutAmount);
-    // if(typeof checkoutAmount !== 'number'){
-    //   checkoutAmount = 0;
-    // }
+
     return (
       <div >
         <StripeCheckout
@@ -65,8 +41,7 @@ class Checkout extends React.Component {
             description="Forge your star" // the pop-in header subtitle
             image="https://stripe.com/img/documentation/checkout/marketplace.png"// the pop-in header image (default none)
             ComponentClass="div"
-            panelLabel="Pay" // prepended to the amount in the bottom pay button
-            amount={Math.round(this.props.totalPrice * 100 + this.props.shipping)} // cents
+            panelLabel="Review Order" // prepended to the amount in the bottom pay button
             currency={CURRENCY}
             stripeKey={STRIPE_PUBLISHABLE}
             locale="auto"
@@ -91,13 +66,14 @@ const mapStateToProps = state => {
   return {
       userId: state.auth.userId,
       totalPrice: state.shoppingCart.cartTotals.item.totalPrice,
-      shipping: state.shoppingCart.cartTotals.shipping
+      shipping: state.shoppingCart.cartTotals.shipping,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-
+    openOrderModal: (token) => dispatch(actions.openOrderModal(token)),
+    closeOrderModal: () => dispatch(actions.closeOrderModal())
   };
 };
 

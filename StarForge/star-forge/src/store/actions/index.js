@@ -1,16 +1,12 @@
 export {
-    addIngredient,
-    removeIngredient,
-    initIngredients,
-    checkoutOpenModal,
-    checkoutCloseModal,
     modelFinishedLoading
 } from './modelBuilder';
 export {
+    openOrderModal,
+    closeOrderModal,
     purchaseModelSuccess,
     passOrderData,
     purchaseModelFail,
-    purchaseInit,
     fetchOrders,
 } from './order';
 export {

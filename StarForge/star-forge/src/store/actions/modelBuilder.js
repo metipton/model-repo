@@ -47,14 +47,3 @@ export const initIngredients = () => {
     };
 };
 
-export const checkoutOpenModal = () => {
-    return {
-        type: actionTypes.CHECKOUT_OPEN_MODAL
-    };
-};
-
-export const checkoutCloseModal = () => {
-    return {
-        type: actionTypes.CHECKOUT_CLOSE_MODAL
-    };
-};

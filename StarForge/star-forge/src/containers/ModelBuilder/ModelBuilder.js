@@ -25,6 +25,7 @@ import LoadingScreen from './LoadingScreen/LoadingScreen';
 import BottomDrawer from '../../components/UI/BottomDrawer/BottomDrawer';
 import Auth from '../../containers/auth0/Auth';
 import Modal from '../../components/UI/Modal/Modal';
+import ModalOrder from '../../components/UI/ModalOrder/ModalOrder'
 import SavedModelsEditor from '../../components/UI/SavedModelsEditor/SavedModelsEditor';
 import CheckoutForm from '../Checkout/CheckoutForm/CheckoutForm';
 
@@ -2073,16 +2074,20 @@ class ModelBuilder extends Component {
                 loadSavedModel={timestamp => this.loadSavedModel(timestamp)}/>
         </Modal>);
 
-    let orderCompleteModal = (
-        <Modal 
-            show={this.props.orderCompleteModalOpen}
-            modalClosed={this.props.orderCompleteModalClose}>
-        </Modal>);
+        let orderModal;
+        if(this.props.checkoutOpen){
+            orderModal = (
+                <ModalOrder 
+                    show={this.props.checkoutOpen}
+                    modalClosed={this.props.closeCheckoutModal}>
+                    <CheckoutForm/>
+                </ModalOrder>);
+        }
     
      return (
         <Aux className={classes.ModelBuilder}>
-            <CheckoutForm/>
             {savedModal}
+            {orderModal}
             {screen}
             <div
                 style={{ width: '100vw', height: '100vh', position: 'absolute', top: '3rem'}}
@@ -2127,6 +2132,7 @@ const mapStateToProps = state => {
         savedModalOpen: state.savedModal.modalOpen,
         byTimestamp: state.savedModal.modelByTimestamp,
         authEmail: state.auth.email,
+        checkoutOpen: state.order.inCheckoutScreen
     };
 };
 
@@ -2146,7 +2152,9 @@ const mapDispatchToProps = dispatch => {
         renameModel: (timestamp, newName)=>dispatch(actions.renameSavedModel(timestamp, newName)),
         closeNameModal: () => dispatch(actions.closeNameModal()),
         closeDeleteModal: () => dispatch(actions.closeDeleteModal()),
-        deleteSavedModel: (timestamp) => dispatch(actions.removeSavedModel(timestamp))
+        deleteSavedModel: (timestamp) => dispatch(actions.removeSavedModel(timestamp)),
+        openOrderModal: () => dispatch(actions.openOrderModal()),
+        closeOrderModal: () => dispatch(actions.closeOrderModal())
     };
 };
 

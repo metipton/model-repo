@@ -1,0 +1,25 @@
+.Header {
+    width: 100%;
+    border-top: .05rem solid black;
+}
+
+.Logo {
+    height: 3rem;
+}
+
+.Text {
+    margin-left: .25rem;
+}
+
+.escape {
+    color: #696969;
+    top: .3rem;
+    right: .3rem;
+    position: absolute;
+    cursor: pointer;
+    z-index: 101
+}
+
+.escape :hover {
+    color: 'black',
+}
