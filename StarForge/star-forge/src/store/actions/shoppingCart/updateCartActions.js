@@ -2,6 +2,13 @@ import * as actionTypes from '../actionTypes';
 
 import persistentCart from '../../../components/ShoppingCart/persistentCart';
 
+export const updateShipping = (shippingMode, shippingPrice) => dispatch => {
+  dispatch({
+    type: actionTypes.UPDATE_SHIPPING,
+    mode: shippingMode,
+    price: shippingPrice
+  })
+}
 
 export const updateCart = (cartProducts) => dispatch => {
   let productQuantity = cartProducts.reduce( (sum, p) => {

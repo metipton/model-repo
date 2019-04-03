@@ -4,10 +4,11 @@ import firebase from '../../Firebase';
 import 'firebase/storage';
 
 import { connect } from 'react-redux';
-import { loadCart, removeProduct, enterCheckout } from '../../store/actions/shoppingCart/floatCartActions';
-import { updateCart } from '../../store/actions/shoppingCart/updateCartActions';
+import { loadShipping, loadCart, removeProduct, enterCheckout } from '../../store/actions/shoppingCart/floatCartActions';
+import { updateShipping,updateCart } from '../../store/actions/shoppingCart/updateCartActions';
 import {purchaseModelSuccess, purchaseModelFail, purchaseModelStart} from '../../store/actions/order'
 import CheckoutStepper from '../../containers/Checkout/CheckoutStepper';
+import ShippingSelector from './ShippingSelector/ShippingSelector'
 
 import classes from './FloatCart.css';
 import CartProduct from './CartProduct';
@@ -22,6 +23,7 @@ class FloatCart extends Component {
 
   componentWillMount() {
     this.pullCartFromFirebase();
+    this.pullShippingFromFirebase();
   }
 
  
@@ -56,6 +58,33 @@ class FloatCart extends Component {
         this.addProduct(product[i]);
       }   
     });
+  }
+
+  pullShippingFromFirebase = () => {
+    let shipping = [];
+
+    const cart = firebase.database().ref();
+    const json = cart.child('Prices/Shipping');
+    json.once("value").then((snapshot) => {
+      snapshot.forEach((childSnapshot) => {
+        // childData will be the actual contents of the child
+        let key = childSnapshot.key;
+        let value = childSnapshot.val();
+        let mode = {"mode": key, "price": value}
+        shipping.push(mode);
+      }) 
+      let price = Number.POSITIVE_INFINITY;
+      let mode;
+      for(var option in shipping){
+        if(shipping[option]['price'] < price){
+          price = shipping[option]['price'];
+          mode = shipping[option]['mode'];
+        }
+      }
+      this.props.updateShipping(mode, price);
+      this.props.loadShipping(shipping);
+    });
+
   }
 
   openFloatCart = () => {
@@ -113,6 +142,10 @@ class FloatCart extends Component {
   render() {
     const { cartTotals, cartProducts, removeProduct } = this.props;
 
+    let shippingDetails;
+    if(shippingDetails !== undefined && shippingDetails !== null){
+
+    }
     const products = cartProducts.map(p => {
       return (
         <CartProduct
@@ -177,7 +210,8 @@ class FloatCart extends Component {
                 {`${cartTotals.currencyFormat} ${util.formatPrice(this.props.cartEmpty ? 0 : this.props.shippingPrice / 100, cartTotals.currencyId)}`}
               </p>
             </div>
-            <div className={classes['sub']}>SUBTOTAL</div>
+            <ShippingSelector/>
+            <div className={classes['sub']}>TOTAL</div>
             <div className={classes['sub-price']}>
               <p className={classes['sub-price__val']}>
                 {`${cartTotals.currencyFormat} ${util.formatPrice(this.props.cartEmpty? 0 : cartTotals.totalPrice + this.props.shippingPrice / 100, cartTotals.currencyId)}`}
@@ -215,7 +249,10 @@ const mapStateToProps = state => ({
   inCheckout: state.shoppingCart.cart.inCheckout,
   cartEmpty: state.shoppingCart.cartTotals.item.productQuantity === 0,
   shippingPrice: state.shoppingCart.cartTotals.shipping,
+  shippingDetails: state.shoppingCart.cartProducts.shipping
 });
 
 
-export default connect(mapStateToProps, { loadCart, updateCart, removeProduct, enterCheckout, purchaseModelStart, purchaseModelSuccess, purchaseModelFail})(FloatCart);
+
+
+export default connect(mapStateToProps, { updateShipping, loadShipping, loadCart, updateCart, removeProduct, enterCheckout, purchaseModelStart, purchaseModelSuccess, purchaseModelFail})(FloatCart);

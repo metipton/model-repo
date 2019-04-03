@@ -1,5 +1,11 @@
 import * as actionTypes from '../actionTypes';
 
+export const loadShipping = (shipping) => dispatch => {
+  dispatch({
+    type: actionTypes.LOAD_SHIPPING,
+    payload: shipping
+  })
+}
 
 export const loadCart = (cartProducts) => dispatch => {
   dispatch({

@@ -2,7 +2,8 @@ import * as actionTypes from '../../actions/actionTypes';
 
 
 const initialState = {
-  shipping: 499,
+  mode: null,
+  shipping: 0,
   item: {
     productQuantity: 0,
     installments: 0,
@@ -10,8 +11,17 @@ const initialState = {
   }
 };
 
+
+
+
 export default function(state = initialState, action) {
   switch (action.type) {
+    case actionTypes.UPDATE_SHIPPING:
+      return {
+        ...state,
+        mode: action.mode,
+        shipping: (action.price * 100)
+      }
     case actionTypes.UPDATE_CART:
       return {
         ...state,

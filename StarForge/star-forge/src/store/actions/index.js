@@ -17,6 +17,7 @@ export {
     authCheckState
 } from './auth';
 export {
+    loadShipping,
     loadCart,
     addProduct,
     removeProduct,
@@ -26,6 +27,9 @@ export {
     enterCheckout,
     exitCheckout
 } from './shoppingCart/floatCartActions';
+export {
+    updateShipping
+} from './shoppingCart/updateCartActions'
 export {
    fetchProducts 
 } from './shoppingCart/productActions';

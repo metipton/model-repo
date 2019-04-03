@@ -3,11 +3,17 @@ import * as actionTypes from '../../actions/actionTypes';
 
 const initialState = {
   addInProgress: false,
+  shipping: null,
   items: [],
 };
 
 export default function(state = initialState, action) {
   switch (action.type) {
+    case actionTypes.LOAD_SHIPPING:
+      return {
+        ...state,
+        shipping: action.payload
+      }
     case actionTypes.LOAD_CART:
       return {
         ...state,

@@ -24,10 +24,12 @@ export const AUTH_OPEN_MODAL = 'AUTH_OPEN_MODAL';
 export const AUTH_CLOSE_MODAL = 'AUTH_CLOSE_MODAL';
 
 export const FETCH_PRODUCTS = 'FETCH_PRODUCTS';
+export const LOAD_SHIPPING = 'LOAD_SHIPPING';
 export const LOAD_CART = 'LOAD_CART';
 export const ADD_PRODUCT = 'ADD_PRODUCT';
 export const REMOVE_PRODUCT = 'REMOVE_PRODUCT';
 export const UPDATE_CART = 'UPDATE_CART';
+export const UPDATE_SHIPPING = 'UPDATE_SHIPPING';
 export const FINISHED_ADD = 'FINISHED_ADD';
 export const ADD_IN_PROGRESS = 'ADD_IN_PROGRSS';
 export const RESET_CART = 'RESET_CART';
