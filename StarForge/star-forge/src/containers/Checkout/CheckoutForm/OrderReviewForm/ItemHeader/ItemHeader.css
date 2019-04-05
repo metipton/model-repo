@@ -1,0 +1,27 @@
+.container {
+    background-color: lightgrey;
+    align-items: left;
+    margin-left: 0%;
+    margin-bottom: 0rem;
+    border-bottom: 1px solid grey;
+    width: 70%;
+    padding: .7rem;
+}
+
+.Head {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 0rem;
+}
+
+.Items {
+    display: inline-block;
+    margin-bottom: 0rem;
+    margin-right: 4rem;
+}
+
+.Para {
+    display: inline-block;
+    margin-bottom: 0rem;
+}
+

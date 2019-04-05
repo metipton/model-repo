@@ -23,10 +23,11 @@ class Checkout extends React.Component {
     alert(data);
   };
 
-  onToken = token => {
+  onToken = (token, addresses) => {
     console.log(token);
+    console.log(addresses);
     firebase.database().ref(`/users/${this.props.userId}/sources`).push({token: token.id,  amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)})
-      .then(this.props.openOrderModal(token))
+      .then(this.props.openOrderModal(token, addresses))
       .catch(this.errorPayment);
   }
 
@@ -72,7 +73,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    openOrderModal: (token) => dispatch(actions.openOrderModal(token)),
+    openOrderModal: (token, addresses) => dispatch(actions.openOrderModal(token, addresses)),
     closeOrderModal: () => dispatch(actions.closeOrderModal())
   };
 };

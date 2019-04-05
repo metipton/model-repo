@@ -1,11 +1,20 @@
 import React, {Component} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { withStyles } from '@material-ui/core/styles';
+import {connect} from 'react-redux';
+import * as actions from '../../../../store/actions/index';
+
 import MaterialUIButton from '../../../../components/UI/Button/MaterialUIButton'
 
 import Checkbox from '@material-ui/core/Checkbox';
+import DeliveryDetails from './DeliveryDetails/DeliveryDetails';
+import ItemHeader from './ItemHeader/ItemHeader';
+import ItemDescriptionCard from './ItemDescriptionCard/ItemDescriptionCard';
 
 const styles = theme => ({
+    holder: {
+        overflow: 'auto'
+    },
     header: {
         width: '100%',
         borderTop: '.05rem solid black',
@@ -44,8 +53,9 @@ class OrderReviewForm extends Component {
         };
 
     render() {
+
     return (
-    <div>
+    <div className={this.props.classes.holder}>
         <div className={this.props.classes.logo}>
             <p>1. Delivery > 2. Payment > <span style={{fontWeight: 'bold'}}>3. Place Order</span></p>
             <FontAwesomeIcon 
@@ -76,6 +86,18 @@ class OrderReviewForm extends Component {
                         </MaterialUIButton>
                     </div>
                 </div>
+                <DeliveryDetails address={this.props.addresses}/>
+                <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
+                {this.props.cart ? this.props.cart.map((item, index) => (
+                    <ItemDescriptionCard
+                        key={index}
+                        image={item.image}
+                        name={item.title}
+                        description={item.description}
+                        material={item.matType}
+                        price={item.price}
+                        />
+                 )) : null}
             </div>
         </div>  
     </div>
@@ -83,4 +105,19 @@ class OrderReviewForm extends Component {
     }
 }
 
-export default withStyles(styles)(OrderReviewForm);
+const mapStateToProps = state => {
+    return {
+        cart: state.shoppingCart.cartProducts.items,
+        cardData: state.order.cardData,
+        addresses: state.order.addresses,
+        numItems: state.shoppingCart.cartTotals.item.productQuantity,
+        shippingMode: state.shoppingCart.cartTotals.mode
+    };
+  };
+  
+  const mapDispatchToProps = dispatch => {
+    return {
+    };
+  };
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(OrderReviewForm));

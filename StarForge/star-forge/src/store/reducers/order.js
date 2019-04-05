@@ -10,13 +10,15 @@ const initialState = {
     purchased: false,
     orderState: 'Review',
     inCheckoutScreen: false,
-    cardData: null
+    cardData: null,
+    addresses: null
 };
 
 const openOrderModal = ( state, action ) => {
     return updateObject( state, {
         inCheckoutScreen: true,
-        cardData: action.cardData });
+        cardData: action.cardData,
+        addresses: action.bothAddr });
 }
 
 const closeOrderModal = ( state, action ) => {

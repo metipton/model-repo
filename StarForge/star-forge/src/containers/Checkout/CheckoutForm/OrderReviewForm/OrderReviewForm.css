@@ -1,3 +1,7 @@
+.holder {
+    overflow: auto; 
+}
+
 .Header {
     width: 100%;
     border-top: .05rem solid black;

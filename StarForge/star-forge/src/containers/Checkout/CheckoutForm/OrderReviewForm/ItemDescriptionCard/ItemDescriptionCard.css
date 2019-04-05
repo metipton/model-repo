@@ -1,19 +1,24 @@
-
+.orderItemContainer {
+    width: 70%
+}
 
 .Info {
     border-right: 0.05rem solid black; 
-    display:block
+    display: inline-block;
 }
 
 .Image {
-    float: left;
+    display: inline-block;
+    height: 7rem;
+    width: 7rem;
 }
 
 .Price {
-    float: right;
+    display: inline-block;
 }
 
 .Name {
+    display: inline-block;
     font-size: 1.5rem;
     font-weight: bold;
 }

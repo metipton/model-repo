@@ -2,10 +2,11 @@ import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
 import firebase from '../../Firebase';
 
-export const openOrderModal = (token) => {
+export const openOrderModal = (token, addresses) => {
     return {
         type: actionTypes.OPEN_ORDER_MODAL,
-        cardData: token.card
+        cardData: token.card,
+        bothAddr: addresses
     }
 }
 
