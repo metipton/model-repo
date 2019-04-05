@@ -2078,8 +2078,9 @@ class ModelBuilder extends Component {
         if(this.props.checkoutOpen){
             orderModal = (
                 <ModalOrder 
+
                     show={this.props.checkoutOpen}
-                    modalClosed={this.props.closeCheckoutModal}>
+                    modalClosed={this.props.closeOrderModal}>
                     <CheckoutForm/>
                 </ModalOrder>);
         }

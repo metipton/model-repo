@@ -82,7 +82,10 @@
       font-size: 1.2em;
       vertical-align: middle; }
   .float-cart__shelf-container {
-    min-height: 280px; }
+    min-height: 280px; 
+    max-height: 45vh;
+    overflow-y: auto;
+    overflow-x: hidden;}
     .float-cart__shelf-container .shelf-empty {
       color: #ececec;
       text-align: center;
@@ -189,6 +192,17 @@
 .float-cart__content {
   height: 100%;
   overflow-y: scroll; }
+
+          /* MAC scrollbar para desktop*/
+@media screen and (min-width: 640px) {
+  .float-cart__shelf-container::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 10px; }
+    .float-cart__shelf-container::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #0c0b10; } }
 
 
   @media only screen and (max-width: 640px) {
@@ -372,7 +386,7 @@
       
       
               /* MAC scrollbar para desktop*/
-      @media screen and (min-width: 640px) {
+      @media screen and (max-width: 640px) {
         .float-cart__content::-webkit-scrollbar {
           -webkit-appearance: none;
           width: 10px;
@@ -385,6 +399,18 @@
       .float-cart__content {
         height: 100%;
         overflow-y: scroll; }
+
+                  /* MAC scrollbar para desktop*/
+      @media screen and (max-width: 640px) {
+        .float-cart__shelf-container::-webkit-scrollbar {
+          -webkit-appearance: none;
+          width: 10px;
+          background-color: rgba(0, 0, 0, 0.2);
+          padding: 10px; }
+          .float-cart__shelf-container::-webkit-scrollbar-thumb {
+          border-radius: 4px;
+          background-color: #0c0b10; } }
+
       
       
         @media only screen and (max-width: 640px) {

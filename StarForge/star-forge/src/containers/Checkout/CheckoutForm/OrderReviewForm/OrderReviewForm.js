@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { withStyles } from '@material-ui/core/styles';
 import {connect} from 'react-redux';
 import * as actions from '../../../../store/actions/index';
+import classes from './OrderReviewForm.css';
 
 import MaterialUIButton from '../../../../components/UI/Button/MaterialUIButton'
 
@@ -11,37 +12,37 @@ import DeliveryDetails from './DeliveryDetails/DeliveryDetails';
 import ItemHeader from './ItemHeader/ItemHeader';
 import ItemDescriptionCard from './ItemDescriptionCard/ItemDescriptionCard';
 
-const styles = theme => ({
-    holder: {
-        overflow: 'auto'
-    },
-    header: {
-        width: '100%',
-        borderTop: '.05rem solid black',
-    },
-    logo: {
-        textAlign: 'center',
-        height: '3rem'
-    },   
-    text: {
-        marginLeft: '.25rem'
-    },
-    escape: {
-        color: '#696969',
-        top: '.3rem',
-        right: '.3rem',
-        position: 'absolute',
-        cursor: 'pointer',
-        zIndex: 101,
-        '&:hover': {
-            color: 'black',
-          }
-      }, 
-    buttonText: {
-        fontSize: '.8rem'
-    }  
+// const styles = theme => ({
+//     holder: {
+//         overflow: 'auto'
+//     },
+//     header: {
+//         width: '100%',
+//         borderTop: '.05rem solid black',
+//     },
+//     logo: {
+//         textAlign: 'center',
+//         height: '3rem'
+//     },   
+//     text: {
+//         marginLeft: '.25rem'
+//     },
+//     escape: {
+//         color: '#696969',
+//         top: '.3rem',
+//         right: '.3rem',
+//         position: 'absolute',
+//         cursor: 'pointer',
+//         zIndex: 101,
+//         '&:hover': {
+//             color: 'black',
+//           }
+//       }, 
+//     buttonText: {
+//         fontSize: '.8rem'
+//     }  
 
-})
+// })
 
 class OrderReviewForm extends Component {
     state = {
@@ -55,17 +56,17 @@ class OrderReviewForm extends Component {
     render() {
 
     return (
-    <div className={this.props.classes.holder}>
-        <div className={this.props.classes.logo}>
+    <div className={classes.holder}>
+        <div className={classes.logo}>
             <p>1. Delivery > 2. Payment > <span style={{fontWeight: 'bold'}}>3. Place Order</span></p>
             <FontAwesomeIcon 
-                    className={this.props.classes.escape} 
+                    className={classes.escape} 
                     icon={['fas', 'times-circle']} 
                     size="1x" 
                     onClick={this.props.close}/>
         </div>
-        <div className={this.props.classes.header}>
-            <div className={this.props.classes.text}>
+        <div className={classes.header}>
+            <div className={classes.text}>
                 <h1>Place Your Order</h1>
                 <p style={{fontSize: '1rem'}}>Please check your delivery and payment details below before placing your order.</p>
                 <div style={{fontSize: '1rem', marginLeft: '25%'}}>
@@ -78,7 +79,7 @@ class OrderReviewForm extends Component {
                     <p style={{display: 'inline-block', fontSize: '1rem ', borderRight: '.05rem solid grey', paddingRight: '.65rem'}}>i accept the s&f terms and conditions</p>
                     <div style={{display: 'inline-block', fontSize: '1rem '}}>            
                         <MaterialUIButton
-                            classes={{label : this.props.classes.buttonText}}
+                            classes={{label : classes.buttonText}}
                             disabled={false}
                             variant="contained"
                             color="primary"
@@ -86,18 +87,20 @@ class OrderReviewForm extends Component {
                         </MaterialUIButton>
                     </div>
                 </div>
-                <DeliveryDetails address={this.props.addresses}/>
-                <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
-                {this.props.cart ? this.props.cart.map((item, index) => (
-                    <ItemDescriptionCard
-                        key={index}
-                        image={item.image}
-                        name={item.title}
-                        description={item.description}
-                        material={item.matType}
-                        price={item.price}
-                        />
-                 )) : null}
+                <div className={classes.scrollbar}>
+                    <DeliveryDetails address={this.props.addresses}/>
+                    <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
+                    {this.props.cart ? this.props.cart.map((item, index) => (
+                        <ItemDescriptionCard
+                            key={index}
+                            image={item.image}
+                            name={item.title}
+                            description={item.description}
+                            material={item.matType}
+                            price={item.price}
+                            />
+                    )) : null}
+                </div>
             </div>
         </div>  
     </div>
@@ -120,4 +123,4 @@ const mapStateToProps = state => {
     };
   };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(OrderReviewForm));
+export default connect(mapStateToProps, mapDispatchToProps)(OrderReviewForm);

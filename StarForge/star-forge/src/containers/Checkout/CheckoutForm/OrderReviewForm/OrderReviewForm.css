@@ -1,17 +1,18 @@
 .holder {
-    overflow: auto; 
+    overflow: auto;
 }
 
-.Header {
+.header {
     width: 100%;
     border-top: .05rem solid black;
 }
 
-.Logo {
+.logo {
+    text-align: center;
     height: 3rem;
 }
 
-.Text {
+.text {
     margin-left: .25rem;
 }
 
@@ -21,9 +22,31 @@
     right: .3rem;
     position: absolute;
     cursor: pointer;
-    z-index: 101
+    z-index: 101;
 }
 
 .escape :hover {
-    color: 'black',
+    color: black,
 }
+
+.buttonText {
+    font-size: .8rem;
+}  
+
+.scrollbar {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.scrollbar::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+    background-color: rgb(247, 254, 255);
+    padding: 10px; 
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #6772e5; 
+    height: 4rem;
+  } 

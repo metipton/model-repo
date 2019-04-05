@@ -29,5 +29,20 @@
     box-sizing: border-box;
     transition: all 0.3s ease-out;
     min-width: 26.25rem;
+    overflow-y: auto;
+    overflow-x: hidden;
     /*whatever width you want*/
   }
+
+  .inner::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+    background-color: rgb(247, 254, 255);
+    padding: 10px; 
+  }
+
+  .inner::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #6772e5; 
+    height: 4rem;
+  } 
