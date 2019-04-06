@@ -1,24 +1,63 @@
 .orderItemContainer {
-    width: 70%
+    width: 70%;
+    display: flex;
+    height: 8.5rem;
+    border-bottom: 2px dashed lightgrey;
 }
 
 .Info {
-    border-right: 0.05rem solid black; 
+    flex: 3;
     display: inline-block;
+}
+
+.InfoContainer {
+    margin-top: 5%;
+    border-right: 0.05rem solid lightgrey; 
+    height: 70%;
+}
+
+.ImageContainer {
+    flex: 1;
+    display: inline-block;
+    padding-top: 2.5%;
+    padding-bottom: 7.5%;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.ImageContainer2 {
+    border: 1px solid lightgrey;
+    background-color: lightgrey;
+    height: 6.25rem;
+    width: 6.25rem;
 }
 
 .Image {
-    display: inline-block;
-    height: 7rem;
-    width: 7rem;
+    max-width:6.25rem;
+    max-height:6.25rem;
 }
 
 .Price {
+    flex: 1;
     display: inline-block;
+    vertical-align: middle;
+    text-align: right;
+    padding-right: .4rem;
+    padding-top: 2.5%;
 }
 
 .Name {
+    padding-left: .5rem;
     display: inline-block;
     font-size: 1.5rem;
     font-weight: bold;
+    font-size: 1rem;
+    margin: 0rem;
+    
+}
+
+.Para {
+    padding-left: .5rem;
+    font-size: 1rem;
+    margin: 0rem;
 }
