@@ -11,10 +11,24 @@ const initialState = {
     orderState: 'Review',
     inCheckoutScreen: false,
     cardData: null,
-    addresses: null
+    addresses: null,
+    autoOpenCheckout: null
 };
 
+const setAutoCheckout = (state) => {
+    return updateObject( state, {
+        autoOpenCheckout: true
+    })
+}
+
+const cancelAutoCheckout = (state) => {  
+    return updateObject( state, {
+        autoOpenCheckout: null
+    })
+}
+
 const openOrderModal = ( state, action ) => {
+
     return updateObject( state, {
         inCheckoutScreen: true,
         cardData: action.cardData,
@@ -52,7 +66,7 @@ const purchaseModelFail = ( state, action ) => {
     } );
 };
 
-const purchaseModelSucess = ( state, action ) => {
+const purchaseModelSuccess = ( state, action ) => {
     return updateObject( state, { 
         loading: false,
         orderState: 'Success',
@@ -77,6 +91,8 @@ const fetchOrdersFail = ( state, action ) => {
 
 const reducer = ( state = initialState, action ) => {
     switch ( action.type ) {
+        case actionTypes.SET_AUTO_CHECKOUT: return setAutoCheckout( state, action );
+        case actionTypes.CANCEL_AUTO_CHECKOUT: return cancelAutoCheckout( state, action );
         case actionTypes.PURCHASE_MODEL_START: return purchaseModelStart( state, action );
         case actionTypes.PASS_ORDER_DATA: return passOrderData(state, action);
         case actionTypes.PURCHASE_MODEL_FAIL: return purchaseModelFail( state, action );

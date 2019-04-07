@@ -2,6 +2,27 @@ import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
 import firebase from '../../Firebase';
 
+export const autoCheckoutTimeout = () => {
+    return (dispatch) => {
+        dispatch(setAutoCheckout());
+        setTimeout(() => {
+            dispatch(cancelAutoCheckout());
+        },  2000);
+    };
+}
+
+export const setAutoCheckout = () => {
+    return {
+        type: actionTypes.SET_AUTO_CHECKOUT
+    }
+}
+
+export const cancelAutoCheckout = () => {
+    return {
+        type: actionTypes.CANCEL_AUTO_CHECKOUT
+    }
+}
+
 export const openOrderModal = (token, addresses) => {
     return {
         type: actionTypes.OPEN_ORDER_MODAL,

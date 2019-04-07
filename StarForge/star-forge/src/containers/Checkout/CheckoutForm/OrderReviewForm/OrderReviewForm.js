@@ -12,6 +12,15 @@ import DeliveryDetails from './DeliveryDetails/DeliveryDetails';
 import ItemHeader from './ItemHeader/ItemHeader';
 import ItemDescriptionCard from './ItemDescriptionCard/ItemDescriptionCard';
 import PriceTotalForm from './PriceTotalForm/PriceTotalForm';
+import PaymentDetailsForm from './PaymentDetailsForm/PaymentDetailsForm';
+
+import visa from '../../../../assets/Thumbs/creditcards/visa.png';
+import amex from '../../../../assets/Thumbs/creditcards/amex.png';
+import defaultCard from '../../../../assets/Thumbs/creditcards/credit.png';
+import diners from '../../../../assets/Thumbs/creditcards/diners.png';
+import discover from '../../../../assets/Thumbs/creditcards/discover.png';
+import mastercard from '../../../../assets/Thumbs/creditcards/mastercard.png';
+
 
 // const styles = theme => ({
 //     holder: {
@@ -54,8 +63,43 @@ class OrderReviewForm extends Component {
         this.setState({ [name]: event.target.checked });
         };
 
-    render() {
+    checkBillingEqualsShipping = () => {
+        let addresses = this.props.addresses;
+        if(addresses.billing_name === addresses.shipping_name && addresses.billing_address_country == addresses.shipping_address_country
+            && addresses.billing_address_zip === addresses.shipping_address_zip && addresses.billing_address_city === addresses.shipping_address_city
+            && addresses.billing_address_state === addresses.shipping_address_state){
+                return true;
+            }
+        return false;
+    }
 
+    editInformation = () => {
+        this.props.handleAutoCheckout();
+        this.props.close();
+    }
+
+    getCardImage = () => {
+        if(this.props.cardData.brand === "Visa"){
+            return visa;
+        }
+        if(this.props.cardData.brand === "MasterCard"){
+            return mastercard;
+        }
+        if(this.props.cardData.brand === "Discover"){
+            return discover;
+        }
+        if(this.props.cardData.brand === "American Express"){
+            return amex ;
+        }
+        if(this.props.cardData.brand === 'Diners Club'){
+            return diners;
+        }
+        return defaultCard;
+    }
+
+    render() {
+        let addressEquality = this.checkBillingEqualsShipping();
+        const defaultCard = this.getCardImage();
     return (
     <div className={classes.holder}>
         <FontAwesomeIcon 
@@ -87,7 +131,9 @@ class OrderReviewForm extends Component {
                 </div>
                 <div className={classes.FlexContainer}>
                     <div className={classes.flexChild1}>
-                        <DeliveryDetails address={this.props.addresses}/>
+                        <DeliveryDetails 
+                            address={this.props.addresses}
+                            edit={this.editInformation}/>
                         <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
                         {this.props.cart ? this.props.cart.map((item, index) => (
                             <ItemDescriptionCard
@@ -106,6 +152,12 @@ class OrderReviewForm extends Component {
                             subTotal={this.props.subTotal}
                             numItems={this.props.numItems}
                         />
+                        <PaymentDetailsForm 
+                            equality={addressEquality}
+                            addresses={this.props.addresses}
+                            cardData={this.props.cardData}
+                            cardImg={defaultCard}
+                            edit={this.editInformation}/>
                     </div>
                 </div>
             </div>
@@ -129,6 +181,8 @@ const mapStateToProps = state => {
   
   const mapDispatchToProps = dispatch => {
     return {
+        // setAutoCheckout: () => dispatch(actions.setAutoCheckout()),
+        handleAutoCheckout: () => dispatch(actions.autoCheckoutTimeout())
     };
   };
 

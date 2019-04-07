@@ -2,6 +2,9 @@ export {
     modelFinishedLoading
 } from './modelBuilder';
 export {
+    autoCheckoutTimeout,
+    setAutoCheckout,
+    cancelAutoCheckout,
     openOrderModal,
     closeOrderModal,
     purchaseModelSuccess,

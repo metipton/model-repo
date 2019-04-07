@@ -12,6 +12,7 @@ const DeliveryDetails = (props) => {
                             className={classes.edit} 
                             icon={['fas', 'edit']} 
                             size="1x" 
+                            onClick={props.edit}
                             />
             </div>
             <p className={classes.Para}>{props.address.shipping_name}, {props.address.shipping_address_line1},   

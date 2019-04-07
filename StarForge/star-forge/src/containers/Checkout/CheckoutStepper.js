@@ -10,6 +10,11 @@ import PAYMENT_SERVER_URL from './constants/server';
 
 class Checkout extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.stripeCheckout = React.createRef();
+  }
+
   successPayment = (token) => {
     console.log(token);
     let id = token.id;
@@ -35,9 +40,12 @@ class Checkout extends React.Component {
   render() {
     const CURRENCY = 'USD';
 
+   // desktopShowModal={this.props.autoCheckout}
     return (
       <div >
         <StripeCheckout
+            ref={this.stripeCheckout}
+            desktopShowModal={this.props.autoCheckout}
             name="Starforge" // the pop-in header title
             description="Forge your star" // the pop-in header subtitle
             image="https://stripe.com/img/documentation/checkout/marketplace.png"// the pop-in header image (default none)
@@ -68,13 +76,14 @@ const mapStateToProps = state => {
       userId: state.auth.userId,
       totalPrice: state.shoppingCart.cartTotals.item.totalPrice,
       shipping: state.shoppingCart.cartTotals.shipping,
+      autoCheckout: state.order.autoOpenCheckout
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     openOrderModal: (token, addresses) => dispatch(actions.openOrderModal(token, addresses)),
-    closeOrderModal: () => dispatch(actions.closeOrderModal())
+    closeOrderModal: () => dispatch(actions.closeOrderModal()),
   };
 };
 
