@@ -1,17 +1,15 @@
 
 .header {
+    margin: 0;
+    padding: 0;
     width: 100%;
-    border-top: .05rem solid black;
 }
 
 .logo {
     text-align: center;
-    height: 3rem;
+    height: 2rem;
 }
 
-.text {
-    margin-left: .25rem;
-}
 
 .escape {
     color: #696969;
@@ -22,13 +20,26 @@
     z-index: 101;
 }
 
-.escape :hover {
-    color: black,
+.escape:hover {
+    color: black;
 }
 
 .buttonText {
     font-size: .8rem;
-}  
+} 
+
+.FlexContainer {
+    display: flex;
+    margin-left: 0;
+}
+
+.flexChild1 {
+    flex: 5
+}
+
+.flexChild2 {
+    flex: 2
+}
 
 /* .scrollbar {
     overflow-y: auto;

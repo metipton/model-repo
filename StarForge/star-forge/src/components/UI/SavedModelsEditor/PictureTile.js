@@ -96,7 +96,8 @@ const styles = theme => ({
     name : {
         marginLeft: 'auto',
         marginRight: 'auto',
-        fontWeight: '400'
+        fontWeight: '400',
+        paddingTop: '1rem'
     },
     loadInProgress: {
         zIndex: 1001,

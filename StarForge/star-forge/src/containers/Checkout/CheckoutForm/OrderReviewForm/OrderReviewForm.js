@@ -11,6 +11,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import DeliveryDetails from './DeliveryDetails/DeliveryDetails';
 import ItemHeader from './ItemHeader/ItemHeader';
 import ItemDescriptionCard from './ItemDescriptionCard/ItemDescriptionCard';
+import PriceTotalForm from './PriceTotalForm/PriceTotalForm';
 
 // const styles = theme => ({
 //     holder: {
@@ -57,18 +58,15 @@ class OrderReviewForm extends Component {
 
     return (
     <div className={classes.holder}>
-        <div className={classes.logo}>
-            <p>1. Delivery > 2. Payment > <span style={{fontWeight: 'bold'}}>3. Place Order</span></p>
-            <FontAwesomeIcon 
-                    className={classes.escape} 
-                    icon={['fas', 'times-circle']} 
-                    size="1x" 
-                    onClick={this.props.close}/>
-        </div>
+        <FontAwesomeIcon 
+                className={classes.escape} 
+                icon={['fas', 'times-circle']} 
+                size="1x" 
+                onClick={this.props.close}/>
         <div className={classes.header}>
             <div className={classes.text}>
-                <h1>Place Your Order</h1>
-                <p style={{fontSize: '1rem'}}>Please check your delivery and payment details below before placing your order.</p>
+                <h1 style={{marginLeft: '.25rem'}}>Review Your Order</h1>
+                <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>Please check your delivery and payment details below before placing your order.</p>
                 <div style={{fontSize: '1rem', marginLeft: '25%'}}>
                     <Checkbox
                         style={{display: 'inline-block', fontSize: '1rem'}}
@@ -87,19 +85,28 @@ class OrderReviewForm extends Component {
                         </MaterialUIButton>
                     </div>
                 </div>
-                <div className={classes.scrollbar}>
-                    <DeliveryDetails address={this.props.addresses}/>
-                    <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
-                    {this.props.cart ? this.props.cart.map((item, index) => (
-                        <ItemDescriptionCard
-                            key={index}
-                            image={item.image}
-                            name={item.title}
-                            description={item.description}
-                            material={item.matType}
-                            price={item.price}
-                            />
-                    )) : null}
+                <div className={classes.FlexContainer}>
+                    <div className={classes.flexChild1}>
+                        <DeliveryDetails address={this.props.addresses}/>
+                        <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
+                        {this.props.cart ? this.props.cart.map((item, index) => (
+                            <ItemDescriptionCard
+                                key={index}
+                                image={item.image}
+                                name={item.title}
+                                description={item.description}
+                                material={item.matType}
+                                price={item.price}
+                                />
+                        )) : null}
+                    </div>
+                    <div className={classes.flexChild2}>
+                        <PriceTotalForm
+                            shippingPrice={this.props.shippingPrice}
+                            subTotal={this.props.subTotal}
+                            numItems={this.props.numItems}
+                        />
+                    </div>
                 </div>
             </div>
         </div>  
@@ -114,7 +121,9 @@ const mapStateToProps = state => {
         cardData: state.order.cardData,
         addresses: state.order.addresses,
         numItems: state.shoppingCart.cartTotals.item.productQuantity,
-        shippingMode: state.shoppingCart.cartTotals.mode
+        shippingMode: state.shoppingCart.cartTotals.mode,
+        shippingPrice: state.shoppingCart.cartTotals.shipping / 100,
+        subTotal: state.shoppingCart.cartTotals.item.totalPrice
     };
   };
   

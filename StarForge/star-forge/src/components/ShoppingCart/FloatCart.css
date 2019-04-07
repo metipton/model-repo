@@ -15,6 +15,7 @@
   right: -450px;
   width: 450px;
   height: 100%;
+  max-height: 100vh;
   background-color: #47494c;
   box-sizing: border-box;
   transition: right 0.2s; }
@@ -82,7 +83,7 @@
       font-size: 1.2em;
       vertical-align: middle; }
   .float-cart__shelf-container {
-    min-height: 280px; 
+    min-height: 15rem; 
     max-height: 45vh;
     overflow-y: auto;
     overflow-x: hidden;}
@@ -289,7 +290,7 @@
             font-size: 1.2em;
             vertical-align: middle; }
         .float-cart__shelf-container {
-          min-height: 280px; }
+          min-height: 15rem; }
           .float-cart__shelf-container .shelf-empty {
             color: #ececec;
             text-align: center;

@@ -29,11 +29,11 @@
     opacity: 1.0;
 }
 
-.Toolbar span:hover,
+/* .Toolbar span:hover,
 .Toolbar span:active,
 .Toolbar span.active {
     color: #06437A;
-}
+} */
 
 .Login {
     display: flex;

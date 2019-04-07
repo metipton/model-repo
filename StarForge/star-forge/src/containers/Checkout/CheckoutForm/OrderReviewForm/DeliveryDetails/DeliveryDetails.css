@@ -5,7 +5,7 @@
     margin-bottom: 0rem;
     border-top: 1px solid black;
     border-bottom: 1px solid grey;
-    width: 70%;
+    width: 100%;
     padding: .2rem;
 }
 
@@ -24,10 +24,11 @@
     color: #696969;
     cursor: pointer;
     z-index: 99;
-    display: inline-block;
+    float: right;
     margin-left: .25rem;
+    margin-right: .5rem;
 }
 
-.edit :hover{
-    color: 'white'
+.edit:hover{
+    color: black;
 }
