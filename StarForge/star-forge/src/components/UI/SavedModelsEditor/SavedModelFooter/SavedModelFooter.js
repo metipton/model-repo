@@ -1,13 +1,9 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Button from '../../Button/SavedHeroButtons';
-import * as actions from '../../../../store/actions/index';
+import {closeSavedModal} from '../../../../store/actions/index';
 
 import classes from './SavedModelFooter.css';
-//import MaterialUIButton from '../../components/UI/Button/MaterialUIButton';
-//import * as actions from '../../store/actions/index';
-
-
 
 
 class SavedModelToolbar extends Component {
@@ -46,7 +42,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        closeSavedModal: () => dispatch(actions.closeSavedModal()),
+        closeSavedModal: () => dispatch(closeSavedModal()),
     }
 }
 

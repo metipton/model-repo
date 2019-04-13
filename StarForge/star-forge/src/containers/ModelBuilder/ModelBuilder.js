@@ -1,12 +1,11 @@
 import * as THREE from 'three';
 import {connect} from 'react-redux';
 import React, {Component} from 'react';
-import firebase from '../../Firebase';
-import 'firebase/storage';
+import {fbDatabase, fbStorage} from '../../Firebase';
+
 import axios from '../../axios-orders.js';
 import GLTFLoader from 'three-gltf-loader';
 import GLTFExporter from 'three-gltf-exporter';
-
 
 import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
@@ -14,13 +13,13 @@ import Aux from '../../hoc/_Aux/_Aux';
 import OrbitControls from 'three-orbitcontrols';
 import Editor from '../../components/UI/Editor/Editor';
 import BottomBar from '../../components/UI/BottomBar/BottomBar';
-import px from './skybox/scifi-px.jpg';
-import nx from './skybox/scifi-nx.jpg';
-import py from './skybox/scifi-py.jpg';
-import ny from './skybox/scifi-ny.jpg';
-import pz from './skybox/scifi-pz.jpg';
-import nz from './skybox/scifi-nz.jpg';
-import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
+import px from '../../assets/skybox/scifi-px.jpg'
+import nx from '../../assets/skybox/scifi-nx.jpg';
+import py from '../../assets/skybox/scifi-py.jpg';
+import ny from '../../assets/skybox/scifi-ny.jpg';
+import pz from '../../assets/skybox/scifi-pz.jpg';
+import nz from '../../assets/skybox/scifi-nz.jpg';
+//import SideDrawerColor from '../../components/UI/SideDrawerColor/SideDrawerColor';
 import LoadingScreen from './LoadingScreen/LoadingScreen';
 import BottomDrawer from '../../components/UI/BottomDrawer/BottomDrawer';
 import Auth from '../../containers/auth0/Auth';
@@ -231,7 +230,8 @@ class ModelBuilder extends Component {
 
     getPriceFromServer = () => {
         let prices = {};
-        const database = firebase.database().ref('Prices' );
+
+        const database = fbDatabase.ref('Prices' );
         database.once("value").then((snapshot) => {
             snapshot.forEach((childSnapshot) => {
               // childData will be the actual contents of the child
@@ -419,14 +419,14 @@ class ModelBuilder extends Component {
 
 
         //create materials for different printing mats
-        const metalMat = new THREE.MeshStandardMaterial( {
+        // const metalMat = new THREE.MeshStandardMaterial( {
 
-            color: 0xffffff,
+        //     color: 0xffffff,
         
-            roughness: .1,
-            metalness: 1,
+        //     roughness: .1,
+        //     metalness: 1,
         
-        } );
+        // } );
 
         //all scene managing objects
         this.numObjects = 0;
@@ -478,8 +478,11 @@ class ModelBuilder extends Component {
         this.camera.position.z = 5.5;
         this.camera.position.y = 2;
         this.scene.add(this.camera);
-        this.initCameraPosit = this.camera.getWorldPosition();
-        this.initCameraRotation = this.camera.getWorldQuaternion();
+
+        this.initCameraPosit = new THREE.Vector3(0,0,0);
+        this.camera.getWorldPosition(this.initCameraPosit);
+        this.initCameraRotation = new THREE.Quaternion();
+        this.camera.getWorldQuaternion(this.initCameraRotation);
 
 
 
@@ -540,8 +543,8 @@ class ModelBuilder extends Component {
            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load(pz), side: THREE.DoubleSide}),
            new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load(nz), side: THREE.DoubleSide}),
        ];
-       var cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
-       this.skyBox = new THREE.Mesh(geometry, cubeMaterial);
+      
+       this.skyBox = new THREE.Mesh(geometry, cubeMaterials);
        this.skyBox.name = 'skybox';
        this.skyBox.receiveShadow = true;
        scene.add(this.skyBox);
@@ -680,7 +683,7 @@ class ModelBuilder extends Component {
    downloadObjectFromStorage = ( category, selection ) => {
        return new Promise( ( resolve, reject ) => {
 
-           firebase.storage().ref( '/Models/' + category + '/' + selection + '.glb' )
+            fbStorage.ref( '/Models/' + category + '/' + selection + '.glb' )
                .getDownloadURL()
                .then( url => {
                    var xhr = new XMLHttpRequest();
@@ -1533,8 +1536,10 @@ class ModelBuilder extends Component {
         imageRenderer.setClearColor( color, 0 );
         imageRenderer.setSize(width, height);
         //put the camera to null position and copy current posit/rotation
-        let currentCamPosit = this.camera.getWorldPosition();
-        let currentCamRotation = this.camera.getWorldQuaternion();
+        let currentCamPosit = new THREE.Vector3(0,0,0)
+        this.camera.getWorldPosition(currentCamPosit);
+        let currentCamRotation = new THREE.Quaternion();
+        this.camera.getWorldQuaternion(currentCamRotation);
         this.camera.position.set(this.initCameraPosit.x, this.initCameraPosit.y, 4.1);
         this.camera.setRotationFromQuaternion(this.initCameraRotation);
         this.camera.clearViewOffset();
@@ -1605,7 +1610,7 @@ class ModelBuilder extends Component {
         this.exporter.parse(  objects, (object)=> {
 
             return new Promise( ( resolve, reject ) => {
-                firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
+                fbStorage.ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
                     this.props.finishedAdd();
                     resolve();
                 }).catch( error => {
@@ -1694,7 +1699,7 @@ class ModelBuilder extends Component {
 
     exportScreenshotToCart = (cartNumber, size, image) => {
         return new Promise( ( resolve, reject ) => {
-            firebase.storage().ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot-' + size + '.png' ).put(image).then((snapshot) => {
+            fbStorage.ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot-' + size + '.png' ).put(image).then((snapshot) => {
                 snapshot.ref.getDownloadURL().then(function(downloadURL) {
                     resolve(downloadURL);
                   });
@@ -1706,7 +1711,7 @@ class ModelBuilder extends Component {
 
     exportScreenshotToSaved = (identifier, size, image) => {
         return new Promise( ( resolve, reject ) => {
-            firebase.storage().ref( '/Saved/' + this.props.userId + '/' + identifier + '/screenshot-' + size + '.png' ).put(image).then(() => {
+            fbStorage.ref( '/Saved/' + this.props.userId + '/' + identifier + '/screenshot-' + size + '.png' ).put(image).then(() => {
                 this.props.saveComplete();
                 resolve();
             }).catch( error => {
@@ -1793,9 +1798,7 @@ class ModelBuilder extends Component {
           };
 
         try {
-        //push payload to firebase database
-        //const database = firebase.database().ref('Carts/' + this.props.userId + '/Cart' + cartNum + '/');
-        const database =  await firebase.database().ref('users/' + this.props.userId + '/Cart/Items/' + cartNum + '/' );
+        const database =  await fbDatabase.ref('users/' + this.props.userId + '/Cart/Items/' + cartNum + '/' );
         database.set(payload);
         } catch(error){
             console.log(error);
@@ -1894,7 +1897,7 @@ class ModelBuilder extends Component {
             morphTargets: this.morphTargets
           };
 
-        const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
+        const database = fbDatabase.ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
         database.set(payload);
         var largeImage = this.takeScreenshot(350, 350);
         this.exportScreenshotToSaved(timestamp, "lg", largeImage);
@@ -1909,7 +1912,7 @@ class ModelBuilder extends Component {
         let timestamps = [];
         let payload = {};
 
-        const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels' );
+        const database = fbDatabase.ref('users/' + this.props.userId + '/SavedModels' );
         database.once("value").then( async (snapshot) => {
             payload = snapshot.val();
             let promises = [];
@@ -1927,7 +1930,7 @@ class ModelBuilder extends Component {
     }
 
     getSavedModelImage = (payload, timestamp) => {
-        const storage = firebase.storage().ref();
+        const storage = fbStorage.ref();
         return new Promise( ( resolve, reject ) => {
             storage.child('/Saved/' + this.props.userId + '/' + timestamp  + '/screenshot-lg.png').getDownloadURL()
             .then( async (url) => {
@@ -1975,16 +1978,16 @@ class ModelBuilder extends Component {
         this.processMultipleModels(categoryArr, selectionArr);
 
         //iterate through all items and switch to saved items
-        for(var category in objects){
-            if(category !== 'Pose'){
-                if(objects[category] === "''" && this.state.currentName[category] === "''"){
+        for(var nextCat in objects){
+            if(nextCat !== 'Pose'){
+                if(objects[nextCat] === "''" && this.state.currentName[nextCat] === "''"){
                     continue;
-                } else if (objects[category] ===  this.state.currentName[category]) {
+                } else if (objects[nextCat] ===  this.state.currentName[nextCat]) {
                     continue;
-                } else if(objects[category] === "''" && this.state.currentName[category] !== "''") {
-                    this.updateObjectHandler(category, this.state.currentName[category], false)
+                } else if(objects[nextCat] === "''" && this.state.currentName[nextCat] !== "''") {
+                    this.updateObjectHandler(nextCat, this.state.currentName[nextCat], false)
                 } else {
-                    this.updateObjectHandler(category, objects[category], false)
+                    this.updateObjectHandler(nextCat, objects[nextCat], false)
                 } 
             }
         }
@@ -2011,14 +2014,14 @@ class ModelBuilder extends Component {
 
     renameSavedModel = (timestamp, newName) => {
 
-        const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp + '/name');
+        const database = fbDatabase.ref('users/' + this.props.userId + '/SavedModels/' + timestamp + '/name');
 
         database.set(newName).then(this.props.renameModel(timestamp, newName)).then(this.props.closeNameModal);
 
     }
 
     deleteSavedModel = (timestamp) => {
-        const database = firebase.database().ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
+        const database = fbDatabase.ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
         database.set(null).then(this.props.deleteSavedModel(timestamp)).then(this.props.closeDeleteModal);
     }
 
@@ -2122,9 +2125,7 @@ class ModelBuilder extends Component {
    }
 }
 
-{/* <SideDrawerColor 
-toggleColor={this.toggleColorHandler} 
-setColor={(color) => this.setHexColor(color)} /> */}
+
 const mapStateToProps = state => {
     return {
         currentCart: state.shoppingCart.cartProducts.items,

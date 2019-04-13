@@ -34,9 +34,6 @@ export {
     updateShipping
 } from './shoppingCart/updateCartActions'
 export {
-   fetchProducts 
-} from './shoppingCart/productActions';
-export {
     openSavedModal,
     closeSavedModal,
     openNameModal,

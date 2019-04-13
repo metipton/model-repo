@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
-import firebase from '../../Firebase';
+import {fbDatabase} from '../../Firebase';
 
 export const autoCheckoutTimeout = () => {
     return (dispatch) => {
@@ -40,7 +40,7 @@ export const closeOrderModal = () => {
 export const purchaseModelSuccess = (userId) => {
     return  async dispatch => {
         dispatch(purchaseModelSuccess());
-        const database =  firebase.database().ref('users/' + userId + '/CompletedOrders');
+        const database =  fbDatabase.ref('users/' + userId + '/CompletedOrders');
         let snapshot = await database.once("value");
         var keys = Object.keys(snapshot.val());
         var orderKey = keys[keys.length-1];

@@ -13,7 +13,6 @@ class ImageGridList extends Component {
         this.props.updateSelection(category, selection);
     };
 
-
     render() {
         const {classes} = this.props;
         return (

@@ -1,6 +1,5 @@
 import React from 'react';
 import Aux from  '../../../../hoc/_Aux/_Aux'
-import Typography from '@material-ui/core/Typography';
 
 import classes from './DrawerToggle.css';
 

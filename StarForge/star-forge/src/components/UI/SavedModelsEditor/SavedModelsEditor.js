@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import 'firebase/storage';
 
-import * as actions from '../../../store/actions/index';
+import {addSavedModels, selectModel, closeNameModal, closeDeleteModal} from '../../../store/actions/index';
 import { withStyles } from '@material-ui/core/styles';
 import SavedModelToolbar from '../SavedModelsEditor/SavedModelToolbar/SavedModelToolbar';
 import SavedModelFooter from './SavedModelFooter/SavedModelFooter';
@@ -288,10 +287,10 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    addSavedModels: (payload, timestamps) => dispatch(actions.addSavedModels(payload, timestamps)),
-    selectModel: (payload) => dispatch(actions.selectModel(payload)),
-    closeNameModal: () => dispatch(actions.closeNameModal()),
-    closeDeleteModal: () => dispatch(actions.closeDeleteModal())
+    addSavedModels: (payload, timestamps) => dispatch(addSavedModels(payload, timestamps)),
+    selectModel: (payload) => dispatch(selectModel(payload)),
+    closeNameModal: () => dispatch(closeNameModal()),
+    closeDeleteModal: () => dispatch(closeDeleteModal())
   }
 }
 

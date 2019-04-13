@@ -4,7 +4,7 @@ import Aux from '../../../hoc/_Aux/_Aux';
 import {connect} from 'react-redux';
 import GridListTile from '@material-ui/core/GridListTile';
 import { withStyles } from '@material-ui/core/styles';
-import * as actions from '../../../store/actions/index';
+import {addSavedModels, openNameModal, openDeleteModal} from '../../../store/actions/index';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const styles = theme => ({
@@ -127,7 +127,7 @@ class PictureTile extends Component {
             );
 
         let tile;
-        if(this.props.selected == this.props.timestamp){
+        if(this.props.selected === this.props.timestamp){
             tile = (
                 <GridListTile
                 classes={{root : classes.gridListTileSelected}}
@@ -190,9 +190,9 @@ const mapStateToProps = state => {
   
   const mapDispatchToProps = dispatch => {
     return {
-      addSavedModels: (payload, timestamps) => dispatch(actions.addSavedModels(payload, timestamps)),
-      openNameModal: () => dispatch(actions.openNameModal()),
-      openDeleteModal: () => dispatch(actions.openDeleteModal())
+      addSavedModels: (payload, timestamps) => dispatch(addSavedModels(payload, timestamps)),
+      openNameModal: () => dispatch(openNameModal()),
+      openDeleteModal: () => dispatch(openDeleteModal())
     }
   }
   

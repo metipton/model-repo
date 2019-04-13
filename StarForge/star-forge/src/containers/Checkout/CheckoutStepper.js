@@ -1,11 +1,11 @@
 import React from 'react'
-import firebase from '../../Firebase';
+import {fbDatabase} from '../../Firebase';
 import StripeCheckout from 'react-stripe-checkout';
 import {connect} from 'react-redux';
-import * as actions from '../../store/actions/index';
+import {openOrderModal, closeOrderModal} from '../../store/actions/index';
 
 import STRIPE_PUBLISHABLE from './constants/stripe';
-import PAYMENT_SERVER_URL from './constants/server';
+//import PAYMENT_SERVER_URL from './constants/server';
 
 
 class Checkout extends React.Component {
@@ -16,10 +16,8 @@ class Checkout extends React.Component {
   }
 
   successPayment = (token) => {
-    console.log(token);
-    let id = token.id;
-    console.log(id);
-    firebase.database().ref(`/users/${this.props.userId}/charges/`).push({amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)});
+
+    fbDatabase.ref(`/users/${this.props.userId}/charges/`).push({amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)});
     this.props.resetCart();
     this.props.closeCart();
   };
@@ -29,9 +27,7 @@ class Checkout extends React.Component {
   };
 
   onToken = (token, addresses) => {
-    console.log(token);
-    console.log(addresses);
-    firebase.database().ref(`/users/${this.props.userId}/sources`).push({token: token.id,  amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)})
+    fbDatabase.ref(`/users/${this.props.userId}/sources`).push({token: token.id,  amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)})
       .then(this.props.openOrderModal(token, addresses))
       .catch(this.errorPayment);
   }
@@ -82,8 +78,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    openOrderModal: (token, addresses) => dispatch(actions.openOrderModal(token, addresses)),
-    closeOrderModal: () => dispatch(actions.closeOrderModal()),
+    openOrderModal: (token, addresses) => dispatch(openOrderModal(token, addresses)),
+    closeOrderModal: () => dispatch(closeOrderModal()),
   };
 };
 

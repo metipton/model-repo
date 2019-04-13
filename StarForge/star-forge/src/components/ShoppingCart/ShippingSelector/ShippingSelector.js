@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import {connect} from 'react-redux';
-import * as actions from '../../../store/actions/index';
+import {updateShipping} from  '../../../store/actions/index';
 
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -81,7 +81,7 @@ const mapStateToProps = state => {
   
   const mapDispatchToProps = dispatch => {
     return {
-        updateShipping: (shippingMode, ShippingPrice) => dispatch(actions.updateShipping(shippingMode, ShippingPrice))
+        updateShipping: (shippingMode, ShippingPrice) => dispatch(updateShipping(shippingMode, ShippingPrice))
     };
   };
 

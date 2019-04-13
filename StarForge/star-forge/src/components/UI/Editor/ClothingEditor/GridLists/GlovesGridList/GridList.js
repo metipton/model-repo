@@ -36,10 +36,12 @@ class ImageGridList extends Component {
                       <img
                           className={classes.lock}
                           src={lock}
+                          alt="link"
                           onClick={() => this.props.gloveLink(index)}/> :
                       <img
                           className={classes.lock}
                           src={unlock}
+                          alt="link"
                           onClick={() => this.props.gloveLink(index)}/>}
 
                   <GridListTile

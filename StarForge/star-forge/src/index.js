@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
 import {Provider} from 'react-redux';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
@@ -26,6 +25,7 @@ const theme = createMuiTheme({
             },  
       },
       typography: {
+        useNextVariants: true,
         "fontFamily": "\"Griffos\", \"Helvetica\", \"Arial\", sans-serif",
         "fontSize": 16,
         "fontWeight": 'normal',

@@ -3,8 +3,7 @@ import {connect} from 'react-redux';
 
 import classes from './BottomBar.css';
 import MaterialUIButton from '../Button/AddToCartButton';
-import * as actions from '../../../store/actions/index';
-import Auth from '../../../containers/auth0/Auth';
+
 
 class BottomBar extends Component {
 
@@ -46,7 +45,6 @@ class BottomBar extends Component {
             ); 
         }
 
-
         return (
             <div>
                 {bottomBar}
@@ -62,11 +60,6 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        openAuth: () => dispatch(actions.authOpenModal()),
-    }
-}
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(BottomBar);
+export default connect(mapStateToProps, null)(BottomBar);

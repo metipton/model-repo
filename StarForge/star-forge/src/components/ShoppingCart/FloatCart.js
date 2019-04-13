@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import firebase from '../../Firebase';
-import 'firebase/storage';
+import {fbDatabase} from '../../Firebase';
 
 import { connect } from 'react-redux';
 import { loadShipping, loadCart, removeProduct, enterCheckout } from '../../store/actions/shoppingCart/floatCartActions';
@@ -47,7 +46,7 @@ class FloatCart extends Component {
 
    pullCartFromFirebase = () => {
     let product = [];
-    const cart = firebase.database().ref();
+    const cart = fbDatabase.ref();
     const json = cart.child('users/' + this.props.userId + '/Cart/Items');
     json.once("value").then((snapshot) => {
       snapshot.forEach((childSnapshot) => {
@@ -63,7 +62,7 @@ class FloatCart extends Component {
   pullShippingFromFirebase = () => {
     let shipping = [];
 
-    const cart = firebase.database().ref();
+    const cart = fbDatabase.ref();
     const json = cart.child('Prices/Shipping');
     json.once("value").then((snapshot) => {
       snapshot.forEach((childSnapshot) => {
@@ -110,7 +109,7 @@ class FloatCart extends Component {
   removeProduct = async (product) => {
     const { cartProducts, updateCart } = this.props;
 
-    const database = firebase.database().ref('users/' + this.props.userId + '/Cart/Items/' + product.cartNumber );
+    const database = fbDatabase.ref('users/' + this.props.userId + '/Cart/Items/' + product.cartNumber );
     await database.set(null);
     const index = cartProducts.findIndex(p => p.id === product.id);
     if (index >= 0) {
@@ -121,8 +120,7 @@ class FloatCart extends Component {
 
   resetShoppingCart = async () => {
     const { cartProducts, updateCart } = this.props;
-    // const database = firebase.database().ref('users/' + this.props.userId + '/Cart/Items');
-    // await database.set(null);
+
     this.props.purchaseModelSuccess(this.props.userId);
     cartProducts.splice(0, this.props.cartProducts.length);
     await updateCart(cartProducts);

@@ -6,7 +6,8 @@ const navigationItem = ( props ) => (
     <li className={classes.NavigationItem}>
         <a
             href={props.link}
-            target="_blank">{props.children}</a>
+            target="_blank"
+            rel="noopener noreferrer">{props.children}</a>
     </li>
 );
 

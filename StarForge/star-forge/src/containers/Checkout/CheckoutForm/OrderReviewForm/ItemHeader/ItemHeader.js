@@ -1,11 +1,9 @@
 import React from 'react'
 import classes from './ItemHeader.css'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-
 const ItemHeader = (props) => {
     let string = "items"
-    if(props.numItems == 1){
+    if(props.numItems === 1){
         string = "item"
     }
     return (

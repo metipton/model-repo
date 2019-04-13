@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
 import {connect} from 'react-redux';
-import firebase from '../../Firebase';
-import 'firebase/storage';
+import {fbStorage} from '../../Firebase';
+
 
 import classes from './FloatCart.css';
 
@@ -32,7 +32,7 @@ class CartProduct extends Component {
  }
 
   getThumbnail = () => {
-    const storage = firebase.storage().ref();
+    const storage = fbStorage.ref();
     storage.child('/Carts/' + this.props.userId + '/CartItem' + this.props.product.cartNumber + '/screenshot-sm.png').getDownloadURL().then((url) => {
       this.setState({
         ...this.state,
@@ -42,7 +42,7 @@ class CartProduct extends Component {
   }
 
   getLargeThumbnail = () => {
-    const storage = firebase.storage().ref();
+    const storage = fbStorage.ref();
     storage.child('/Carts/' + this.props.userId + '/CartItem' + this.props.product.cartNumber + '/screenshot-lg.png').getDownloadURL().then((url) => {
       this.setState({
         ...this.state,

@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const PriceTotalForm = (props) => {
     let string = "items"
-    if(props.numItems == 1){
+    if(props.numItems === 1){
         string = "item"
     }
     return (

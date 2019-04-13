@@ -1,14 +1,12 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import firebase from '../../Firebase';
-
+import {fbAuth} from '../../Firebase';
 
 import classes from './Toolbar.css';
 import DrawerToggle from '../../components/Navigation/SideDrawer/DrawerToggle/DrawerToggle';
 import MaterialUIButton from '../../components/UI/Button/MaterialUIButton';
-//import AuthFormik from '../Auth/AuthFormik';
-import * as actions from '../../store/actions/index';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+
+import {logout, exitCheckout} from '../../store/actions/index';
 import ShoppingCart from '../../components/ShoppingCart/FloatCart';
 import ShoppingCartIcon from '../../components/UI/ShoppingCartIcon/ShoppingCartIcon';
 import SocialMedia from '../../components/Navigation/NavigationItems/SocialMedia/SocialMedia';
@@ -48,19 +46,11 @@ class Toolbar extends Component {
 
     authLogout = () => {
         this.auth.logout();
-        firebase.auth().signOut().then(function() {
+        fbAuth.signOut().then(function() {
             console.log('Signed Out');
         }, function(error) {
             console.error('Sign Out Error', error);
         });
-    }
-
-    StyledLoginUI = (uiConfig, firebaseAuth) => {
-        return (
-        <StyledFirebaseAuth
-            uiConfig={uiConfig}
-            firebaseAuth={firebaseAuth}/>
-        );
     }
 
 
@@ -131,8 +121,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        logout: () => dispatch(actions.logout()),
-        closeCheckout: () => dispatch(actions.exitCheckout()),
+        logout: () => dispatch(logout()),
+        closeCheckout: () => dispatch(exitCheckout()),
     }
 }
 

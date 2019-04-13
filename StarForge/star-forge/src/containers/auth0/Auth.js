@@ -1,9 +1,9 @@
 // src/Auth/Auth.js
 import auth0 from 'auth0-js';
-import * as actions from '../../store/actions/index';
+import {logout, resetCart, socialAuth} from '../../store/actions/index';
 import decode from 'jwt-decode';
 import newStore from '../../store.js';
-import firebase from '../../Firebase';
+import {fbAuth} from '../../Firebase';
 
 class Auth {
 
@@ -48,7 +48,7 @@ class Auth {
               that.logout();
               return;
             }
-            await firebase.auth().signInWithCustomToken(firebaseToken['firebaseToken']).catch(function(error) {
+            await fbAuth.signInWithCustomToken(firebaseToken['firebaseToken']).catch(function(error) {
               // Handle Errors here.
               console.log(error.message)
               // ...
@@ -83,8 +83,8 @@ class Auth {
     localStorage.removeItem('email');
     localStorage.removeItem('fbToken');
     localStorage.removeItem('fbExpiry');
-    this.store.dispatch(actions.logout());
-    this.store.dispatch(actions.resetCart());
+    this.store.dispatch(logout());
+    this.store.dispatch(resetCart());
     // navigate to the home route
   }
 
@@ -136,7 +136,7 @@ class Auth {
     const decodedResult = decode(authResult.idToken);
     this.email = decodedResult.email;
     this.userId = decodedResult.sub;
-    this.store.dispatch(actions.socialAuth(this.accessToken, this.userId, this.idToken, this.expiresAt, this.email, this.fbToken, fbExpiry));
+    this.store.dispatch(socialAuth(this.accessToken, this.userId, this.idToken, this.expiresAt, this.email, this.fbToken, fbExpiry));
 
   }
 

@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { withStyles } from '@material-ui/core/styles';
 import {connect} from 'react-redux';
-import * as actions from '../../../../store/actions/index';
+import {autoCheckoutTimeout} from '../../../../store/actions/index';
 import classes from './OrderReviewForm.css';
 
 import MaterialUIButton from '../../../../components/UI/Button/MaterialUIButton'
@@ -22,38 +21,6 @@ import discover from '../../../../assets/Thumbs/creditcards/discover.png';
 import mastercard from '../../../../assets/Thumbs/creditcards/mastercard.png';
 
 
-// const styles = theme => ({
-//     holder: {
-//         overflow: 'auto'
-//     },
-//     header: {
-//         width: '100%',
-//         borderTop: '.05rem solid black',
-//     },
-//     logo: {
-//         textAlign: 'center',
-//         height: '3rem'
-//     },   
-//     text: {
-//         marginLeft: '.25rem'
-//     },
-//     escape: {
-//         color: '#696969',
-//         top: '.3rem',
-//         right: '.3rem',
-//         position: 'absolute',
-//         cursor: 'pointer',
-//         zIndex: 101,
-//         '&:hover': {
-//             color: 'black',
-//           }
-//       }, 
-//     buttonText: {
-//         fontSize: '.8rem'
-//     }  
-
-// })
-
 class OrderReviewForm extends Component {
     state = {
         confirmedTOS: false
@@ -65,7 +32,7 @@ class OrderReviewForm extends Component {
 
     checkBillingEqualsShipping = () => {
         let addresses = this.props.addresses;
-        if(addresses.billing_name === addresses.shipping_name && addresses.billing_address_country == addresses.shipping_address_country
+        if(addresses.billing_name === addresses.shipping_name && addresses.billing_address_country === addresses.shipping_address_country
             && addresses.billing_address_zip === addresses.shipping_address_zip && addresses.billing_address_city === addresses.shipping_address_city
             && addresses.billing_address_state === addresses.shipping_address_state){
                 return true;
@@ -181,8 +148,7 @@ const mapStateToProps = state => {
   
   const mapDispatchToProps = dispatch => {
     return {
-        // setAutoCheckout: () => dispatch(actions.setAutoCheckout()),
-        handleAutoCheckout: () => dispatch(actions.autoCheckoutTimeout())
+        handleAutoCheckout: () => dispatch(autoCheckoutTimeout())
     };
   };
 

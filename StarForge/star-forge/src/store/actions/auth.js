@@ -1,18 +1,6 @@
 import * as actionTypes from './actionTypes';
 
 
-export const authOpenModal = () => {
-    return {
-        type: actionTypes.AUTH_OPEN_MODAL
-    };
-};
-
-export const authCloseModal = () => {
-    return {
-        type: actionTypes.AUTH_CLOSE_MODAL
-    };
-};
-
 export const authStart = () => {
     return {
         type: actionTypes.AUTH_START

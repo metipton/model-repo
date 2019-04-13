@@ -8,7 +8,6 @@ const styles = theme => ({
     width: '6rem',
   },
   button: {
-    width: '12rem',
     textAlign: 'center',
     opacity: '1',    
     width: '6rem',

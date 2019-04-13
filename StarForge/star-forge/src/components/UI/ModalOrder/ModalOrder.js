@@ -40,13 +40,3 @@ class ModalOrder extends Component {
 
 export default ModalOrder;
 
-
-{/* <div
-className={classes.Modal}
-style={{
-    zIndex: this.props.show ? '500' : '-1',
-    transform: this.props.show ? 'translateY(0)' : 'translateY(100vh)',
-    opacity: this.props.show ? '1' : '0'
-}}>
-{this.props.children}
-</div> */}

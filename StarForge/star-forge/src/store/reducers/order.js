@@ -66,13 +66,13 @@ const purchaseModelFail = ( state, action ) => {
     } );
 };
 
-const purchaseModelSuccess = ( state, action ) => {
-    return updateObject( state, { 
-        loading: false,
-        orderState: 'Success',
-        puchased: true
-    } );
-};
+// const purchaseModelSuccess = ( state, action ) => {
+//     return updateObject( state, { 
+//         loading: false,
+//         orderState: 'Success',
+//         puchased: true
+//     } );
+// };
 
 const fetchOrdersStart = ( state, action ) => {
     return updateObject( state, { loading: true } );

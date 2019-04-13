@@ -2,13 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 
 import { withStyles } from '@material-ui/core/styles';
-import * as actions from '../../../../store/actions/index';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classes from './SavedModelToolbar.css';
-//import MaterialUIButton from '../../components/UI/Button/MaterialUIButton';
-//import * as actions from '../../store/actions/index';
-
-
+import {closeSavedModal} from '../../../../store/actions/index';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const styles = theme => ({ 
     exit: {
@@ -65,9 +60,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        closeSavedModal: () => dispatch(actions.closeSavedModal()),
+        closeSavedModal: () => dispatch(closeSavedModal()),
     }
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedModelToolbar));
+export default connect(null, mapDispatchToProps)(withStyles(styles)(SavedModelToolbar));

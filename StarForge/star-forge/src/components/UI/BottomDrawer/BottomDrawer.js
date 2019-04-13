@@ -10,7 +10,7 @@ import UpIcon from '@material-ui/icons/KeyboardArrowUp';
 import DownIcon from '@material-ui/icons/KeyboardArrowDown';
 import TextField from '@material-ui/core/TextField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import * as actions from '../../../store/actions/index';
+import {saveInProgress} from '../../../store/actions/index';
 
 
 
@@ -74,13 +74,12 @@ const styles = theme => ({
   innerButtons: {
     cursor: 'pointer',
     boxSizing: 'border-box',
-    width: '4rem',
+    width: '6.25rem',
     textAlign: 'center',
     color: '#06437A',
     padding: '.3rem',
     marginLeft: 0,
     marginRight: 0,
-    width: '6.25rem',
     transition: '.3s',
     '&:hover':{
       backgroundColor: '#FFA500',
@@ -242,7 +241,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveInProgress: ()=>dispatch(actions.saveInProgress())
+    saveInProgress: ()=>dispatch(saveInProgress())
   }
 }
 

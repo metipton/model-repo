@@ -17,14 +17,8 @@ class ImageGridList extends Component {
 
     render() {
         const {classes} = this.props;
-        let linker = (
-            <img
-                className={classes.lock}
-                src={lock}
-                />);
-        if(!this.props.state.links.feet.linked) {
-            linker = (<img className={classes.lock} src={unlock} />)
-        }
+
+        
         return (
         <div className={classes.root}>
           <GridList cellHeight={150} className={classes.gridList} cols={1}>
@@ -40,10 +34,12 @@ class ImageGridList extends Component {
                       <img
                           className={classes.lock}
                           src={lock}
+                          alt="link"
                           onClick={() => this.props.feetLink(index)}/> :
                       <img
                           className={classes.lock}
                           src={unlock}
+                          alt="link"
                           onClick={() => this.props.feetLink(index)}/>}
                   <GridListTile
                       className={(this.props.state.selected.FootLeft === tile.name) ? classes.gridListTileSelected : classes.gridListTile}

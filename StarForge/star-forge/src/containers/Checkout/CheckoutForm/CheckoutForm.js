@@ -1,6 +1,6 @@
 import React from 'react'
 import {connect} from 'react-redux';
-import * as actions from '../../../store/actions/index';
+import {closeOrderModal} from '../../../store/actions/index';
 
 import OrderReviewForm from './OrderReviewForm/OrderReviewForm';
 import OrderCompleteForm from './OrderCompleteForm/OrderCompleteForm';
@@ -25,7 +25,7 @@ class CheckoutForm extends React.Component {
     }
     return (
       <div>
-          <OrderReviewForm close={this.props.closeOrderModal}/>
+          {screen}
       </div>
     )
   }
@@ -38,7 +38,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    closeOrderModal: () => dispatch(actions.closeOrderModal())
+    closeOrderModal: () => dispatch(closeOrderModal())
   };
 };
 
