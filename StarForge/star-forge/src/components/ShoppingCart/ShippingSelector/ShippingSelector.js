@@ -22,7 +22,8 @@ const styles = theme => ({
 
   },
   selector: {
-      height: '1.25rem'
+      height: '1.25rem',
+      margin: '.5rem'
   }
 });
 
@@ -31,11 +32,13 @@ class ShippingSelector extends React.Component {
   handleChange = (event) => {
     let price;
     for(var mode in this.props.shipping){
+
         if(this.props.shipping[mode]['mode'] === event.target.value){
             price = this.props.shipping[mode]['price'];
         }
     }
-    this.props.updateShipping(event.target.value, price);
+
+    this.props.updateShipping(this.props.userId, event.target.value, price);
   };
 
   render() {
@@ -75,13 +78,14 @@ const mapStateToProps = state => {
     return {
         shipping: state.shoppingCart.cartProducts.shipping,
         currentPrice: state.shoppingCart.cartTotals.shipping,
-        currentMode: state.shoppingCart.cartTotals.mode
+        currentMode: state.shoppingCart.cartTotals.mode,
+        userId: state.auth.userId,
     };
   };
   
   const mapDispatchToProps = dispatch => {
     return {
-        updateShipping: (shippingMode, ShippingPrice) => dispatch(updateShipping(shippingMode, ShippingPrice))
+        updateShipping: (userId, shippingMode, ShippingPrice) => dispatch(updateShipping(userId, shippingMode, ShippingPrice))
     };
   };
 

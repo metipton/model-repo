@@ -7,6 +7,11 @@ Model Builder
 Styling:
         Apply halo to selected image 
 	apply same changes for saved images to editor
+	Change color scheme
+		pri : #6772e5   purple
+		sec: #f6a4eb  pink
+		letters: #c4f0ff light blue
+
 
 Color Editor
 	Figure out the UI and functionality required 
@@ -47,14 +52,13 @@ Known bugs
 	replace all setStates that include call to this.state with functional form using prevState
 	Need to make the editor example to fill entire viewport dynamically
 	update to v100 threejs
-	wrong pants when clicking new ->
-	base doesnt come back when clicking new
 	Race won't work when loading saved
 	Issues with posing when loading different races
 	morph targets not hooked up to new race model following export replacement
 	Correct if save model fails -> reset the save button
-	Only import classes actually used in each file
-	exporting a loaded model results in duplicate race skin
-	have save icon stop saving on failure
+	exporting a loaded model results in duplicate race skin 
+		error is in cycleallskinnedmeshes - to duplicate load model then try to export.
+
+
 	
 

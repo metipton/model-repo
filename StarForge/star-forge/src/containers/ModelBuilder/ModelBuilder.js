@@ -65,7 +65,7 @@ class ModelBuilder extends Component {
             Base: '',
             BaseItem: '',
             Pet: '',
-            Pose: '',
+            Pose: 'Pose1',
         },
         currentName: {
             Genre: 'Sci-fi',
@@ -1715,6 +1715,7 @@ class ModelBuilder extends Component {
                 this.props.saveComplete();
                 resolve();
             }).catch( error => {
+                this.props.saveComplete();
                 reject(error);
             });
         });
@@ -1791,6 +1792,7 @@ class ModelBuilder extends Component {
             currencyFormat: "$",
             quantity: 1,
             isFreeShipping: false,
+            shippingMode: this.props.shippingMode,
             timeStamp: timestamp,
             date: dateString,
             email: this.props.authEmail,
@@ -1811,17 +1813,29 @@ class ModelBuilder extends Component {
 
     // All the bottom bar functions are below
     resetHero = async () => {
+
+        const resetItems = this.resetState.currentName;
         for(let i = this.objectHolder.children.length - 1; i >= 0; i--){
             let name = this.objectHolder.children[i].name;
             if(name !== 'Race' && name !== 'Base' && name !== 'Chest' && name !== 'LegsWearable'){
                 this.removeObjectFromScene(name);
             } else {
-                let selection = name + '1';
+                let selection = resetItems[name];
+
                 if(selection !== this.state.currentName[name]){
                     await this.updateObjectHandler(name, selection, false );
                 }
             }
         }
+        //add missing items 
+        let items = ['Base', 'Chest', 'LegsWearable'];
+        for(let i = 0; i < items.length; i++){
+            let selection = items[i];
+            if(this.state.currentName[selection] !== resetItems[selection]){
+                await this.updateObjectHandler(selection, resetItems[selection], false );
+            }
+        }
+
         this.setPoseHandler('Pose1');
 
         //set the correct state
@@ -1896,11 +1910,16 @@ class ModelBuilder extends Component {
             name: this.state.modelName,
             morphTargets: this.morphTargets
           };
+        try {
+            const database = fbDatabase.ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
+            database.set(payload);
+            var largeImage = this.takeScreenshot(350, 350);
+            this.exportScreenshotToSaved(timestamp, "lg", largeImage);
+        } catch( error ){
+            console.log(error);
+            this.props.saveComplete();
+        }
 
-        const database = fbDatabase.ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
-        database.set(payload);
-        var largeImage = this.takeScreenshot(350, 350);
-        this.exportScreenshotToSaved(timestamp, "lg", largeImage);
     }
 
     loadSavedHeroData = () => {
@@ -2009,7 +2028,8 @@ class ModelBuilder extends Component {
 
         this.props.closeSavedModal();
         this.props.loadComplete();
-
+        console.log(this.scene);
+        console.log(this.objectPool);
     }
 
     renameSavedModel = (timestamp, newName) => {
@@ -2134,7 +2154,8 @@ const mapStateToProps = state => {
         savedModalOpen: state.savedModal.modalOpen,
         byTimestamp: state.savedModal.modelByTimestamp,
         authEmail: state.auth.email,
-        checkoutOpen: state.order.inCheckoutScreen
+        checkoutOpen: state.order.inCheckoutScreen,
+        shippingMode: state.shoppingCart.cartTotals.mode
     };
 };
 
@@ -2147,7 +2168,6 @@ const mapDispatchToProps = dispatch => {
         openSavedModal: () => dispatch(actions.openSavedModal()),
         closeSavedModal: () => dispatch(actions.closeSavedModal()),
         addSavedModels: (payload, timestamps) => dispatch(actions.addSavedModels(payload, timestamps)),
-        saveInProgress: ()=>dispatch(actions.saveInProgress()),
         saveComplete: ()=>dispatch(actions.saveComplete()),
         loadInProgress: ()=>dispatch(actions.loadInProgress()),
         loadComplete: ()=>dispatch(actions.loadComplete()),

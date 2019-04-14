@@ -1,8 +1,22 @@
 import * as actionTypes from '../actionTypes';
 
-import persistentCart from '../../../components/ShoppingCart/persistentCart';
+const postShippingInfo = (userId, shippingMode) => {
+  const url = `https://us-central1-starforge-153cc.cloudfunctions.net/setShippingMode?userId=${userId}&shippingMode=${shippingMode}`;
+  return new Promise( ( resolve, reject ) => {
+      fetch(url)
+          .then((response) => {
+              resolve(response.json())
+          })
+          .catch((error) => {
+            console.log(error);
+            reject(error);
+          });
+      })
+}
 
-export const updateShipping = (shippingMode, shippingPrice) => dispatch => {
+export const updateShipping = (userId, shippingMode, shippingPrice) => async dispatch => {
+  await postShippingInfo(userId, shippingMode);
+
   dispatch({
     type: actionTypes.UPDATE_SHIPPING,
     mode: shippingMode,
@@ -34,8 +48,6 @@ export const updateCart = (cartProducts) => dispatch => {
     currencyId: 'USD',
     currencyFormat: '$',
   }
-
-  persistentCart().persist(JSON.stringify(cartProducts));
 
   dispatch({
     type: actionTypes.UPDATE_CART,

@@ -10,7 +10,7 @@ import UpIcon from '@material-ui/icons/KeyboardArrowUp';
 import DownIcon from '@material-ui/icons/KeyboardArrowDown';
 import TextField from '@material-ui/core/TextField';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {saveInProgress} from '../../../store/actions/index';
+import {saveInProgress, saveComplete} from '../../../store/actions/index';
 
 
 
@@ -127,8 +127,14 @@ class TemporaryDrawer extends React.Component {
   };
 
   saveHero = () => {
-    this.props.saveInProgress();
-    this.props.saveHero();
+    try{
+      this.props.saveInProgress();
+      this.props.saveHero();
+    } catch (error) {
+      console.log(error);
+      this.props.saveComplete();
+    }
+
   }
 
   render() {
@@ -241,7 +247,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveInProgress: ()=>dispatch(saveInProgress())
+    saveInProgress: ()=>dispatch(saveInProgress()),
+    saveComplete: ()=>dispatch(saveComplete()),
   }
 }
 

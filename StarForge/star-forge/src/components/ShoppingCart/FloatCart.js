@@ -80,7 +80,8 @@ class FloatCart extends Component {
           mode = shipping[option]['mode'];
         }
       }
-      this.props.updateShipping(mode, price);
+
+      this.props.updateShipping(this.props.userId, mode, price);
       this.props.loadShipping(shipping);
     });
 

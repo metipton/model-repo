@@ -105,7 +105,6 @@ const removeSavedModel = (state, action) => {
         return item !== action.timestamp // return all the items not matching the action.id
       })
     delete state.modelByTimestamp[action.timestamp] // delete the hash associated with the action.id
-    console.log(state);
     return updateObject( state, {
         modelById: prunedIds,
         modelByTimestamp: state.modelByTimestamp
