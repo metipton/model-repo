@@ -36,7 +36,6 @@ class ModelBuilder extends Component {
             Genre: 'Sci-fi',
             Race: '',
             Face: '',
-            Expression: '',
             Ears: '',
             Hair: '',
             Beard: '',
@@ -71,7 +70,6 @@ class ModelBuilder extends Component {
             Genre: 'Sci-fi',
             Race: '',
             Face: '',
-            Expression: '',
             Ears: '',
             Hair: '',
             Beard: '',
@@ -105,7 +103,6 @@ class ModelBuilder extends Component {
         cache: {
             Race: {},
             Face: {},
-            Expression: {},
             Ears: {},
             Hair: {},
             Beard: {},
@@ -140,7 +137,6 @@ class ModelBuilder extends Component {
         currentObject: {
             Race: null,
             Face: null,
-            Expression: null,
             Ears: null,
             Hair: null,
             Beard: null,
@@ -725,7 +721,20 @@ class ModelBuilder extends Component {
             if(category !== 'Pose' && !this.isObjectInCache( category, selectionArr[index])){
                 return this.downloadObjectFromStorage( category, selectionArr[index])
                 .then(async (file) => {
-                    return this.loadModelToMemory(category, selectionArr[index], file);
+                    const url = window.URL.createObjectURL(file);
+
+                    //make sure to set the state in the cache when downloading multiples.  This allows for reloading all models to reset on export
+                    this.setState({
+                        ...this.state,
+                        cache: {
+                            ...this.state.cache,
+                            [category] : {
+                                ...this.state.cache[category],
+                                [selectionArr[index]]: url
+                            }
+                        },
+                    });
+                    return this.loadModelToMemory(category, selectionArr[index], file);    
                 })
             }
         }) 

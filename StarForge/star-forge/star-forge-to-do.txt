@@ -41,23 +41,17 @@ Backend
 
 Nice to haves
 	Add a backdrop and loading spinner when exporting the model
-	figure out how to load feet concurrently
+	implement batch load for feet and gloves
 	Abstract out the gridList component
 	Change header for Auth log in
-	remove references to cache in state.
-	change reset to be based off of initial state and not just the first items
 	optimize code to release things you are no longer using (https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects)
 
 Known bugs
 	replace all setStates that include call to this.state with functional form using prevState
 	Need to make the editor example to fill entire viewport dynamically
 	update to v100 threejs
-	Race won't work when loading saved
-	Issues with posing when loading different races
 	morph targets not hooked up to new race model following export replacement
 	Correct if save model fails -> reset the save button
-	exporting a loaded model results in duplicate race skin 
-		error is in cycleallskinnedmeshes - to duplicate load model then try to export.
 
 
 	
