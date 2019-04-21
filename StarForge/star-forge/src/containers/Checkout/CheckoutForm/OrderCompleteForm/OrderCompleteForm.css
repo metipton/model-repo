@@ -1,0 +1,43 @@
+
+.header {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.logo {
+    text-align: center;
+    height: 2rem;
+}
+
+
+.escape {
+    color: #696969;
+    top: .3rem;
+    right: .3rem;
+    position: absolute;
+    cursor: pointer;
+    z-index: 101;
+}
+
+.escape:hover {
+    color: black;
+}
+
+.buttonText {
+    font-size: .8rem;
+} 
+
+.FlexContainer {
+    display: flex;
+    margin-left: 0;
+}
+
+.flexChild1 {
+    flex: 5
+}
+
+.flexChild2 {
+    flex: 2
+}
+
