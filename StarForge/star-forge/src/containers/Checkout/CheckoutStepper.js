@@ -15,12 +15,6 @@ class Checkout extends React.Component {
     this.stripeCheckout = React.createRef();
   }
 
-  successPayment = (token) => {
-
-    fbDatabase.ref(`/users/${this.props.userId}/charges/`).push({amount: Math.round(this.props.totalPrice * 100 + this.props.shipping)});
-    this.props.resetCart();
-    this.props.closeCart();
-  };
 
   errorPayment = data => {
     alert(data);

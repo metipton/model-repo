@@ -4,6 +4,7 @@
 }
 
 .Head {
+    box-sizing: border-box;
     display: inline-block;
     background-color: lightgrey;
     align-items: left;
@@ -28,6 +29,7 @@
 }
 
 .Para {
+    margin-left: .25rem;
     margin-bottom: .5rem;
     font-size: 1rem;
 }
@@ -35,15 +37,16 @@
 .ParaSmall {
     font-weight: bold;
     font-size: 1rem;
+    margin-left: .25rem;
 }
 
 .edit {
+    display: inline-block;
     color: #696969;
     cursor: pointer;
     z-index: 99;
-    margin-left: .25rem;
+    margin-left: .5rem;
     margin-right: .5rem;
-    float: right;
 }
 
 .edit:hover{

@@ -29,7 +29,7 @@
     box-sizing: border-box;
     transition: all 0.3s ease-out;
     min-width: 26.25rem;
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
     /*whatever width you want*/
   }

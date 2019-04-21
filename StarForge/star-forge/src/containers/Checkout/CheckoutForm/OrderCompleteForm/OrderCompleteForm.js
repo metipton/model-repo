@@ -1,159 +1,131 @@
-// import React, {Component} from 'react';
-// import {connect} from 'react-redux';
-// import 'firebase/storage';
+import React, {Component} from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {connect} from 'react-redux';
+import {autoCheckoutTimeout} from '../../../../store/actions/index';
+import classes from './OrderCompleteForm.css';
 
-// import * as actions from '../../../store/actions/index';
-// import { withStyles } from '@material-ui/core/styles';
-// import SavedModelToolbar from '../SavedModelsEditor/SavedModelToolbar/SavedModelToolbar';
-// import SavedModelFooter from './SavedModelFooter/SavedModelFooter';
-// import GridList from '@material-ui/core/GridList';
-// import ModalSmall from '../modalSmall/modalSmall';
-// import PictureTile from './PictureTile';
-// import SmallModalButton from '../Button/SmallModalButton'
-// import DeleteModelButton from '../Button/deleteModelButton'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import InputBase from '@material-ui/core/InputBase';
-// import InputLabel from '@material-ui/core/InputLabel';
+import DeliveryDetails from '../OrderReviewForm/DeliveryDetails/DeliveryDetails';
+import ItemHeader from '../OrderReviewForm/ItemHeader/ItemHeader';
+import ItemDescriptionCard from '../OrderReviewForm/ItemDescriptionCard/ItemDescriptionCard';
+import PriceTotalForm from '../OrderReviewForm/PriceTotalForm/PriceTotalForm';
+import PaymentDetailsForm from '../OrderReviewForm/PaymentDetailsForm/PaymentDetailsForm';
 
+import visa from '../../../../assets/Thumbs/creditcards/visa.png';
+import amex from '../../../../assets/Thumbs/creditcards/amex.png';
+import defaultCard from '../../../../assets/Thumbs/creditcards/credit.png';
+import diners from '../../../../assets/Thumbs/creditcards/diners.png';
+import discover from '../../../../assets/Thumbs/creditcards/discover.png';
+import mastercard from '../../../../assets/Thumbs/creditcards/mastercard.png';
 
+class OrderReviewForm extends Component {
+    state = {
+        confirmedTOS: false
+    }
 
-// const styles = theme => ({
-//   root: {
-//     boxSizing: 'border-box',
-//     display: 'block',
-//     justifyContent: 'space-between',
-//     textAlign: 'center',
-//     height: '94%',
-//     width: '100%',
-//     marginTop: '3rem' ,
-//   },
-//   gridList: {
-//     boxSizing: 'border-box',
-//     display: 'block',
-//     justifyContent: 'space-between',
-//     textAlign: 'center',
-//     height: '100%',
-//     width: '100%',
-//     marginTop: '2rem'    
-//   },
-//   escape: {
-//     color: '#696969',
-//     top: '.3rem',
-//     right: '.3rem',
-//     position: 'absolute',
-//     cursor: 'pointer',
-//     zIndex: 101,
-//     '&:hover': {
-//         color: 'black',
-//       }
-//   },
-//   smallModal: {
-//     textAlign: 'left'
-//   },
-//   text: {
-//     marginTop:'1rem',
-//     marginBottom:'.4rem',
-//     color: 'white',
-//     fontWeight: 400,
-//     fontSize: '1.2rem'
-//   },
-//   buttonText: {
-//     color: 'white',
-//     fontWeight: 300,
-//     fontSize: '1rem'
-//   },
-//   bootstrapRoot: {
-
-//     'label + &': {
-//       marginTop: '.4rem',
-//     },
-//     '&:focus': {
-//       color: 'white',
-//       fontSize: '1.5rem',
-//     },
-//   },
-//   bootstrapInput: {
-//     borderRadius: 4,
-//     marginBottom: '.4rem',
-//     position: 'relative',
-//     backgroundColor: 'lightgrey',
-//     border: '1px solid #ced4da',
-//     fontSize: 16,
-//     width: 'auto',
-//     padding: '10px 12px',
-//     transition: theme.transitions.create(['border-color', 'box-shadow']),
-//     '&:focus': {
-//       borderRadius: 4,
-//       borderColor: '#ffffff ',
-//       boxShadow: '0 0 0 0.2rem rgba(255,255,255, 1)',
-//     },
-//   },
-//   bootstrapFormLabel: {
-//     color: 'white',
-//     fontSize: '1.2rem',
-//   },
-// });
-
-// class SavedModelsEditor extends Component {
-
-//     state = {
-//         selected: null,
-//     }
-
-//   constructor(props){
-//     super(props);
-//     this.modal = React.createRef();
-//     //changes the size of screen when browser resized
-//     window.addEventListener('resize', this.onWindowResize, false);
-//   }
-
-//     componentDidMount () {
-//       this.onWindowResize();
-//     }
+    checkBillingEqualsShipping = () => {
+        let addresses = this.props.addresses;
+        if(addresses.billing_name === addresses.shipping_name && addresses.billing_address_country === addresses.shipping_address_country
+            && addresses.billing_address_zip === addresses.shipping_address_zip && addresses.billing_address_city === addresses.shipping_address_city
+            && addresses.billing_address_state === addresses.shipping_address_state){
+                return true;
+            }
+        return false;
+    }
 
 
-//     onWindowResize = () => {
-//       let cWidth;
+    getCardImage = () => {
+        if(this.props.cardData.brand === "Visa"){
+            return visa;
+        }
+        if(this.props.cardData.brand === "MasterCard"){
+            return mastercard;
+        }
+        if(this.props.cardData.brand === "Discover"){
+            return discover;
+        }
+        if(this.props.cardData.brand === "American Express"){
+            return amex ;
+        }
+        if(this.props.cardData.brand === 'Diners Club'){
+            return diners;
+        }
+        return defaultCard;
+    }
 
-//       if(this.modal.current){
-//         cWidth = this.modal.current.offsetWidth
-//       } else {
-//         cWidth =300;
-//       }
+    render() {
+        let addressEquality = this.checkBillingEqualsShipping();
+        const defaultCard = this.getCardImage();
+    return (
+    <div className={classes.holder}>
+        <h1 style={{marginLeft: '.25rem'}}>thanks for your order </h1>
+        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>order number: <span style={{fontweight: 'bold'}}></span></p>
+        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>confirmation email will be sent to: <span style={{fontweight: 'bold'}}></span></p>
+        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>expected delivery date: <span style={{fontweight: 'bold'}}></span></p>
+        <FontAwesomeIcon 
+                className={classes.escape} 
+                icon={['fas', 'times-circle']} 
+                size="1x" 
+                onClick={this.props.close}/>
+        <div className={classes.header}>
+            <div className={classes.text}>
 
-//       this.setState({
-//         ...this.state,
-//         width: cWidth
-//       })
-//     }
+                <div className={classes.FlexContainer}>
+                    <div className={classes.flexChild1}>
+                        <DeliveryDetails 
+                            allowEdit={false}
+                            address={this.props.addresses}
+                            edit={this.editInformation}/>
+                        <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
+                        {this.props.cart ? this.props.cart.map((item, index) => (
+                            <ItemDescriptionCard
+                                key={index}
+                                image={item.image}
+                                name={item.title}
+                                description={item.description}
+                                material={item.matType}
+                                price={item.price}
+                                />
+                        )) : null}
+                    </div>
+                    <div className={classes.flexChild2}>
+                        <PriceTotalForm
+                            allowEdit={false}
+                            shippingPrice={this.props.shippingPrice}
+                            subTotal={this.props.subTotal}
+                            numItems={this.props.numItems}
+                        />
+                        <PaymentDetailsForm 
+                            allowEdit={false}
+                            equality={addressEquality}
+                            addresses={this.props.addresses}
+                            cardData={this.props.cardData}
+                            cardImg={defaultCard}
+                            edit={this.editInformation}/>
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </div>
+    )
+    }
+}
 
-//     nameInputHandler = name => event => {
-//       this.setState({
-//         ...this.state,
-//         [name]: event.target.value,
-//       });
-//     };
+const mapStateToProps = state => {
+    return {
+        cart: state.shoppingCart.cartProducts.items,
+        cardData: state.order.cardData,
+        addresses: state.order.addresses,
+        numItems: state.shoppingCart.cartTotals.item.productQuantity,
+        shippingMode: state.shoppingCart.cartTotals.mode,
+        shippingPrice: state.shoppingCart.cartTotals.shipping / 100,
+        subTotal: state.shoppingCart.cartTotals.item.totalPrice
+    };
+  };
+  
+  const mapDispatchToProps = dispatch => {
+    return {
+        handleAutoCheckout: () => dispatch(autoCheckoutTimeout())
+    };
+  };
 
-
-//     render() {
-//         const { classes } = this.props;
-
-//          return (
-//             <div></div>
-//          )}
-// }
-
-// const mapStateToProps = state => {
-//   return {
-//     userId: state.auth.userId,
-
-//   };
-// };
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//   }
-// }
-
-// export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedModelsEditor));
-
+export default connect(mapStateToProps, mapDispatchToProps)(OrderReviewForm);

@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {connect} from 'react-redux';
-import {autoCheckoutTimeout} from '../../../../store/actions/index';
+import {autoCheckoutTimeout, purchaseModelStart, purchaseModelSuccess, purchaseModelFail} from '../../../../store/actions/index';
 import classes from './OrderReviewForm.css';
+import {fbDatabase} from '../../../../Firebase';
 
 import MaterialUIButton from '../../../../components/UI/Button/MaterialUIButton'
 
@@ -23,7 +24,8 @@ import mastercard from '../../../../assets/Thumbs/creditcards/mastercard.png';
 
 class OrderReviewForm extends Component {
     state = {
-        confirmedTOS: false
+        confirmedTOS: false,
+        listenerLoaded: false
     }
 
     handleChange = name => event => {
@@ -64,78 +66,151 @@ class OrderReviewForm extends Component {
         return defaultCard;
     }
 
+    commencePayment = () => {
+        try{
+            if(!this.state.confirmedTOS)
+                return;
+            fbDatabase.ref(`/users/${this.props.userId}/charges/`).push({amount: Math.round(this.props.subTotal * 100 + this.props.shippingPrice * 100)});
+            this.props.purchaseModelStart();
+            var chargeRef = fbDatabase.ref(`Orders/${this.props.userId}`);
+
+            chargeRef.limitToLast(1).on("child_added", (snapshot) => {
+                //hacky way to make sure that the listener doesn't fire when it's  first created.
+                if(!this.state.listenerLoaded){
+                    this.setState({
+                        ...this.state,
+                        listenerLoaded: true
+                    }, () => {
+                        return;
+                    })
+                } else {
+                    var key = Object.keys(snapshot.val())[0];
+                    var value = snapshot.val()[key];
+                    var orderNumber = value['Info']['created'];
+                    this.paymentResults(orderNumber, value, chargeRef);
+                    console.log(value);
+                }
+            });
+        } catch(error){
+            console.log(error);
+        }
+    };
+
+    paymentResults = (key, results, dbRef) => {
+        dbRef.off("child_added", () => {
+            console.log("Db event listener is off.")
+        })
+        if(results['Info']['status'] !== "succeeded"){
+            this.props.purchaseModelFail(results);
+            return;
+        }
+        this.props.purchaseModelSuccess(key, results);
+        console.log(results);
+        // this.props.resetCart();
+        // this.props.closeCart();
+    }
+
     render() {
-        let addressEquality = this.checkBillingEqualsShipping();
-        const defaultCard = this.getCardImage();
-    return (
-    <div className={classes.holder}>
-        <FontAwesomeIcon 
-                className={classes.escape} 
-                icon={['fas', 'times-circle']} 
-                size="1x" 
-                onClick={this.props.close}/>
-        <div className={classes.header}>
-            <div className={classes.text}>
-                <h1 style={{marginLeft: '.25rem'}}>Review Your Order</h1>
-                <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>Please check your delivery and payment details below before placing your order.</p>
-                <div style={{fontSize: '1rem', marginLeft: '25%'}}>
-                    <Checkbox
-                        style={{display: 'inline-block', fontSize: '1rem'}}
-                        checked={this.state.confirmedTOS}
-                        onChange={this.handleChange('confirmedTOS')}
-                        value="confirmedTOS"
-                        color="primary"/>
-                    <p style={{display: 'inline-block', fontSize: '1rem ', borderRight: '.05rem solid grey', paddingRight: '.65rem'}}>i accept the s&f terms and conditions</p>
-                    <div style={{display: 'inline-block', fontSize: '1rem '}}>            
-                        <MaterialUIButton
-                            classes={{label : classes.buttonText}}
-                            disabled={false}
-                            variant="contained"
-                            color="primary"
-                            clicked={this.handleChange}>place order and pay
-                        </MaterialUIButton>
+        let addressEquality;
+        let defaultCard;
+        try{
+            addressEquality = this.checkBillingEqualsShipping();
+            defaultCard = this.getCardImage();
+        } catch(error) {
+            console.log(error);
+        }
+    
+        return (
+        <div className={classes.holder}>
+            <FontAwesomeIcon 
+                    className={classes.escape} 
+                    icon={['fas', 'times-circle']} 
+                    size="1x" 
+                    onClick={this.props.close}/>
+            <div className={classes.header}>
+                <div className={classes.text}>
+                    <h1 style={{marginLeft: '.25rem'}}>Review Your Order</h1>
+                    <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>Please check your delivery and payment details below before placing your order.</p>
+                    <div style={{fontSize: '1rem', marginLeft: '25%'}}>
+                        <Checkbox
+                            style={{display: 'inline-block', fontSize: '1rem'}}
+                            checked={this.state.confirmedTOS}
+                            onChange={this.handleChange('confirmedTOS')}
+                            value="confirmedTOS"
+                            color="primary"/>
+                        <p style={{display: 'inline-block', fontSize: '1rem ', borderRight: '.05rem solid grey', paddingRight: '.65rem'}}>i accept the s&f terms and conditions</p>
+                        <div style={{display: 'inline-block', fontSize: '1rem '}}>            
+                            <MaterialUIButton
+                                classes={{label : classes.buttonText}}
+                                disabled={false}
+                                variant="contained"
+                                color="primary"
+                                clicked={this.commencePayment}>place order and pay
+                            </MaterialUIButton>
+                        </div>
+                    </div>
+                    <div className={classes.FlexContainer}>
+                        <div className={classes.flexChild1}>
+                            <DeliveryDetails 
+                                allowEdit={true}
+                                address={this.props.addresses}
+                                edit={this.editInformation}/>
+                            <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
+                            {this.props.cart ? this.props.cart.map((item, index) => (
+                                <ItemDescriptionCard
+                                    key={index}
+                                    image={item.image}
+                                    name={item.title}
+                                    description={item.description}
+                                    material={item.matType}
+                                    price={item.price}
+                                    />
+                            )) : null}
+                        </div>
+                        <div className={classes.flexChild2}>
+                            <PriceTotalForm
+                                allowEdit={true}
+                                shippingPrice={this.props.shippingPrice}
+                                subTotal={this.props.subTotal}
+                                numItems={this.props.numItems}
+                            />
+                            <PaymentDetailsForm
+                                allowEdit={true} 
+                                equality={addressEquality}
+                                addresses={this.props.addresses}
+                                cardData={this.props.cardData}
+                                cardImg={defaultCard}
+                                edit={this.editInformation}/>
+                        </div>
+                    </div>
+                    <div style={{fontSize: '1rem', marginLeft: '25%', marginTop: '2rem', marginBottom: '2rem'}}>
+                        <Checkbox
+                            style={{display: 'inline-block', fontSize: '1rem'}}
+                            checked={this.state.confirmedTOS}
+                            onChange={this.handleChange('confirmedTOS')}
+                            value="confirmedTOS"
+                            color="primary"/>
+                        <p style={{display: 'inline-block', fontSize: '1rem ', borderRight: '.05rem solid grey', paddingRight: '.65rem'}}>i accept the s&f terms and conditions</p>
+                        <div style={{display: 'inline-block', fontSize: '1rem '}}>            
+                            <MaterialUIButton
+                                classes={{label : classes.buttonText}}
+                                disabled={false}
+                                variant="contained"
+                                color="primary"
+                                clicked={this.commencePayment}>place order and pay
+                            </MaterialUIButton>
+                        </div>
                     </div>
                 </div>
-                <div className={classes.FlexContainer}>
-                    <div className={classes.flexChild1}>
-                        <DeliveryDetails 
-                            address={this.props.addresses}
-                            edit={this.editInformation}/>
-                        <ItemHeader numItems={this.props.numItems} mode={this.props.shippingMode}/>
-                        {this.props.cart ? this.props.cart.map((item, index) => (
-                            <ItemDescriptionCard
-                                key={index}
-                                image={item.image}
-                                name={item.title}
-                                description={item.description}
-                                material={item.matType}
-                                price={item.price}
-                                />
-                        )) : null}
-                    </div>
-                    <div className={classes.flexChild2}>
-                        <PriceTotalForm
-                            shippingPrice={this.props.shippingPrice}
-                            subTotal={this.props.subTotal}
-                            numItems={this.props.numItems}
-                        />
-                        <PaymentDetailsForm 
-                            equality={addressEquality}
-                            addresses={this.props.addresses}
-                            cardData={this.props.cardData}
-                            cardImg={defaultCard}
-                            edit={this.editInformation}/>
-                    </div>
-                </div>
-            </div>
-        </div>  
-    </div>
+            </div>  
+        </div>
     )
     }
 }
 
 const mapStateToProps = state => {
     return {
+        userId: state.auth.userId,
         cart: state.shoppingCart.cartProducts.items,
         cardData: state.order.cardData,
         addresses: state.order.addresses,
@@ -148,7 +223,10 @@ const mapStateToProps = state => {
   
   const mapDispatchToProps = dispatch => {
     return {
-        handleAutoCheckout: () => dispatch(autoCheckoutTimeout())
+        purchaseModelStart: () => dispatch(purchaseModelStart()),
+        handleAutoCheckout: () => dispatch(autoCheckoutTimeout()),
+        purchaseModelFail: (error) => dispatch(purchaseModelFail(error)),
+        purchaseModelSuccess: (key, results) => dispatch(purchaseModelSuccess(key,results))
     };
   };
 

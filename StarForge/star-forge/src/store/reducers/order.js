@@ -1,6 +1,7 @@
 import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../utility';
 
+
 const initialState = {
     orders: [],
     mostRecentId: null,
@@ -12,7 +13,8 @@ const initialState = {
     inCheckoutScreen: false,
     cardData: null,
     addresses: null,
-    autoOpenCheckout: null
+    autoOpenCheckout: null,
+    orderResults: null
 };
 
 const setAutoCheckout = (state) => {
@@ -66,13 +68,15 @@ const purchaseModelFail = ( state, action ) => {
     } );
 };
 
-// const purchaseModelSuccess = ( state, action ) => {
-//     return updateObject( state, { 
-//         loading: false,
-//         orderState: 'Success',
-//         puchased: true
-//     } );
-// };
+const purchaseModelSuccess = ( state, action ) => {
+    return updateObject( state, { 
+        loading: false,
+        orderState: 'Complete',
+        purchased: true,
+        orderResults: action.payload,
+        orderNumber: action.orderNumber
+    } );
+};
 
 const fetchOrdersStart = ( state, action ) => {
     return updateObject( state, { loading: true } );
@@ -94,6 +98,7 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.SET_AUTO_CHECKOUT: return setAutoCheckout( state, action );
         case actionTypes.CANCEL_AUTO_CHECKOUT: return cancelAutoCheckout( state, action );
         case actionTypes.PURCHASE_MODEL_START: return purchaseModelStart( state, action );
+        case actionTypes.PURCHASE_MODEL_SUCCESS: return purchaseModelSuccess(state, action);
         case actionTypes.PASS_ORDER_DATA: return passOrderData(state, action);
         case actionTypes.PURCHASE_MODEL_FAIL: return purchaseModelFail( state, action );
         case actionTypes.FETCH_ORDERS_START: return fetchOrdersStart( state, action );

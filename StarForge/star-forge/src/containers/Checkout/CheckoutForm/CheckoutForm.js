@@ -9,23 +9,21 @@ class CheckoutForm extends React.Component {
 
 
   render() {
-    let screen;
-    if(this.props.orderState === 'Review'){
-        screen = (
-            <div>
-                <OrderReviewForm close={this.props.closeOrderModal}/>
-            </div>
-            );
-    } else {
-        screen = (
+    let orderReviewForm = (
+      <div>
+          <OrderReviewForm close={this.props.closeOrderModal}/>
+      </div>
+      );
+
+    let orderCompleteForm = (
             <div>
                 <OrderCompleteForm close={this.props.closeOrderModal}/>
             </div>
-        );
-    }
+    );
     return (
       <div>
-          {screen}
+          {this.props.orderState === "Review" || this.props.orderState === "Pending" ? orderReviewForm : null}
+          {this.props.orderState === "Complete" ? orderCompleteForm : null}
       </div>
     )
   }

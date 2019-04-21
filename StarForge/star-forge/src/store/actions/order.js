@@ -1,6 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
-import {fbDatabase} from '../../Firebase';
+
 
 export const autoCheckoutTimeout = () => {
     return (dispatch) => {
@@ -37,17 +37,18 @@ export const closeOrderModal = () => {
     }
 }
 
-export const purchaseModelSuccess = (userId) => {
-    return  async dispatch => {
-        dispatch(purchaseModelSuccess());
-        const database =  fbDatabase.ref('users/' + userId + '/CompletedOrders');
-        let snapshot = await database.once("value");
-        var keys = Object.keys(snapshot.val());
-        var orderKey = keys[keys.length-1];
-        var orderData = snapshot.val()[orderKey];
-        var dataKey = Object.keys(orderData['Info']);
-        var orderInfo = orderData['Info'][dataKey[0]];
-        dispatch(passOrderData(orderKey, orderData['Cart'], orderInfo))
+export const purchaseModelStart = () => {
+
+    return {
+        type: actionTypes.PURCHASE_MODEL_START
+    };
+};
+
+export const purchaseModelSuccess = (key, results) => {
+    return {
+        type: actionTypes.PURCHASE_MODEL_SUCCESS,
+        payload: results,
+        orderNumber: key
     };
 };
 
@@ -67,19 +68,6 @@ export const purchaseModelFail = (error) => {
     };
 };
 
-
-export const purchaseModelStart = () => {
-    return {
-        type: actionTypes.PURCHASE_MODEL_START
-    };
-};
-
-
-export const purchaseInit = () => {
-    return {
-        type: actionTypes.PURCHASE_INIT
-    };
-};
 
 export const fetchOrdersSuccess = ( orders ) => {
     return {

@@ -7,6 +7,7 @@ export {
     cancelAutoCheckout,
     openOrderModal,
     closeOrderModal,
+    purchaseModelStart,
     purchaseModelSuccess,
     passOrderData,
     purchaseModelFail,
