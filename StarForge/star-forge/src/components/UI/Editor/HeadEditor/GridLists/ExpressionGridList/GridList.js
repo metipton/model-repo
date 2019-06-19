@@ -133,7 +133,7 @@ class ImageGridList extends Component {
           <div className={classes.slider}>
             <Slider 
               name = {smile}
-              startVal={20} 
+              startVal={0} 
               morphPercents={this.props.morphPercents}
               updateExpression={this.props.updateExpression}/>
           </div>

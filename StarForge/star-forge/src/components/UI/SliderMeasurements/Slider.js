@@ -7,8 +7,11 @@ export default class SliderComp extends Component {
   }
  
   onChange = (percent) => {
-    this.props.updateBodyTarget(this.props.name, percent);
     this.setState({ percent });
+    if(Math.abs(percent - this.props.morphPercents.body[this.props.name]['percent']) >= 3){
+      this.props.updateBodyTarget(this.props.name, percent);  
+    }
+
   }
   onDone = (percent) => {
   };
@@ -18,12 +21,8 @@ export default class SliderComp extends Component {
   }
  
   render() {
-    let percent;
-    if(this.props.morphPercents !== undefined){
-      percent = this.props.morphPercents.body[this.props.name]['percent'];
-    } else {
-      percent = this.state;
-    }
+    let percent = this.state.percent;
+
     return (
         <Slider
           value={percent}

@@ -29,24 +29,6 @@ const styles = theme => ({
 });
 
 
-/**
- * The example data is structured as follows:
- *
- * import image from 'path/to/image.jpg';
- * [etc...]
- *
- * const tileData = [
- *   {
- *     img: image,
- *     title: 'Image',
- *     author: 'author',
- *     cols: 2,
- *   },
- *   {
- *     [etc...]
- *   },
- * ];
- */
 class ImageGridList extends Component {
 
 
@@ -75,7 +57,7 @@ class ImageGridList extends Component {
 
           <div className={classes.slider}>
             <Slider 
-                startVal={20} 
+                startVal={0} 
                 name={height}
                 updateBodyTarget={this.props.updateBodyTarget}
                 morphPercents={this.props.morphPercents}/>

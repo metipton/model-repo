@@ -7,6 +7,25 @@ export const loadShipping = (shipping) => dispatch => {
   })
 }
 
+export const toggleCart = () => dispatch => {
+  dispatch({
+    type: actionTypes.TOGGLE_CART,
+  });
+}
+
+export const openCart = () => dispatch => {
+  dispatch({
+    type: actionTypes.OPEN_CART,
+  });
+}
+
+export const closeCart = () => dispatch => {
+  dispatch({
+    type: actionTypes.CLOSE_CART,
+  });
+}
+
+
 export const loadCart = (cartProducts) => dispatch => {
   dispatch({
     type: actionTypes.LOAD_CART,

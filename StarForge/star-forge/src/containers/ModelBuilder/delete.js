@@ -1,7 +1,9 @@
+import * as THREE from 'three';
 import {connect} from 'react-redux';
 import React, {Component} from 'react';
 import {fbDatabase, fbStorage} from '../../Firebase';
 
+import axios from '../../axios-orders.js';
 import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
 import Aux from '../../hoc/_Aux/_Aux';
@@ -21,31 +23,27 @@ import SceneManager from './SceneManager';
 
 class ModelBuilder extends Component {
 
-    state = {
-        materials: {
-            matType: 'Standard',
-            price: 0,
-            prices: null
-        },
-        modelName: 'Nameless',
-        loading: true,
-        coloringEnabled: false,
-        RESOURCES_LOADED: false,
-        numChars: 2
+
+    constructor(props) {
+     super(props)
+     this.start = this.start.bind(this)
+     this.stop = this.stop.bind(this)
+     this.animate = this.animate.bind(this)
+     this.setObjectStateHandler = this.setObjectStateHandler.bind(this)
+     this.loadModelFromMemory = this.loadModelFromMemory.bind(this);
+
+     this.RESOURCES_LOADED = false;
+     this.modelName= 'Nameless';
+
     }
 
-    constructor (props) {
-        super(props);
-        this.sceneManager = new SceneManager(this, this.state.numChars);
-    }
 
     async componentDidMount() {
-        
-        this.sceneManager.postMountInit(this.mount);
-        await this.getPriceFromServer();
-        //this.loadInitialModelAndObjects();
-        const auth = new Auth();
-        this.auth = auth;
+       this.init();
+       await this.getPriceFromServer();
+       this.loadInitialModelAndObjects();
+       const auth = new Auth();
+       this.auth = auth;
     }
 
     authLogin = (callback) => {
@@ -53,11 +51,16 @@ class ModelBuilder extends Component {
     }
 
     componentWillUnmount() {
-        this.stop()
-        this.mount.removeChild(this.renderer.domElement)
+     this.stop()
+     this.mount.removeChild(this.renderer.domElement)
     }
 
-  
+    init = () => {
+        this.sceneManager = new SceneManager(this.mount);
+        
+    }
+
+    
     getPriceFromServer = () => {
         let prices = {};
         const database = fbDatabase.ref('Prices' );
@@ -65,9 +68,9 @@ class ModelBuilder extends Component {
             snapshot.forEach((childSnapshot) => {
               // childData will be the actual contents of the child
 
-                prices = {
-                    ...prices,
-                    [childSnapshot.key] : childSnapshot.val()
+              prices = {
+                  ...prices,
+                  [childSnapshot.key] : childSnapshot.val()
                 };   
             })
         }).then( () => {
@@ -80,7 +83,8 @@ class ModelBuilder extends Component {
                 }
 
             })
-        })  
+        })
+        
     }
 
 
@@ -89,7 +93,7 @@ class ModelBuilder extends Component {
             fbStorage.ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/screenshot-' + size + '.png' ).put(image).then((snapshot) => {
                 snapshot.ref.getDownloadURL().then(function(downloadURL) {
                     resolve(downloadURL);
-                });
+                  });
             }).catch( error => {
                 reject(error);
             });
@@ -134,7 +138,7 @@ class ModelBuilder extends Component {
                         reject(error);
                     };
                 });
-        })
+            })
     }
     
 
@@ -151,8 +155,8 @@ class ModelBuilder extends Component {
             cartNum = cartNum["cartNumber"];
         }
 
-        var smallImage = this.sceneManager.takeScreenshot(140, 140);
-        var largeImage = this.sceneManager.takeScreenshot(350, 350);
+        var smallImage = this.takeScreenshot(140, 140);
+        var largeImage = this.takeScreenshot(350, 350);
         let imageURL;
         try{
             await this.exportModelGLTF(cartNum);
@@ -208,58 +212,34 @@ class ModelBuilder extends Component {
         alert("Share hero");
     }
 
-    saveModels = () => {
+    saveHero = () => {
         let func = this.saveHero;
         if(!this.props.userId){
             this.authLogin(func);
             return;
         }
         const timestamp = new Date().getTime();
+        let payload = {
+            objects: {
+                ...this.state.currentName,
 
-        let payload = this.sceneManager.getCompleteSaveState();
-        payload = {
-            ...payload,
-            name: this.state.modelName
-        }
+            },
+            links: {
+                ...this.state.links
+            },
+            name: this.state.modelName,
+            morphTargets: this.morphTargets
+          };
         try {
             const database = fbDatabase.ref('users/' + this.props.userId + '/SavedModels/' + timestamp);
             database.set(payload);
-            var largeImage = this.sceneManager.takeScreenshot(350, 350);
+            var largeImage = this.takeScreenshot(350, 350);
             this.exportScreenshotToSaved(timestamp, "lg", largeImage);
         } catch( error ){
             console.log(error);
             this.props.saveComplete();
         }
 
-    }
-
-    exportModelGLTF = async (cartNumber) => {
-
-        let objects = this.sceneManager.getExportObjects();
-
-        await this.sceneManager.cycleAllRaceModels();
-        await this.sceneManager.cycleAllSkinnedMeshes();
-        var DEFAULT_OPTIONS = {
-            binary: true,
-            trs: false,
-            onlyVisible: true,
-            truncateDrawRange: false,
-            embedImages: false,
-            forceIndices: true,
-            forcePowerOfTwoTextures: false
-        };
-        //animations: this.sceneManager.animationScene.animations[0],
-        this.sceneManager.exporter.parse(  objects, (object)=> {
-  
-            return new Promise( ( resolve, reject ) => {
-                fbStorage.ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
-                    this.props.finishedAdd();
-                    resolve();
-                }).catch( error => {
-                    reject(error);
-                });
-            });
-        }, DEFAULT_OPTIONS);
     }
 
     loadSavedHeroData = () => {
@@ -313,17 +293,63 @@ class ModelBuilder extends Component {
     loadSavedModel = async (timestamp) => {
         this.props.loadInProgress();
         const savedState = this.props.byTimestamp[timestamp];
-        //add in the name here to set the name
         let name = savedState.name;
+        let links = savedState.links;
+        let morphTarget = savedState.morphTargets;
+        let objects = savedState.objects;
         this.setState({
             ...this.state,
-
+            links: links,
             modelName: name
         })
-        await this.sceneManager.loadSavedModels(savedState);
+
+        let categoryArr = [];
+        let selectionArr = [];
+        //load all items not already in memory into memory
+        for(var category in objects){
+            if( objects[category] !== "''" && !this.isObjectInCache(category, objects[category]) && category !== 'Pose' ){
+                categoryArr.push(category);
+                selectionArr.push(objects[category]);
+            }
+        }
+
+        await this.loadMultipleModelsToMemory(categoryArr, selectionArr);
+        this.processMultipleModels(categoryArr, selectionArr);
+
+        //iterate through all items and switch to saved items
+        for(var nextCat in objects){
+            if(nextCat !== 'Pose'){
+                if(objects[nextCat] === "''" && this.state.currentName[nextCat] === "''"){
+                    continue;
+                } else if (objects[nextCat] ===  this.state.currentName[nextCat]) {
+                    continue;
+                } else if(objects[nextCat] === "''" && this.state.currentName[nextCat] !== "''") {
+                    this.updateObjectHandler(nextCat, this.state.currentName[nextCat], false)
+                } else {
+                    this.updateObjectHandler(nextCat, objects[nextCat], false)
+                } 
+            }
+        }
+
+        //pose the model
+        if(objects['Pose'] !== this.state.currentName['Pose']){
+            this.setPoseHandler(objects['Pose']);
+        }
+
+        //apply morph targets
+        this.morphTargets = morphTarget;
+
+        for(var part in this.morphTargets.body){
+            this.updateBodyPercent(part, this.morphTargets.body[part]['percent']);
+        }
+        for(var expression in this.morphTargets.expression){
+            this.updateExpressionPercent(expression, this.morphTargets.expression[expression]['percent']);
+        }
 
         this.props.closeSavedModal();
         this.props.loadComplete();
+        console.log(this.scene);
+        console.log(this.objectPool);
     }
 
     renameSavedModel = (timestamp, newName) => {
@@ -345,40 +371,6 @@ class ModelBuilder extends Component {
         });
     };
 
-    setMaterialHandler = (material) => {
-        this.updateMaterialSelectionOnModels(material);
-        const modelPrice = this.state.materials.prices[material];
-        if(modelPrice && !this.state.materials.matType !== material){
-            this.setState({
-                ...this.state,
-                selected: {
-                    ...this.state.selected,
-                    Material: material
-                },
-                materials: {
-                    ...this.state.materials,
-                    matType: material,
-                    price: modelPrice
-                }
-            }, () => {
-            });
-        }
-      }
-    
-      updateMaterialSelectionOnModels = (material) => {
-          if( material === 'Standard'){
-    
-          } else if ( material === 'Premium') {
-    
-          } else if ( material === 'Steel' ){
-    
-          } else if (material === 'Bronze' ){
-    
-          } else if (material === 'Digital') {
-    
-          } 
-      }
-
     onMouseDown = ( event ) => {
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
@@ -387,16 +379,11 @@ class ModelBuilder extends Component {
         }
     }
 
-    loadingComplete = () => {
-        this.setState({
-            ...this.state,
-            RESOURCES_LOADED: true
-        })
-    }
-
-
    render() {
+    let morphTargetsProp = this.morphTargets;
     let screen = null;
+
+
     if(!this.state.RESOURCES_LOADED){
         screen = (
             <LoadingScreen/>
@@ -434,26 +421,25 @@ class ModelBuilder extends Component {
                 style={{ width: '100vw', height: '100vh', position: 'absolute', top: '3rem'}}
                 ref={(mount) => { this.mount = mount }}/>
             <Editor
-                material={this.state.materials.matType}
-                state={this.sceneManager.getCurrentCharState()}
-                updateObject={(category, selection) => this.sceneManager.getCurrentChar().updateObjectHandler(category, selection, false)}
-                setFeetLink={(index) => this.sceneManager.getCurrentChar().setFeetLinkHandler(index)}
-                updateFeet={(category, selection) => this.sceneManager.getCurrentChar().setFeetHandler(category, selection)}
-                setGloveLink={(index) => this.sceneManager.getCurrentChar().setGloveLinkHandler(index)}
-                updateGlove={(category, selection) => this.sceneManager.getCurrentChar().setGloveHandler(category, selection)}
-                updatePose={(pose) => this.sceneManager.setAllPoses(pose)} 
-                updateExpression={(trait, newPercent) => this.sceneManager.getCurrentChar().updateExpressionPercent(trait, newPercent)}
-                updateBodyTarget={(trait, newPercent) => this.sceneManager.getCurrentChar().updateBodyPercent(trait, newPercent)}
+                state={this.state}
+                updateObject={(category, selection) => this.updateObjectHandler(category, selection, false)}
+                setFeetLink={(index) => this.setFeetLinkHandler(index)}
+                updateFeet={(category, selection) => this.setFeetHandler(category, selection)}
+                setGloveLink={(index) => this.setGloveLinkHandler(index)}
+                updateGlove={(category, selection) => this.setGloveHandler(category, selection)}
+                updatePose={(pose) => this.setPoseHandler(pose)} 
+                updateExpression={(trait, newPercent) => this.updateExpressionPercent(trait, newPercent)}
+                updateBodyTarget={(trait, newPercent) => this.updateBodyPercent(trait, newPercent)}
                 updateMaterial={(material) => this.setMaterialHandler(material)}
-                morphPercents={this.sceneManager.getCurrentCharState().morphTargets}/>
+                morphPercents={morphTargetsProp}/>
 
             <BottomBar 
                 addToCart={this.addModelToCart}
                 materialPrice={this.state.materials.price} />  
             <BottomDrawer
                 name={this.state.modelName}
-                resetModels={this.sceneManager.resetAllModels}
-                saveModels={this.saveModels}
+                resetHero={this.resetHero}
+                saveHero={this.saveHero}
                 shareHero={this.shareHero}
                 openSavedHeroModal={this.openSavedHeroModal}
                 changeName={(name) => this.nameChangeHandler(name)}/>  

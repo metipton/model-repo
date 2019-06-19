@@ -3,12 +3,14 @@ import Slider from 'react-slider-simple';
  
 export default class SliderComp extends Component {
   state  = {
-    percent: 30,
+    percent: 0,
   }
  
   onChange = (percent) => {
-    this.props.updateExpression(this.props.name, percent);
     this.setState({ percent });
+    if(Math.abs(percent - this.props.morphPercents.expression[this.props.name]['percent']) >= 3){
+      this.props.updateExpression(this.props.name, percent);  
+    }
   }
   onDone = (percent) => {
   };
@@ -18,17 +20,11 @@ export default class SliderComp extends Component {
   }
  
   render() {
-    let percent;
-    if(this.props.morphPercents !== undefined){
-      percent = this.props.morphPercents.expression[this.props.name]['percent'];
-    } else {
-      percent = this.state;
-    }
-    //this.props.expressionPercents.expression[this.props.name];
     
     return (
         <Slider
-          value={percent}
+          value={this.state.percent}
+          rounded={true}
           onChange={this.onChange}
           thumbColor="rgb(255, 165, 0)"
           shadowColor="rgb(255, 165, 0)"

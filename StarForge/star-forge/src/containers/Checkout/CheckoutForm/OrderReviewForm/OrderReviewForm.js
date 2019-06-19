@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {connect} from 'react-redux';
-import {autoCheckoutTimeout, purchaseModelStart, purchaseModelSuccess, purchaseModelFail} from '../../../../store/actions/index';
+import {autoCheckoutTimeout, purchaseModelStart, purchaseModelSuccess, purchaseModelFail, updateCart, closeCart} from '../../../../store/actions/index';
 import classes from './OrderReviewForm.css';
 import {fbDatabase} from '../../../../Firebase';
 
@@ -106,9 +106,16 @@ class OrderReviewForm extends Component {
         }
         this.props.purchaseModelSuccess(key, results);
         console.log(results);
-        // this.props.resetCart();
-        // this.props.closeCart();
+        this.resetShoppingCart();
+        this.props.closeCart();
     }
+
+    resetShoppingCart = async () => {
+        const { cartProducts} = this.props;
+        cartProducts.splice(0, this.props.cartProducts.length);
+        await this.props.updateCart(cartProducts);
+    }
+
 
     render() {
         let addressEquality;
@@ -217,7 +224,8 @@ const mapStateToProps = state => {
         numItems: state.shoppingCart.cartTotals.item.productQuantity,
         shippingMode: state.shoppingCart.cartTotals.mode,
         shippingPrice: state.shoppingCart.cartTotals.shipping / 100,
-        subTotal: state.shoppingCart.cartTotals.item.totalPrice
+        subTotal: state.shoppingCart.cartTotals.item.totalPrice,
+        cartProducts: state.shoppingCart.cartProducts.items,
     };
   };
   
@@ -226,7 +234,9 @@ const mapStateToProps = state => {
         purchaseModelStart: () => dispatch(purchaseModelStart()),
         handleAutoCheckout: () => dispatch(autoCheckoutTimeout()),
         purchaseModelFail: (error) => dispatch(purchaseModelFail(error)),
-        purchaseModelSuccess: (key, results) => dispatch(purchaseModelSuccess(key,results))
+        purchaseModelSuccess: (key, results) => dispatch(purchaseModelSuccess(key,results)),
+        updateCart: (products) => dispatch(updateCart(products)),
+        closeCart: () => dispatch(closeCart())
     };
   };
 

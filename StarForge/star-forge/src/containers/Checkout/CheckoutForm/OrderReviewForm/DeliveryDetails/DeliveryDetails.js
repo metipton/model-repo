@@ -19,7 +19,7 @@ const DeliveryDetails = (props) => {
     return (
         <div className={classes.container}>
             <div>
-                <p className={classes.Head}>Delivery Address </p>
+                <p className={classes.Head}>Delivery Address</p>
                 {editIcon}
             </div>
             <p className={classes.Para}>{props.address.shipping_name}, {props.address.shipping_address_line1},   

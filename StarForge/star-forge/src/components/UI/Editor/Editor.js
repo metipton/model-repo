@@ -109,6 +109,7 @@ class categorySelectors extends Component{
                     <div className={classes.SecondColumn}>
                             <MaterialEditor
                                 state={this.props.state}
+                                material={this.props.material}
                                 updateMaterial={this.props.updateMaterial}/>
                     </div>
                 );

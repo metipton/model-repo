@@ -5,6 +5,7 @@ Model Builder
 	switch export to collada, stl, or obj
 	
 Styling:
+	Have a spinner while uploading to cart
         Apply halo to selected image 
 	apply same changes for saved images to editor
 	Change color scheme
@@ -17,6 +18,8 @@ Color Editor
 	Figure out the UI and functionality required 
 
 Editor
+	Abstract UI to accomodate two people
+		
 	Make race always two column with male and female side
 	Make two handed/sided things always two column with a selector between them
 	Material - Card w/ buttons and images - Retextures the model
@@ -26,8 +29,11 @@ Shopping cart
 	figure out rollback if model fails to upload
 
 Checkout
-	Get order complete modal on successful checkout
-	Send an order confirmation email when done	
+	reset order status and state after closing order complete modal
+	add remove to the checkout items
+	reset cart after completing the checkout process
+	Have a spinner after order is placed and before confirmation
+	Get order complete modal on successful checkout	
 	tap into shapeway api to send order info and models
 
 Site security

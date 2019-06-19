@@ -23,6 +23,9 @@ export {
 export {
     loadShipping,
     loadCart,
+    openCart,
+    toggleCart,
+    closeCart,
     addProduct,
     removeProduct,
     completedAddToCart,
@@ -32,7 +35,8 @@ export {
     exitCheckout
 } from './shoppingCart/floatCartActions';
 export {
-    updateShipping
+    updateShipping,
+    updateCart
 } from './shoppingCart/updateCartActions'
 export {
     openSavedModal,

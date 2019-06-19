@@ -126,10 +126,10 @@ class TemporaryDrawer extends React.Component {
     });
   };
 
-  saveHero = () => {
+  saveModels = () => {
     try{
       this.props.saveInProgress();
-      this.props.saveHero();
+      this.props.saveModels();
     } catch (error) {
       console.log(error);
       this.props.saveComplete();
@@ -140,7 +140,7 @@ class TemporaryDrawer extends React.Component {
   render() {
     const { classes } = this.props;
     let saveImage = (
-        <div className={classes.innerButtons} onClick={this.saveHero}>
+        <div className={classes.innerButtons} onClick={this.saveModels}>
           <FontAwesomeIcon className={classes.icon} icon={['fas', 'save']} size="1x" />
           <span className={classes.innerSpan}>
             Save
@@ -195,7 +195,7 @@ class TemporaryDrawer extends React.Component {
             </div> 
             <div 
               className={classes.innerButtons}
-              onClick={this.props.resetHero}>
+              onClick={this.props.resetModels}>
               <FontAwesomeIcon className={classes.icon} icon={['fas', 'user']} size="1x" />
               <span className={classes.innerSpan}>
                 New

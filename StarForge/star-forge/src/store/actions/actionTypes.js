@@ -26,6 +26,9 @@ export const AUTH_CLOSE_MODAL = 'AUTH_CLOSE_MODAL';
 
 export const LOAD_SHIPPING = 'LOAD_SHIPPING';
 export const LOAD_CART = 'LOAD_CART';
+export const OPEN_CART = 'OPEN_CART';
+export const TOGGLE_CART = 'TOGGLE_CART';
+export const CLOSE_CART = 'CLOSE_CART';
 export const ADD_PRODUCT = 'ADD_PRODUCT';
 export const REMOVE_PRODUCT = 'REMOVE_PRODUCT';
 export const UPDATE_CART = 'UPDATE_CART';

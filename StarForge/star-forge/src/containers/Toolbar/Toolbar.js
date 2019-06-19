@@ -6,7 +6,7 @@ import classes from './Toolbar.css';
 import DrawerToggle from '../../components/Navigation/SideDrawer/DrawerToggle/DrawerToggle';
 import MaterialUIButton from '../../components/UI/Button/MaterialUIButton';
 
-import {logout, exitCheckout} from '../../store/actions/index';
+import {logout, exitCheckout, closeCart, openCart, toggleCart} from '../../store/actions/index';
 import ShoppingCart from '../../components/ShoppingCart/FloatCart';
 import ShoppingCartIcon from '../../components/UI/ShoppingCartIcon/ShoppingCartIcon';
 import SocialMedia from '../../components/Navigation/NavigationItems/SocialMedia/SocialMedia';
@@ -26,18 +26,21 @@ class Toolbar extends Component {
     }
 
     shoppingCartOpenHandler = () => {
-    this.setState( { showShoppingCart: true } );
+        this.props.openCart();
+        //this.setState( { showShoppingCart: true } );
     }
 
     shoppingCartCloseHandler = () => {
-    this.setState( { showShoppingCart: false } );
+        this.props.closeCart();
+        //this.setState( { showShoppingCart: false } );
     }
 
 
     shoppingCartToggleHandler = () => {
-        this.setState( ( prevState ) => {
-            return { showShoppingCart: !prevState.showShoppingCart };
-        } );
+        this.props.toggleCart();
+        // this.setState( ( prevState ) => {
+        //     return { showShoppingCart: !prevState.showShoppingCart };
+        // } );
     }
 
     authLogin = () => {
@@ -79,12 +82,12 @@ class Toolbar extends Component {
                     <div className={classes.toolbarItem}>
                         <ShoppingCartIcon
                             numItems={this.props.numCartItems}
-                            showBadge={this.state.showShoppingCart}
+                            showBadge={this.props.isCartOpen}
                             clicked={this.shoppingCartToggleHandler}/>
                     </div>
                     <div>
                         <ShoppingCart
-                            show={this.state.showShoppingCart}
+                            show={this.props.isCartOpen}
                             open={this.shoppingCartOpenHandler}
                             close={this.shoppingCartCloseHandler} />
                     </div>
@@ -111,6 +114,7 @@ class Toolbar extends Component {
 
 const mapStateToProps = state => {
     return {
+        isCartOpen: state.shoppingCart.cart.cartOpen,
         isAuthenticated: state.auth.accessToken !== null,
         authEmail: state.auth.email,
         inCheckout: state.shoppingCart.cart.inCheckout,
@@ -123,6 +127,9 @@ const mapDispatchToProps = dispatch => {
     return {
         logout: () => dispatch(logout()),
         closeCheckout: () => dispatch(exitCheckout()),
+        closeCart: () => dispatch(closeCart()),
+        openCart: () => dispatch(openCart()),
+        toggleCart: () => dispatch(toggleCart())
     }
 }
 
