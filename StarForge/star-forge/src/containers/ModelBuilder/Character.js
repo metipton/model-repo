@@ -885,41 +885,43 @@ class Character {
 
     getBoneByCategory = (category) => {
         var bone;
+        console.log("character: " + this.charNum)
         switch(category) {
              case 'Base':
-                 bone = this.getBoneByName("rigcurrent_base");
+                 bone = this.getBoneByName("_base");
                  return bone;
              case 'Beard':
-                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
+                 bone = this.getBoneByName("_MCH-hand_ik_rootL");
                  return bone;
              case 'Chest':
-                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
+                 bone = this.getBoneByName("_MCH-hand_ik_rootL");
                  return bone;
              case 'FootLeft':
-                 bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootL");
+                 bone = this.getBoneByName("_MCH-foot_ik_rootL");
                  return bone;
              case 'FootRight':
-                 bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootR");
+                 bone = this.getBoneByName("_MCH-foot_ik_rootR");
                  return bone;
              case 'GloveLeft':
-                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
+                 bone = this.getBoneByName("_MCH-hand_ik_rootL");
                  return bone;
              case 'GloveRight':
-                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
+                 bone = this.getBoneByName("_MCH-hand_ik_rootR");
                  return bone;
              case 'HandLeft':
-                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
+                 bone = this.getBoneByName("_MCH-hand_ik_rootL");
                  return bone;
              case 'HandRight':
-                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootR");
+                 bone = this.getBoneByName("_MCH-hand_ik_rootR");
                  return bone;
              case 'Headwear':
-                 bone = this.getBoneByName("rigcurrent_MCH-hand_ik_rootL");
+                 bone = this.getBoneByName("_MCH-hand_ik_rootL");
                  return bone;
              case 'LegsWearable':
-                 bone = this.getBoneByName("rigcurrent_MCH-foot_ik_rootL");
+                 bone = this.getBoneByName("_MCH-foot_ik_rootL");
                  return bone;
              default:
+                 console.log("bone not found");
                  return;
              }
     }
@@ -969,10 +971,13 @@ class Character {
 
     getBoneByName = (name) => {
         for(let i = 0; i < this.bones.length; i++){
-            if( this.bones[i].name === name){
+            if( this.bones[i].name.endsWith(name)){
+                console.log(this.bones);
                 return this.bones[i];
             }
         }
+        console.log(this.bones);
+        console.log("no bone for this")
         return null;
     }
 
