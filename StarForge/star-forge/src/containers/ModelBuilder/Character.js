@@ -1235,7 +1235,6 @@ class Character {
         }
     }
 
-
     getState = () => {
         return this.state;
     }

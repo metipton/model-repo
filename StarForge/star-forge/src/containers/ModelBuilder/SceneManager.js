@@ -20,7 +20,7 @@ class SceneManager{
     this.builder = builder;
     this.loading = true;
     this.numCharacters = numChars;
-    this.currentCharNum = 0;
+    this.currentCharNum = 1;
     this.characters = [];
     this.scenes  = [];
     this.init();
@@ -462,7 +462,14 @@ class SceneManager{
     for(let i = 0; i < this.characters.length; i++ ){
       this.characters[i].setPoseHandler(pose);
     }
-}
+  }
+
+  
+  setCurrentChar = (charNum) => {
+    this.currentCharNum = charNum;
+    console.log("character " + this.currentCharNum + " is selected.");
+    this.builder.forceUpdate();
+  }
 
   getCompleteSaveState = () => {
     let payload = {};
@@ -479,11 +486,13 @@ class SceneManager{
   }
 
   getCurrentChar = () => {
-    return this.characters[this.currentCharNum];
+    let num = this.currentCharNum - 1;
+    return this.characters[num];
   }
 
   getCurrentCharState = () => {
-    return this.characters[this.currentCharNum].getState();
+    let num = this.currentCharNum - 1;
+    return this.characters[num].getState();
   }
 
   

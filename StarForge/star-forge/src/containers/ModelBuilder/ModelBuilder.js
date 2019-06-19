@@ -17,6 +17,8 @@ import SavedModelsEditor from '../../components/UI/SavedModelsEditor/SavedModels
 import CheckoutForm from '../Checkout/CheckoutForm/CheckoutForm';
 import BackdropOrder from '../../components/UI/Backdrop/BackdropOrder'
 import SceneManager from './SceneManager';
+import CharSelectButton from '../../components/UI/Button/CharSelectButton';
+//import CharSelectButton from '../../components/UI/Button/CharSelectButton';
 
 
 class ModelBuilder extends Component {
@@ -430,6 +432,11 @@ class ModelBuilder extends Component {
             {savedModal}
             {orderModal}
             {screen}
+            <div className={classes.CharSelect}>
+                <CharSelectButton
+                    setChar={(charNum) => this.sceneManager.setCurrentChar(charNum)}/>
+            </div>
+
             <div
                 style={{ width: '100vw', height: '100vh', position: 'absolute', top: '3rem'}}
                 ref={(mount) => { this.mount = mount }}/>
