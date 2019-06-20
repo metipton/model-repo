@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {connect} from 'react-redux';
-import {autoCheckoutTimeout, purchaseModelStart, purchaseModelSuccess, purchaseModelFail, updateCart, closeCart} from '../../../../store/actions/index';
+import {autoCheckoutTimeout, purchaseModelStart, purchaseModelSuccess, purchaseModelFail, updateCart, closeCart, setCompleteOrderState} from '../../../../store/actions/index';
 import classes from './OrderReviewForm.css';
 import {fbDatabase} from '../../../../Firebase';
 
@@ -104,8 +104,9 @@ class OrderReviewForm extends Component {
             this.props.purchaseModelFail(results);
             return;
         }
+        this.props.setCompleteOrderState(results['Cart']['Items'], this.props.totals, results['Info']['created'] )
         this.props.purchaseModelSuccess(key, results);
-        console.log(results);
+        
         this.resetShoppingCart();
         this.props.closeCart();
     }
@@ -221,6 +222,7 @@ const mapStateToProps = state => {
         cart: state.shoppingCart.cartProducts.items,
         cardData: state.order.cardData,
         addresses: state.order.addresses,
+        totals: state.shoppingCart.cartTotals,
         numItems: state.shoppingCart.cartTotals.item.productQuantity,
         shippingMode: state.shoppingCart.cartTotals.mode,
         shippingPrice: state.shoppingCart.cartTotals.shipping / 100,
@@ -236,6 +238,7 @@ const mapStateToProps = state => {
         purchaseModelFail: (error) => dispatch(purchaseModelFail(error)),
         purchaseModelSuccess: (key, results) => dispatch(purchaseModelSuccess(key,results)),
         updateCart: (products) => dispatch(updateCart(products)),
+        setCompleteOrderState: (products, total, id) => dispatch(setCompleteOrderState(products, total, id)),
         closeCart: () => dispatch(closeCart())
     };
   };

@@ -31,7 +31,7 @@ const PriceTotalForm = (props) => {
             <div className={classes.Items}>
                 <p className={classes.Para}>Subtotal: <span style={{float: 'right', marginRight: '.5rem'}}>${props.subTotal}</span></p>
                 <p className={classes.Para}>Shipping: <span style={{float: 'right', marginRight: '.5rem'}}>${props.shippingPrice}</span></p>
-                <p className={classes.ParaSmall}>Total: <span style={{fontSize: '1.25rem', float: 'right', marginRight: '.5rem'}}>${(props.subTotal + props.shippingPrice).toFixed(2)}</span></p>
+                <p className={classes.ParaSmall}>Total: <span style={{fontSize: '1.25rem', float: 'right', marginRight: '.5rem'}}>${(parseInt(props.subTotal) + props.shippingPrice).toFixed(2)}</span></p>
             </div>
         </div>
     )

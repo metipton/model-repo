@@ -215,60 +215,8 @@ class SceneManager{
     this.camera.updateProjectionMatrix();
   }
 
-  cloneScene = () => {
-      console.log(this.scene);
-      let gltf = this.scene;
-      let newScene = new THREE.Scene();
-      newScene.add(gltf);
-      const clone = {
-      animations: gltf.animations,
-      scene: gltf.children[0].clone(true)
-      };
-
-      const skinnedMeshes = {};
-
-      gltf.children[0].traverse(node => {
-          if (node.isSkinnedMesh) {
-              skinnedMeshes[node.name] = node;
-          }
-      });
-
-      const cloneBones = {};
-      const cloneSkinnedMeshes = {};
-
-      clone.scene.traverse(node => {
-          if (node.isBone) {
-              cloneBones[node.name] = node;
-          }
-
-          if (node.isSkinnedMesh) {
-              cloneSkinnedMeshes[node.name] = node;
-          }
-      });
-
-      for (let name in skinnedMeshes) {
-          const skinnedMesh = skinnedMeshes[name];
-          const skeleton = skinnedMesh.skeleton;
-          const cloneSkinnedMesh = cloneSkinnedMeshes[name];
-      
-          const orderedCloneBones = [];
-
-      for (let i = 0; i < skeleton.bones.length; ++i) {
-          const cloneBone = cloneBones[skeleton.bones[i].name];
-          orderedCloneBones.push(cloneBone);
-      }
-
-      cloneSkinnedMesh.bind(
-          new THREE.Skeleton(orderedCloneBones, skeleton.boneInverses),
-          cloneSkinnedMesh.matrixWorld);
-      }
-
-      return clone;
-  }
 
   getExportObjects = () => {
-    console.log(this.scene);
-    console.log(this.getCurrentCharState());
     let objects = [];
     for(let i = 1; i <= this.characters.length; i++){
       let holder = this.scene.getObjectByName("Object Holder " + i);
@@ -467,7 +415,6 @@ class SceneManager{
   
   setCurrentChar = (charNum) => {
     this.currentCharNum = charNum;
-    console.log("character " + this.currentCharNum + " is selected.");
     this.builder.forceUpdate();
   }
 
@@ -480,7 +427,6 @@ class SceneManager{
         [i]: state
       }
     }
-    console.log(payload);
     return payload;
 
   }

@@ -112,13 +112,13 @@ class OrderReviewForm extends Component {
 
 const mapStateToProps = state => {
     return {
-        cart: state.shoppingCart.cartProducts.items,
+        cart: state.order.mostRecentCart,
         cardData: state.order.cardData,
         addresses: state.order.addresses,
-        numItems: state.shoppingCart.cartTotals.item.productQuantity,
-        shippingMode: state.shoppingCart.cartTotals.mode,
-        shippingPrice: state.shoppingCart.cartTotals.shipping / 100,
-        subTotal: state.shoppingCart.cartTotals.item.totalPrice
+        numItems: state.order.mostRecentTotals.item.productQuantity,
+        shippingMode: state.order.mostRecentTotals.mode,
+        shippingPrice: state.order.mostRecentTotals.shipping / 100,
+        subTotal: state.order.orderResults.Cart.cartTotal
     };
   };
   

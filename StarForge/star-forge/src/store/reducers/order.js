@@ -6,7 +6,7 @@ const initialState = {
     orders: [],
     mostRecentId: null,
     mostRecentCart: null,
-    mostrecentInfo: null,
+    mostRecentTotals: null,
     loading: false,
     purchased: false,
     orderState: 'Review',
@@ -16,6 +16,15 @@ const initialState = {
     autoOpenCheckout: null,
     orderResults: null
 };
+
+const setCompleteOrderState = (state, action) => {
+    console.log(action.products);
+    return updateObject( state, {
+        mostRecentId: action.id,
+        mostRecentCart: action.products,
+        mostRecentTotals: action.totals
+    })
+}
 
 const setAutoCheckout = (state) => {
     return updateObject( state, {
@@ -106,6 +115,7 @@ const reducer = ( state = initialState, action ) => {
         case actionTypes.FETCH_ORDERS_FAIL: return fetchOrdersFail( state, action );
         case actionTypes.OPEN_ORDER_MODAL: return openOrderModal( state, action);
         case actionTypes.CLOSE_ORDER_MODAL: return closeOrderModal( state, action);
+        case actionTypes.SET_COMPLETE_ORDER_STATE: return setCompleteOrderState( state, action);
         default: return state;
     }
 };

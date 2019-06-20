@@ -12,6 +12,7 @@ export {
     passOrderData,
     purchaseModelFail,
     fetchOrders,
+    setCompleteOrderState
 } from './order';
 export {
     socialAuth,

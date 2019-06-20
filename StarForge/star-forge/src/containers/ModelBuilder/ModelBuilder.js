@@ -238,9 +238,11 @@ class ModelBuilder extends Component {
     exportModelGLTF = async (cartNumber) => {
 
         let objects = this.sceneManager.getExportObjects();
-
+        console.log("1");
         await this.sceneManager.cycleAllRaceModels();
+        console.log("2");
         await this.sceneManager.cycleAllSkinnedMeshes();
+        console.log("3");
         var DEFAULT_OPTIONS = {
             binary: true,
             trs: false,

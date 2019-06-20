@@ -341,7 +341,6 @@ class Character {
                 filepath = filepath + this.sManager.characters[i].getGender() + '/'
             }
             filepath = filepath + this.state.race + '-Char' + this.charNum + '.glb'
-            console.log(filepath);
             fbStorage.ref( filepath )
                 .getDownloadURL()
                 .then( url => {
@@ -885,7 +884,6 @@ class Character {
 
     getBoneByCategory = (category) => {
         var bone;
-        console.log("character: " + this.charNum)
         switch(category) {
              case 'Base':
                  bone = this.getBoneByName("_base");
@@ -972,12 +970,9 @@ class Character {
     getBoneByName = (name) => {
         for(let i = 0; i < this.bones.length; i++){
             if( this.bones[i].name.endsWith(name)){
-                console.log(this.bones);
                 return this.bones[i];
             }
         }
-        console.log(this.bones);
-        console.log("no bone for this")
         return null;
     }
 
@@ -988,18 +983,17 @@ class Character {
         this.armatureHolder.add(newArmature);
         //remove old race from object holder
         this.fManager.removeObjectFromHolder('Race', this.objectHolder);
-
         //add new race to object holder
         let child = null;
         for(let i = 0; i < newArmature.children.length; i++){
             if(newArmature.children[i].isSkinnedMesh){
                 child = newArmature.children[i];
                 child.name = 'Race';
+                this.objectPool['Race']['Race1'] = child;
+                THREE.SceneUtils.attach(child, newArmature, this.objectHolder);
                 break;
             }
         }
-        this.objectPool['Race']['Race1'] = child;
-        THREE.SceneUtils.attach(child, newArmature, this.objectHolder);
 
     }
 

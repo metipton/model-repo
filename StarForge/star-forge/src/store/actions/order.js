@@ -52,6 +52,16 @@ export const purchaseModelSuccess = (key, results) => {
     };
 };
 
+export const setCompleteOrderState = (products, totals, id) => {
+    return {
+        type: actionTypes.SET_COMPLETE_ORDER_STATE,
+        products: products,
+        totals: totals,
+        id: id
+    }
+
+}
+
 export const passOrderData = (orderKey, Cart, Info) => {
     return {
         type: actionTypes.PASS_ORDER_DATA,
@@ -88,6 +98,8 @@ export const fetchOrdersStart = () => {
         type: actionTypes.FETCH_ORDERS_START
     };
 };
+
+
 
 export const fetchOrders = (token, userId) => {
     return dispatch => {
