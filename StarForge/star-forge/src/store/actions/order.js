@@ -52,11 +52,13 @@ export const purchaseModelSuccess = (key, results) => {
     };
 };
 
-export const setCompleteOrderState = (products, totals, id) => {
+export const setCompleteOrderState = (products, numItems, shippingPrice, shippingMode, id) => {
     return {
         type: actionTypes.SET_COMPLETE_ORDER_STATE,
         products: products,
-        totals: totals,
+        numItems: numItems,
+        shippingPrice: shippingPrice,
+        shippingMode: shippingMode,
         id: id
     }
 

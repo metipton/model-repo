@@ -6,7 +6,9 @@ const initialState = {
     orders: [],
     mostRecentId: null,
     mostRecentCart: null,
-    mostRecentTotals: null,
+    shippingMode: "Value ( 2-5 days )",
+    shippingPrice: 4.99,
+    numItems: 0,
     loading: false,
     purchased: false,
     orderState: 'Review',
@@ -18,11 +20,13 @@ const initialState = {
 };
 
 const setCompleteOrderState = (state, action) => {
-    console.log(action.products);
     return updateObject( state, {
         mostRecentId: action.id,
         mostRecentCart: action.products,
-        mostRecentTotals: action.totals
+        shippingMode: action.shippingMode,
+        shippingPrice: action.shippingPrice,
+        numItems: action.numItems
+
     })
 }
 
@@ -47,7 +51,10 @@ const openOrderModal = ( state, action ) => {
 }
 
 const closeOrderModal = ( state, action ) => {
-    return updateObject( state, {inCheckoutScreen: false});
+    return updateObject( state, {
+        inCheckoutScreen: false,
+        orderState: 'Review'
+    });
 }
 
 const purchaseModelStart = ( state, action ) => {

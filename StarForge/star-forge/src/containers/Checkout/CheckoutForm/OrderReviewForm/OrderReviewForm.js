@@ -74,8 +74,8 @@ class OrderReviewForm extends Component {
             this.props.purchaseModelStart();
             var chargeRef = fbDatabase.ref(`Orders/${this.props.userId}`);
 
-            chargeRef.limitToLast(1).on("child_added", (snapshot) => {
-                //hacky way to make sure that the listener doesn't fire when it's  first created.
+             var ref = chargeRef.limitToLast(1).on("child_added", (snapshot) => {
+                //hacky way to make sure that the listener doesn't fire when it's first created.
                 if(!this.state.listenerLoaded){
                     this.setState({
                         ...this.state,
@@ -88,6 +88,7 @@ class OrderReviewForm extends Component {
                     var value = snapshot.val()[key];
                     var orderNumber = value['Info']['created'];
                     this.paymentResults(orderNumber, value, chargeRef);
+                    chargeRef.off("child_added", ref);
                     console.log(value);
                 }
             });
@@ -96,15 +97,15 @@ class OrderReviewForm extends Component {
         }
     };
 
-    paymentResults = (key, results, dbRef) => {
-        dbRef.off("child_added", () => {
-            console.log("Db event listener is off.")
-        })
+    paymentResults = (key, results) => {
+
         if(results['Info']['status'] !== "succeeded"){
             this.props.purchaseModelFail(results);
             return;
         }
-        this.props.setCompleteOrderState(results['Cart']['Items'], this.props.totals, results['Info']['created'] )
+        console.log(this.props.shippingMode);
+        console.log(results['Info']['created'] )
+        this.props.setCompleteOrderState(results['Cart']['Items'], this.props.numItems, this.props.shippingPrice, this.props.shippingMode, results['Info']['created'] )
         this.props.purchaseModelSuccess(key, results);
         
         this.resetShoppingCart();
@@ -222,7 +223,6 @@ const mapStateToProps = state => {
         cart: state.shoppingCart.cartProducts.items,
         cardData: state.order.cardData,
         addresses: state.order.addresses,
-        totals: state.shoppingCart.cartTotals,
         numItems: state.shoppingCart.cartTotals.item.productQuantity,
         shippingMode: state.shoppingCart.cartTotals.mode,
         shippingPrice: state.shoppingCart.cartTotals.shipping / 100,
@@ -238,7 +238,7 @@ const mapStateToProps = state => {
         purchaseModelFail: (error) => dispatch(purchaseModelFail(error)),
         purchaseModelSuccess: (key, results) => dispatch(purchaseModelSuccess(key,results)),
         updateCart: (products) => dispatch(updateCart(products)),
-        setCompleteOrderState: (products, total, id) => dispatch(setCompleteOrderState(products, total, id)),
+        setCompleteOrderState: (products, numItems, shippingPrice, shippingMode, id) => dispatch(setCompleteOrderState(products, numItems, shippingPrice, shippingMode, id)),
         closeCart: () => dispatch(closeCart())
     };
   };

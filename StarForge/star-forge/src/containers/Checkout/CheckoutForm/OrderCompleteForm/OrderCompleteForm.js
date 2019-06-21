@@ -58,9 +58,9 @@ class OrderReviewForm extends Component {
     return (
     <div className={classes.holder}>
         <h1 style={{marginLeft: '.25rem'}}>thanks for your order </h1>
-        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>order number: <span style={{fontweight: 'bold'}}></span></p>
-        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>confirmation email will be sent to: <span style={{fontweight: 'bold'}}></span></p>
-        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>expected delivery date: <span style={{fontweight: 'bold'}}></span></p>
+        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>order number: <span style={{fontWeight: 'bold'}}>{this.props.id}</span></p>
+        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>confirmation email will be sent to: <span style={{fontWeight: 'bold'}}>{this.props.email}</span></p>
+        <p style={{fontSize: '1rem', marginTop: '.25rem', marginLeft: '.25rem'}}>expected delivery date: <span style={{fontWeight: 'bold'}}> soon-ish!</span></p>
         <FontAwesomeIcon 
                 className={classes.escape} 
                 icon={['fas', 'times-circle']} 
@@ -115,10 +115,12 @@ const mapStateToProps = state => {
         cart: state.order.mostRecentCart,
         cardData: state.order.cardData,
         addresses: state.order.addresses,
-        numItems: state.order.mostRecentTotals.item.productQuantity,
-        shippingMode: state.order.mostRecentTotals.mode,
-        shippingPrice: state.order.mostRecentTotals.shipping / 100,
-        subTotal: state.order.orderResults.Cart.cartTotal
+        numItems: state.order.numItems,
+        shippingMode: state.order.shippingMode,
+        shippingPrice: state.order.shippingPrice,
+        subTotal: state.order.orderResults.Cart.cartTotal,
+        id: state.order.mostRecentId,
+        email: state.auth.email
     };
   };
   
