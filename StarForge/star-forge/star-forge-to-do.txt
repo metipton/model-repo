@@ -20,7 +20,6 @@ Editor
 
 Checkout
 	add remove to the checkout itemss
-	Have a spinner after order is placed and before confirmation
 	tap into shapeway api to send order info and models
 
 Site security
@@ -31,7 +30,6 @@ Backend
 	send orders to shapeway API on order
 
 Nice to haves
-	Add a backdrop and loading spinner when exporting the model
 	implement batch load for feet and gloves
 	Abstract out the gridList component
 	Change header for Auth log in

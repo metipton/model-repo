@@ -16,6 +16,7 @@ import ModalOrder from '../../components/UI/ModalOrder/ModalOrder'
 import SavedModelsEditor from '../../components/UI/SavedModelsEditor/SavedModelsEditor';
 import CheckoutForm from '../Checkout/CheckoutForm/CheckoutForm';
 import BackdropOrder from '../../components/UI/Backdrop/BackdropOrder'
+import BackdropUpload from '../../components/UI/Backdrop/BackdropUpload'
 import SceneManager from './SceneManager';
 import CharSelectButton from '../../components/UI/Button/CharSelectButton';
 //import CharSelectButton from '../../components/UI/Button/CharSelectButton';
@@ -238,11 +239,8 @@ class ModelBuilder extends Component {
     exportModelGLTF = async (cartNumber) => {
 
         let objects = this.sceneManager.getExportObjects();
-        console.log("1");
         await this.sceneManager.cycleAllRaceModels();
-        console.log("2");
         await this.sceneManager.cycleAllSkinnedMeshes();
-        console.log("3");
         var DEFAULT_OPTIONS = {
             binary: true,
             trs: false,
@@ -407,6 +405,11 @@ class ModelBuilder extends Component {
         );
     }
 
+    let uploadBackdrop = (
+        <BackdropUpload show={this.props.uploadInProgress} />
+    )
+
+
     let savedModal = (
         <Modal 
             show={this.props.savedModalOpen}
@@ -421,7 +424,6 @@ class ModelBuilder extends Component {
         if(this.props.checkoutOpen){
             orderModal = (
                 <ModalOrder 
-
                     show={this.props.checkoutOpen}
                     modalClosed={this.props.closeOrderModal}>
                     <BackdropOrder show={this.props.orderState === "Pending"}/>
@@ -431,6 +433,7 @@ class ModelBuilder extends Component {
     
      return (
         <Aux className={classes.ModelBuilder}>
+            {uploadBackdrop}
             {savedModal}
             {orderModal}
             {screen}
@@ -477,7 +480,7 @@ const mapStateToProps = state => {
     return {
         currentCart: state.shoppingCart.cartProducts.items,
         userId: state.auth.userId,
-        addInProgress: state.shoppingCart.cartProducts.addInProgress,
+        uploadInProgress: state.shoppingCart.cartProducts.addInProgress,
         savedModalOpen: state.savedModal.modalOpen,
         byTimestamp: state.savedModal.modelByTimestamp,
         authEmail: state.auth.email,

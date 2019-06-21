@@ -3,15 +3,12 @@ import {connect} from 'react-redux';
 import {closeOrderModal} from '../../../store/actions/index';
 import OrderReviewForm from './OrderReviewForm/OrderReviewForm';
 import OrderCompleteForm from './OrderCompleteForm/OrderCompleteForm';
-import BackdropOrder from '../../../components/UI/Backdrop/BackdropOrder'
+
 
 class CheckoutForm extends React.Component {
 
 
   render() {
-    let backdrop = (
-        <BackdropOrder show={true}/>
-    )
     let orderReviewForm = (
       <div>
           <OrderReviewForm close={this.props.closeOrderModal}/>

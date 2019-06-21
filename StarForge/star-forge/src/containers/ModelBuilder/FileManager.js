@@ -1,8 +1,7 @@
-import * as THREE from 'three';
 import {fbStorage} from '../../Firebase';
-
 import GLTFLoader from 'three-gltf-loader';
-import axios from '../../axios-orders.js';
+
+
 class FileManager {
 
     constructor (builder) {
