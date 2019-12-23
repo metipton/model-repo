@@ -6,6 +6,7 @@ import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
 import Aux from '../../hoc/_Aux/_Aux';
 import Editor from '../../components/UI/Editor/Editor';
+import Wizard from '../../components/UI/Wizard/Wizard';
 import BottomBar from '../../components/UI/BottomBar/BottomBar';
 
 import LoadingScreen from './LoadingScreen/LoadingScreen';
@@ -18,13 +19,14 @@ import CheckoutForm from '../Checkout/CheckoutForm/CheckoutForm';
 import BackdropOrder from '../../components/UI/Backdrop/BackdropOrder'
 import BackdropUpload from '../../components/UI/Backdrop/BackdropUpload'
 import SceneManager from './SceneManager';
-import CharSelectButton from '../../components/UI/Button/CharSelectButton';
-//import CharSelectButton from '../../components/UI/Button/CharSelectButton';
+import CharSelectButton from '../../components/UI/Wizard/PoseMode/GenderSelectButton';
+
 
 
 class ModelBuilder extends Component {
 
     state = {
+        relSize: 'Same',
         materials: {
             matType: 'Standard',
             price: 0,
@@ -347,6 +349,15 @@ class ModelBuilder extends Component {
         });
     };
 
+    setHeightHandler = (height) => {
+        this.setState({
+            ...this.state,
+            relSize: height
+        }, () => {
+            console.log(this.state.relSize);
+        })
+    }
+
     setMaterialHandler = (material) => {
         this.updateMaterialSelectionOnModels(material);
         const modelPrice = this.state.materials.prices[material];
@@ -437,28 +448,25 @@ class ModelBuilder extends Component {
             {savedModal}
             {orderModal}
             {screen}
-            <div className={classes.CharSelect}>
-                <CharSelectButton
-                    setChar={(charNum) => this.sceneManager.setCurrentChar(charNum)}/>
-            </div>
-
             <div
                 style={{ width: '100vw', height: '100vh', position: 'absolute', top: '3rem'}}
                 ref={(mount) => { this.mount = mount }}/>
-            <Editor
-                material={this.state.materials.matType}
+            <Wizard
+                setGender={(charNum, gender) => this.sceneManager.setCharGender(charNum, gender)}
+                setChar={(charNum)=>{this.sceneManager.setCurrentChar(charNum)}}
+                setColor={(object, color)=>{this.sceneManager.setObjectColor(object, color)}}
                 state={this.sceneManager.getCurrentCharState()}
+                updatePose={(pose) => this.sceneManager.setAllPoses(pose)}
+                updateHeight={(height => this.setHeightHandler(height))}
                 updateObject={(category, selection) => this.sceneManager.getCurrentChar().updateObjectHandler(category, selection, false)}
                 setFeetLink={(index) => this.sceneManager.getCurrentChar().setFeetLinkHandler(index)}
                 updateFeet={(category, selection) => this.sceneManager.getCurrentChar().setFeetHandler(category, selection)}
                 setGloveLink={(index) => this.sceneManager.getCurrentChar().setGloveLinkHandler(index)}
                 updateGlove={(category, selection) => this.sceneManager.getCurrentChar().setGloveHandler(category, selection)}
-                updatePose={(pose) => this.sceneManager.setAllPoses(pose)} 
                 updateExpression={(trait, newPercent) => this.sceneManager.getCurrentChar().updateExpressionPercent(trait, newPercent)}
                 updateBodyTarget={(trait, newPercent) => this.sceneManager.getCurrentChar().updateBodyPercent(trait, newPercent)}
                 updateMaterial={(material) => this.setMaterialHandler(material)}
                 morphPercents={this.sceneManager.getCurrentCharState().morphTargets}/>
-
             <BottomBar 
                 addToCart={this.addModelToCart}
                 materialPrice={this.state.materials.price} />  
@@ -514,3 +522,18 @@ const mapDispatchToProps = dispatch => {
 ModelBuilder.propTypes = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModelBuilder);
+
+
+// <Editor
+// material={this.state.materials.matType}
+// state={this.sceneManager.getCurrentCharState()}
+// updateObject={(category, selection) => this.sceneManager.getCurrentChar().updateObjectHandler(category, selection, false)}
+// setFeetLink={(index) => this.sceneManager.getCurrentChar().setFeetLinkHandler(index)}
+// updateFeet={(category, selection) => this.sceneManager.getCurrentChar().setFeetHandler(category, selection)}
+// setGloveLink={(index) => this.sceneManager.getCurrentChar().setGloveLinkHandler(index)}
+// updateGlove={(category, selection) => this.sceneManager.getCurrentChar().setGloveHandler(category, selection)}
+// updatePose={(pose) => this.sceneManager.setAllPoses(pose)} 
+// updateExpression={(trait, newPercent) => this.sceneManager.getCurrentChar().updateExpressionPercent(trait, newPercent)}
+// updateBodyTarget={(trait, newPercent) => this.sceneManager.getCurrentChar().updateBodyPercent(trait, newPercent)}
+// updateMaterial={(material) => this.setMaterialHandler(material)}
+// morphPercents={this.sceneManager.getCurrentCharState().morphTargets}/>

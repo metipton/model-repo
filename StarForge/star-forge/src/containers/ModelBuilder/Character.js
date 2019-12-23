@@ -1238,6 +1238,10 @@ class Character {
         return this.state;
     }
 
+    setGender = (gender) => {
+        this.state.gender = gender
+    }
+    
     getGender = () => {
         return this.state.gender;
     }
@@ -1257,6 +1261,54 @@ class Character {
 
     getLoadingState = () => {
         return this.state.RESOURCES_LOADED;
+    }
+
+    setObjectColor = (category, color )=> {
+        console.log(category);
+        console.log(color);
+        color = '#' + color
+        let object = this.objectHolder.getObjectByName(category);
+        console.log(object);
+        let newColor = new THREE.Color(color);
+        //handle changing color for feet
+        if(category == 'Gloves'){
+            if(this.state.links.gloves.gloves.GloveLeft){
+                object = this.objectHolder.getObjectByName("GloveLeft");
+                object.material.color.set(newColor);
+            }
+            if(this.state.links.gloves.gloves.GloveRight){
+                object = this.objectHolder.getObjectByName("GloveRight");
+                object.material.color.set(newColor);
+            }
+            return;
+        }
+        if(category == 'Feet'){
+            if(this.state.links.feet.shoes.FootLeft){
+                object = this.objectHolder.getObjectByName("FootLeft");
+                object.material.color.set(newColor);
+            }
+            if(this.state.links.feet.shoes.FootRight){
+                object = this.objectHolder.getObjectByName("FootRight");
+                object.material.color.set(newColor);
+            }
+            return;
+        }
+        if(category == 'Handheld'){
+            if(this.state.links.handheld.hand.HandHeldLeft){
+                object = this.objectHolder.getObjectByName("HandLeft");
+                object.material.color.set(newColor);
+            }
+            if(this.state.links.handheld.hand.HandHeldRight){
+                object = this.objectHolder.getObjectByName("HandRight");
+                object.material.color.set(newColor);
+            }
+            return;
+        }
+        //handle changing color for gloves
+        //handle changing color for handheld
+        if(object !== undefined){
+            object.material.color.set(newColor);
+        }
     }
 
 }

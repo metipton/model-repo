@@ -418,6 +418,16 @@ class SceneManager{
     this.builder.forceUpdate();
   }
 
+  setCharGender = (charNum, gender) => {
+    let num = charNum - 1;
+    this.characters[num].setGender(gender);
+    console.log("Char " + charNum + "'s gender is: " + this.getCharGender(charNum));
+  }
+
+  setObjectColor = (object, color) => {
+    this.getCurrentChar().setObjectColor(object, color);
+  }
+
   getCompleteSaveState = () => {
     let payload = {};
     for(let i = 0; i < this.characters.length; i++){
@@ -431,9 +441,16 @@ class SceneManager{
 
   }
 
+
+
   getCurrentChar = () => {
     let num = this.currentCharNum - 1;
     return this.characters[num];
+  }
+
+  getCharGender = (charNum) => {
+    let num = charNum - 1;
+    return this.characters[num].getGender();
   }
 
   getCurrentCharState = () => {

@@ -7,7 +7,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faTwitter } from '@fortawesome/fontawesome-free-brands'
 import { faFacebook } from '@fortawesome/fontawesome-free-brands'
 import { faInstagram } from '@fortawesome/fontawesome-free-brands'
-import { faSave, faEdit, faTrashAlt, faTimesCircle, faSync, faSpinner, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
+import { faSave, faEdit, faTrashAlt, faTimesCircle, faSync, faSpinner, faShoppingBag, faTshirt, faMitten, faSocks, faShoePrints } from '@fortawesome/free-solid-svg-icons'
 import { faShare } from '@fortawesome/free-solid-svg-icons'
 import { faFolder } from '@fortawesome/free-solid-svg-icons'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
@@ -45,7 +45,11 @@ class App extends Component {
         library.add(faTimesCircle);
         library.add(faSync);
         library.add(faSpinner);
-        library.add(faShoppingBag)
+        library.add(faShoppingBag);
+        library.add(faTshirt);
+        library.add(faMitten);
+        library.add(faSocks);
+        library.add(faShoePrints);
 
         let routes = (
           <Switch>

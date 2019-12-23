@@ -221,7 +221,7 @@ class SavedModelsEditor extends Component {
 
                       <InputLabel 
                         shrink htmlFor="bootstrap-input"
-                        FormLabelClasses={{
+                        formlabelclasses={{
                           root: classes.bootstrapFormLabel,
                           focused: classes.bootstrapFormLabel}}
                         classes={{

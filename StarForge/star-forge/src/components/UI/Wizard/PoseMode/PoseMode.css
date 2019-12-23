@@ -1,0 +1,6 @@
+.CharSelect {
+    position: fixed;
+    margin-top: 2rem;
+    z-index: 10000;
+    margin-left: 1rem;
+}
