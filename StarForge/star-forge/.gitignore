@@ -21,4 +21,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # firebase keys
-/firebase/firebase-key.json
+/firebase

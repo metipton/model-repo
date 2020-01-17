@@ -30,8 +30,8 @@ Known bugs
 	Need to make the editor example to fill entire viewport dynamically
 	morph targets not hooked up to new race model following export replacement
 	Correct if save model fails -> reset the save button
-	loading model fails if you dont select a model
 	Waiting on commits to gltfexporter and react-slider-simple
+	User creation doesn't successfully 
 	
 
 
