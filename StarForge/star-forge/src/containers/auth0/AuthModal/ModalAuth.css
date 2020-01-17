@@ -1,0 +1,49 @@
+
+.outer {
+    z-index: -1;
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+  
+  .middle {
+    z-index: -1;
+    display: table-cell;
+    vertical-align: middle;
+  }
+  
+  .inner {
+    position: relative;
+    margin-top: auto;
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 500;
+    background-color: #e9ebec;
+    width: 15%;
+    height: 25%;
+    max-height: 45.75rem;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 1px black;
+    box-sizing: border-box;
+    transition: all 0.3s ease-out;
+    min-width: 17rem;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    /*whatever width you want*/
+  }
+
+  .inner::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 10px;
+    background-color: rgb(247, 254, 255);
+    padding: 10px; 
+  }
+
+  .inner::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #6772e5; 
+    height: 4rem;
+  } 
