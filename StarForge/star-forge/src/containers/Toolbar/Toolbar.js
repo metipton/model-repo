@@ -1,28 +1,32 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {fbAuth} from '../../Firebase';
+import React, {Component} from 'react'
+import {connect} from 'react-redux'
+import {fbAuth} from '../../Firebase'
 
-import classes from './Toolbar.css';
-import DrawerToggle from '../../components/Navigation/SideDrawer/DrawerToggle/DrawerToggle';
-import MaterialUIButton from '../../components/UI/Button/MaterialUIButton';
+import classes from './Toolbar.css'
+import DrawerToggle from '../../components/Navigation/SideDrawer/DrawerToggle/DrawerToggle'
+import MaterialUIButton from '../../components/UI/Button/MaterialUIButton'
 
-import {logout, exitCheckout, closeCart, openCart, toggleCart} from '../../store/actions/index';
-import ShoppingCart from '../../components/ShoppingCart/FloatCart';
-import ShoppingCartIcon from '../../components/UI/ShoppingCartIcon/ShoppingCartIcon';
-import SocialMedia from '../../components/Navigation/NavigationItems/SocialMedia/SocialMedia';
+import {logout, exitCheckout, closeCart, openCart, toggleCart} from '../../store/actions/index'
+import ShoppingCart from '../../components/ShoppingCart/FloatCart'
+import ShoppingCartIcon from '../../components/UI/ShoppingCartIcon/ShoppingCartIcon'
+import SocialMedia from '../../components/Navigation/NavigationItems/SocialMedia/SocialMedia'
 
-import Auth from '../auth0/Auth';
+import Auth from '../auth0/Auth'
+import FirebaseAuth from '../auth0/FirebaseAuth'
+import AuthForm from '../auth0/AuthForm/AuthForm'
+
   
 
 class Toolbar extends Component {
 
     state = {
-        showShoppingCart: false
+        showShoppingCart: false,
     }
 
-    componentWillMount(){
-        const auth = new Auth();
-        this.auth = auth;
+    constructor(props) {
+        super(props)
+        this.firebaseAuth = new FirebaseAuth();
+        this.auth = new Auth();
     }
 
     shoppingCartOpenHandler = () => {
@@ -44,7 +48,7 @@ class Toolbar extends Component {
     }
 
     authLogin = () => {
-        this.auth.login();
+        this.firebaseAuth.login();
     }
 
     authLogout = () => {
@@ -64,6 +68,7 @@ class Toolbar extends Component {
                 color="primary"
                 clicked={this.authLogin}>Log In</MaterialUIButton>
         );
+
 
         if(this.props.isAuthenticated){
             authSection = (
@@ -103,10 +108,10 @@ class Toolbar extends Component {
             </header>
         );
 
-
         return (
             <div>
                 {toolbar}
+                <AuthForm/>
             </div>
         );
     };
@@ -119,7 +124,8 @@ const mapStateToProps = state => {
         authEmail: state.auth.email,
         inCheckout: state.shoppingCart.cart.inCheckout,
         checkoutURL: state.shoppingCart.cart.checkout.webUrl,
-        numCartItems: state.shoppingCart.cartTotals.item.productQuantity
+        numCartItems: state.shoppingCart.cartTotals.item.productQuantity,
+        firebaseUIWidget: state.auth.firebaseUIWidget
     };
 };
 

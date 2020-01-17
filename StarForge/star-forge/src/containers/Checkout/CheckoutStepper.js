@@ -13,6 +13,7 @@ class Checkout extends React.Component {
   constructor(props) {
     super(props);
     this.stripeCheckout = React.createRef();
+    console.log(STRIPE_PUBLISHABLE)
   }
 
 

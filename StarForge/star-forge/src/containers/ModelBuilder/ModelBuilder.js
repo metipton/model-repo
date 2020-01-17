@@ -6,12 +6,12 @@ import * as actions from '../../store/actions/index';
 import classes from './ModelBuilder.css';
 import Aux from '../../hoc/_Aux/_Aux';
 import Editor from '../../components/UI/Editor/Editor';
-import Wizard from '../../components/UI/Wizard/Wizard';
+//import Wizard from '../../components/UI/Wizard/Wizard';
 import BottomBar from '../../components/UI/BottomBar/BottomBar';
 
 import LoadingScreen from './LoadingScreen/LoadingScreen';
 import BottomDrawer from '../../components/UI/BottomDrawer/BottomDrawer';
-import Auth from '../../containers/auth0/Auth';
+import Auth from '../../containers/auth0/FirebaseAuth';
 import Modal from '../../components/UI/Modal/Modal';
 import ModalOrder from '../../components/UI/ModalOrder/ModalOrder'
 import SavedModelsEditor from '../../components/UI/SavedModelsEditor/SavedModelsEditor';
@@ -19,7 +19,6 @@ import CheckoutForm from '../Checkout/CheckoutForm/CheckoutForm';
 import BackdropOrder from '../../components/UI/Backdrop/BackdropOrder'
 import BackdropUpload from '../../components/UI/Backdrop/BackdropUpload'
 import SceneManager from './SceneManager';
-import CharSelectButton from '../../components/UI/Wizard/PoseMode/GenderSelectButton';
 
 
 
@@ -36,7 +35,7 @@ class ModelBuilder extends Component {
         loading: true,
         coloringEnabled: false,
         RESOURCES_LOADED: false,
-        numChars: 2
+        numChars: 1
     }
 
     constructor (props) {
@@ -161,8 +160,6 @@ class ModelBuilder extends Component {
         let imageURL;
         try{
             await this.exportModelGLTF(cartNum);
-            //this.exportModelSTL(cartNum);
-            //this.exportModelOBJ(cartNum);
             await this.exportScreenshotToCart(cartNum, "sm", smallImage);
             imageURL = await this.exportScreenshotToCart(cartNum, "lg", largeImage);
         } catch(error){
@@ -214,7 +211,7 @@ class ModelBuilder extends Component {
     }
 
     saveModels = () => {
-        let func = this.saveHero;
+        let func = this.saveModels;
         if(!this.props.userId){
             this.authLogin(func);
             return;
@@ -222,6 +219,7 @@ class ModelBuilder extends Component {
         const timestamp = new Date().getTime();
 
         let payload = this.sceneManager.getCompleteSaveState();
+
         payload = {
             ...payload,
             name: this.state.modelName
@@ -239,10 +237,11 @@ class ModelBuilder extends Component {
     }
 
     exportModelGLTF = async (cartNumber) => {
-
         let objects = this.sceneManager.getExportObjects();
         await this.sceneManager.cycleAllRaceModels();
         await this.sceneManager.cycleAllSkinnedMeshes();
+        // let scene = this.sceneManager.scene;
+
         var DEFAULT_OPTIONS = {
             binary: true,
             trs: false,
@@ -252,14 +251,15 @@ class ModelBuilder extends Component {
             forceIndices: true,
             forcePowerOfTwoTextures: false
         };
-        //animations: this.sceneManager.animationScene.animations[0],
-        this.sceneManager.exporter.parse(  objects, (object)=> {
-  
-            return new Promise( ( resolve, reject ) => {
-                fbStorage.ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(object).then(() => {
+
+        this.sceneManager.exporter.parse(  objects, (result)=> {
+
+            return new Promise( ( resolve, reject ) => {  
+                fbStorage.ref( '/Carts/' + this.props.userId + '/CartItem' + cartNumber + '/model.glb' ).put(result).then(() => {
                     this.props.finishedAdd();
                     resolve();
                 }).catch( error => {
+                    console.log(error);
                     reject(error);
                 });
             });
@@ -315,6 +315,10 @@ class ModelBuilder extends Component {
     }
 
     loadSavedModel = async (timestamp) => {
+        console.log(timestamp)
+        if(timestamp===null){
+            return
+        }
         this.props.loadInProgress();
         const savedState = this.props.byTimestamp[timestamp];
         //add in the name here to set the name
@@ -449,9 +453,22 @@ class ModelBuilder extends Component {
             {orderModal}
             {screen}
             <div
-                style={{ width: '100vw', height: '100vh', position: 'absolute', top: '3rem'}}
+                style={{ width: '100vw', height: '100vh', position: 'absolute', top: '0rem'}}
                 ref={(mount) => { this.mount = mount }}/>
-            <Wizard
+            <Editor
+                material={this.state.materials.matType}
+                state={this.sceneManager.getCurrentCharState()}
+                updateObject={(category, selection) => this.sceneManager.getCurrentChar().updateObjectHandler(category, selection, false)}
+                setFeetLink={(index) => this.sceneManager.getCurrentChar().setFeetLinkHandler(index)}
+                updateFeet={(category, selection) => this.sceneManager.getCurrentChar().setFeetHandler(category, selection)}
+                setGloveLink={(index) => this.sceneManager.getCurrentChar().setGloveLinkHandler(index)}
+                updateGlove={(category, selection) => this.sceneManager.getCurrentChar().setGloveHandler(category, selection)}
+                updatePose={(pose) => this.sceneManager.setAllPoses(pose)} 
+                updateExpression={(trait, newPercent) => this.sceneManager.getCurrentChar().updateExpressionPercent(trait, newPercent)}
+                updateBodyTarget={(trait, newPercent) => this.sceneManager.getCurrentChar().updateBodyPercent(trait, newPercent)}
+                updateMaterial={(material) => this.setMaterialHandler(material)}
+                morphPercents={this.sceneManager.getCurrentCharState().morphTargets}/>
+            {/* <Wizard
                 setGender={(charNum, gender) => this.sceneManager.setCharGender(charNum, gender)}
                 setChar={(charNum)=>{this.sceneManager.setCurrentChar(charNum)}}
                 setColor={(object, color)=>{this.sceneManager.setObjectColor(object, color)}}
@@ -466,7 +483,7 @@ class ModelBuilder extends Component {
                 updateExpression={(trait, newPercent) => this.sceneManager.getCurrentChar().updateExpressionPercent(trait, newPercent)}
                 updateBodyTarget={(trait, newPercent) => this.sceneManager.getCurrentChar().updateBodyPercent(trait, newPercent)}
                 updateMaterial={(material) => this.setMaterialHandler(material)}
-                morphPercents={this.sceneManager.getCurrentCharState().morphTargets}/>
+                morphPercents={this.sceneManager.getCurrentCharState().morphTargets}/> */}
             <BottomBar 
                 addToCart={this.addModelToCart}
                 materialPrice={this.state.materials.price} />  
@@ -522,18 +539,3 @@ const mapDispatchToProps = dispatch => {
 ModelBuilder.propTypes = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(ModelBuilder);
-
-
-// <Editor
-// material={this.state.materials.matType}
-// state={this.sceneManager.getCurrentCharState()}
-// updateObject={(category, selection) => this.sceneManager.getCurrentChar().updateObjectHandler(category, selection, false)}
-// setFeetLink={(index) => this.sceneManager.getCurrentChar().setFeetLinkHandler(index)}
-// updateFeet={(category, selection) => this.sceneManager.getCurrentChar().setFeetHandler(category, selection)}
-// setGloveLink={(index) => this.sceneManager.getCurrentChar().setGloveLinkHandler(index)}
-// updateGlove={(category, selection) => this.sceneManager.getCurrentChar().setGloveHandler(category, selection)}
-// updatePose={(pose) => this.sceneManager.setAllPoses(pose)} 
-// updateExpression={(trait, newPercent) => this.sceneManager.getCurrentChar().updateExpressionPercent(trait, newPercent)}
-// updateBodyTarget={(trait, newPercent) => this.sceneManager.getCurrentChar().updateBodyPercent(trait, newPercent)}
-// updateMaterial={(material) => this.setMaterialHandler(material)}
-// morphPercents={this.sceneManager.getCurrentCharState().morphTargets}/>

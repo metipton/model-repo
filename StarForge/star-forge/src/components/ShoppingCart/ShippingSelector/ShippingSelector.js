@@ -54,7 +54,7 @@ class ShippingSelector extends React.Component {
             aria-label="Shipping Method"
             name="shippingMethod"
             className={classes.group}
-            value={this.props.currentMode}
+            //value={this.props.currentMode}
             onChange={this.handleChange}
           >
           {shippingDetails ? shippingDetails.map((detail) => (

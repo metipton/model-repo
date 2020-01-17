@@ -1,16 +1,8 @@
 	
 Styling:
-	Have a spinner while uploading to cart
         Apply halo to selected image 
 	apply same changes for saved images to editor
-	Change color scheme
-		pri : #6772e5   purple
-		sec: #f6a4eb  pink
-		letters: #c4f0ff light blue
 
-
-Color Editor
-	Figure out the UI and functionality required 
 
 Editor		
 	Make two handed/sided things always two column with a selector between them
@@ -19,15 +11,14 @@ Editor
 
 
 Checkout
-	add remove to the checkout itemss
-	tap into shapeway api to send order info and models
+	Hand errors gracefully when adding to cart fails
 
 Site security
 	need new firebase API as the old one is compromised due to upload to github
 
 Backend
 	send email after order complete
-	send orders to shapeway API on order
+	//send orders to shapeway API on order
 
 Nice to haves
 	implement batch load for feet and gloves
@@ -37,9 +28,11 @@ Nice to haves
 
 Known bugs
 	Need to make the editor example to fill entire viewport dynamically
-	update to v100 threejs
 	morph targets not hooked up to new race model following export replacement
 	Correct if save model fails -> reset the save button
+	loading model fails if you dont select a model
+	Waiting on commits to gltfexporter and react-slider-simple
+	
 
 
 	

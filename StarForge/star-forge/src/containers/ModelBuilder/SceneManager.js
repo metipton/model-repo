@@ -1,8 +1,6 @@
-import * as THREE from 'three';
-import GLTFLoader from 'three-gltf-loader';
-import GLTFExporter from 'three-gltf-exporter';
-import OrbitControls from 'three-orbitcontrols';
+import THREE from '../../Three'
 import Character from './Character.js';
+import GLTFExporter from 'three-gltf-exporter'
 
 import px from '../../assets/skybox/scifi-px.jpg'
 import nx from '../../assets/skybox/scifi-nx.jpg';
@@ -29,8 +27,8 @@ class SceneManager{
   init(){
     this.skyBox = null;
     this.THREE = THREE;
-    this.gltfLoader = new GLTFLoader();
-    this.exporter = new GLTFExporter();
+    this.gltfLoader = new THREE.GLTFLoader();
+    this.exporter = new THREE.GLTFExporter();
     this.clock = new THREE.Clock();
 
     //main scene objects
@@ -61,7 +59,6 @@ class SceneManager{
     this.renderer = new THREE.WebGLRenderer({ antialias: true })
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.gammaOutput = true
     this.renderer.setClearColor('#000000')
     this.renderer.setSize(width, height)
   }
@@ -107,7 +104,7 @@ class SceneManager{
 
   setupControls() {
     //enable orbit controls
-    const controls = new OrbitControls(this.camera, this.renderer.domElement);
+    const controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
     controls.enabled = true;
     controls.enablePan = false;
     controls.minDistance = 4;
@@ -215,7 +212,6 @@ class SceneManager{
     this.camera.updateProjectionMatrix();
   }
 
-
   getExportObjects = () => {
     let objects = [];
     for(let i = 1; i <= this.characters.length; i++){
@@ -236,12 +232,23 @@ class SceneManager{
     return objects;
   }
 
+  // getExportObjects = () => {
+  //   let objects = [];
+  //   for(let i = 1; i <= this.characters.length; i++){
+  //     let holder = this.scene.getObjectByName("Object Holder " + i);
+  //     for(let j = 0; j < holder.children.length; j++){
+  //       let child = holder.children[j];
+  //       objects.push(child);
+  //     }
+  //   }
+  //   return objects;
+  // }
+
   createPosedClone = (skinnedMesh) => {
       
     let clone = skinnedMesh.clone();
     var boneMatrices = skinnedMesh.skeleton.boneMatrices;
     var geometry = skinnedMesh.geometry;
-
 
     var position = geometry.attributes.position;
     var skinIndex = geometry.attributes.skinIndex;
@@ -251,7 +258,6 @@ class SceneManager{
     var bindMatrixInverse = skinnedMesh.bindMatrixInverse;
     
     var i, j, si, sw;
-
 
     var vertex = new THREE.Vector3();
     var temp = new THREE.Vector3();
@@ -346,7 +352,6 @@ class SceneManager{
       var imageRenderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } ); // init like this
       imageRenderer.shadowMap.enabled = true;
       imageRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      imageRenderer.gammaOutput = true;
       imageRenderer.setClearColor( color, 0 );
       imageRenderer.setSize(width, height);
       //put the camera to null position and copy current posit/rotation
@@ -358,7 +363,8 @@ class SceneManager{
       this.camera.setRotationFromQuaternion(this.initCameraRotation);
       this.camera.clearViewOffset();
       this.camera.setViewOffset(width, height, 0, height * .28, width, height );
-      imageRenderer.render( this.scene, this.camera, null, false );
+      imageRenderer.render( this.scene, this.camera);
+      // imageRenderer.render( this.scene, this.camera, null, false );
 
       const dataURL = imageRenderer.domElement.toDataURL( 'image/png' );
 

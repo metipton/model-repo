@@ -44,7 +44,6 @@ class Auth {
         if (authResult && authResult.accessToken && authResult.idToken) {
             const firebaseToken = await that.getFirebaseToken(authResult.idToken);
             if(firebaseToken.err !== undefined){
-              console.log(firebaseToken.err)
               that.logout();
               return;
             }
@@ -55,12 +54,26 @@ class Auth {
             });
             that.setSession(authResult, firebaseToken);
             typeof callback === 'function' && callback();
-          } else if (err) {
-            console.log(err);
-            alert(`Error: ${err.error}. Check the console for further details.`);
-          }
+        } else if (err) {
+          console.log(err);
+          alert(`Error: ${err.error}. Check the console for further details.`);
+        }
     });
   }
+
+  getFirebaseToken = (token) => {
+    const url = "https://us-central1-starforge-153cc.cloudfunctions.net/getFirebaseAuth?token=" + token;
+    return new Promise( ( resolve, reject ) => {
+        fetch(url)
+            .then((response) => {
+                resolve(response.json())
+            })
+            .catch((error) => {
+                console.log(error);
+                reject(error);
+            });
+        })
+}
 
   getProfile = (idToken) => {
     this.email = decode(idToken).email;;
@@ -89,30 +102,6 @@ class Auth {
   }
 
 
-  // handleAuthentication() {
-  //   this.auth0.parseHash((err, authResult) => {
-  //     if (authResult && authResult.accessToken && authResult.idToken) {
-  //       this.setSession(authResult);
-  //     } else if (err) {
-  //       console.log(err);
-  //       alert(`Error: ${err.error}. Check the console for further details.`);
-  //     }
-  //   });
-  // }
-
-  getFirebaseToken = (token) => {
-      const url = "https://us-central1-starforge-153cc.cloudfunctions.net/getFirebaseAuth?token=" + token;
-      return new Promise( ( resolve, reject ) => {
-          fetch(url)
-              .then((response) => {
-                  resolve(response.json())
-              })
-              .catch((error) => {
-                  console.log(error);
-                  reject(error);
-              });
-          })
-  }
 
   getAccessToken() {
     return this.accessToken;
@@ -137,7 +126,6 @@ class Auth {
     this.email = decodedResult.email;
     this.userId = decodedResult.sub;
     this.store.dispatch(socialAuth(this.accessToken, this.userId, this.idToken, this.expiresAt, this.email, this.fbToken, fbExpiry));
-
   }
 
 

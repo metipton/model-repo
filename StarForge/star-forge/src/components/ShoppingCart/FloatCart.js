@@ -20,21 +20,23 @@ class FloatCart extends Component {
     isOpen: false,
   };
 
-  componentWillMount() {
-    this.pullCartFromFirebase();
-    this.pullShippingFromFirebase();
-  }
+  // componentWillMount() {
+  //   this.pullCartFromFirebase();
+  //   this.pullShippingFromFirebase();
+  // }
 
  
 
   componentDidMount() {
+    this.pullCartFromFirebase();
+    this.pullShippingFromFirebase();
     setTimeout(() => {
       this.props.updateCart(this.props.cartProducts);
     }, 0);
     this.addProduct = this.addProduct.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.newProduct !== this.props.newProduct) {
       this.addProduct(nextProps.newProduct);
     }

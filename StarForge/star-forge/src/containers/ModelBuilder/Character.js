@@ -1,7 +1,7 @@
-import * as THREE from 'three';
+//import * as THREE from 'three';
+import THREE from '../../Three'
 import {fbStorage} from '../../Firebase';
 
-import GLTFLoader from 'three-gltf-loader';
 import axios from '../../axios-orders.js';
 import FileManager from './FileManager.js';
 
@@ -207,7 +207,7 @@ class Character {
         this.bones = [];
         this.currentMesh = null;
         this.skeleton = null;
-        this.gltfLoader = new GLTFLoader();
+        this.gltfLoader = new THREE.GLTFLoader();
         this.objectHolder = new THREE.Object3D();
         this.objectHolder.name = "Object Holder " + charNum;
         this.scene.add(this.objectHolder);
@@ -437,7 +437,7 @@ class Character {
             let object = this.objectPool[categoryArr[i]][selectionArr[i]].scene;
             let child;
             child = object.children[0].getObjectByProperty('type', 'SkinnedMesh');
-            if(child === undefined || child == null) {
+            if(child === undefined || child === null) {
                 child = object.children[0].getObjectByProperty('type', 'Mesh'); 
             }
             child.frustumCulled = false;
@@ -590,8 +590,10 @@ class Character {
 
                             let parent = object.children[0];
                             model.name = category;
-                            THREE.SceneUtils.attach(model, parent, this.objectHolder);
-                            THREE.SceneUtils.attach(parent, parent.parent, this.armatureHolder);
+                            this.objectHolder.attach(model)
+                            //THREE.SceneUtils.attach(model, parent, this.objectHolder);
+                            //THREE.SceneUtils.attach(parent, parent.parent, this.armatureHolder);
+                            this.armatureHolder.attach(parent)
                             this.scene.remove(object);
                             this.armatureLoaded = true;                              
                         } else {
@@ -705,6 +707,8 @@ class Character {
     }
 
     setPoseHandler = (pose) => {
+        console.log(this.objectHolder);
+        console.log(this.scene);
         if(this.actions[pose]) {
             this.setPoseByName(pose);
         }
@@ -958,7 +962,8 @@ class Character {
              //console.log(error);
          }
          if(fromDownload){
-             THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
+             this.objectHolder.attach(child)
+             //THREE.SceneUtils.attach(child, child.parent, this.objectHolder);
          } else {
              this.objectHolder.add(child);
          }
@@ -990,7 +995,8 @@ class Character {
                 child = newArmature.children[i];
                 child.name = 'Race';
                 this.objectPool['Race']['Race1'] = child;
-                THREE.SceneUtils.attach(child, newArmature, this.objectHolder);
+                this.objectHolder.attach(child)
+                //THREE.SceneUtils.attach(child, newArmature, this.objectHolder);
                 break;
             }
         }
@@ -1050,7 +1056,8 @@ class Character {
                 this.applyMorphTargetsOnImport(child);
                 //Need to apply facial expressions to the raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
                 //detach from parent and put in object holder
-                THREE.SceneUtils.attach(child, child.parent, this.objectHolder);            
+                this.objectHolder.attach(child)
+                //THREE.SceneUtils.attach(child, child.parent, this.objectHolder);            
             }
         }
 
@@ -1079,9 +1086,7 @@ class Character {
             if(this.state.currentName[selection] !== resetItems[selection]){
                 await this.updateObjectHandler(selection, resetItems[selection], false );
             }
-        }
-
-        this.setPoseHandler('Pose1');
+        }  
 
         //set the correct state
         this.resetMorphTargets();
@@ -1094,6 +1099,8 @@ class Character {
             links: this.resetState.links,
             materials: this.resetState.materials
         }
+
+        this.setPoseHandler('Pose1');
     }
 
     resetMorphTargets = () => {
@@ -1271,7 +1278,7 @@ class Character {
         console.log(object);
         let newColor = new THREE.Color(color);
         //handle changing color for feet
-        if(category == 'Gloves'){
+        if(category === 'Gloves'){
             if(this.state.links.gloves.gloves.GloveLeft){
                 object = this.objectHolder.getObjectByName("GloveLeft");
                 object.material.color.set(newColor);
@@ -1282,7 +1289,7 @@ class Character {
             }
             return;
         }
-        if(category == 'Feet'){
+        if(category === 'Feet'){
             if(this.state.links.feet.shoes.FootLeft){
                 object = this.objectHolder.getObjectByName("FootLeft");
                 object.material.color.set(newColor);
@@ -1293,7 +1300,7 @@ class Character {
             }
             return;
         }
-        if(category == 'Handheld'){
+        if(category === 'Handheld'){
             if(this.state.links.handheld.hand.HandHeldLeft){
                 object = this.objectHolder.getObjectByName("HandLeft");
                 object.material.color.set(newColor);

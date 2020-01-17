@@ -28,7 +28,7 @@ class App extends Component {
 
 
     componentDidMount () {
-        this.props.onTryAutoLogin();
+        //this.props.onTryAutoLogin();
     }
 
     render() {

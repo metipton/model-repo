@@ -15,77 +15,66 @@ const initialState = {
 
 const loadInProgress = (state) => {
     return updateObject(state, {
-            ...this.state,
             loadInProgress: true
         });
 };
 
 const loadComplete = (state) => {
     return updateObject(state, {
-            ...this.state,
             loadInProgress: false
         });
 };
 
 const saveInProgress = (state) => {
     return updateObject(state, {
-            ...this.state,
             saveInProgress: true
         });
 };
 
 const saveComplete = (state) => {
     return updateObject(state, {
-            ...this.state,
             saveInProgress: false
         });
 };
 
 const openSavedModal = (state) => {
     return updateObject(state, {
-            ...this.state,
             modalOpen: true
         });
 };
 
 const closeSavedModal = (state) => {
     return updateObject(state, {
-            ...this.state,
             modalOpen: false
         });
 };
 
 const openNameModal = (state) => {
     return updateObject(state, {
-            ...this.state,
             modalSmallNameShow:  true
         });
 };
 
 const closeNameModal = (state) => {
     return updateObject(state, {
-            ...this.state,
             modalSmallNameShow:  false
         });
 };
 
 const openDeleteModal = (state) => {
     return updateObject(state, {
-            ...this.state,
             modalSmallDeleteShow: true
         });
 };
 
 const closeDeleteModal = (state) => {
     return updateObject(state, {
-            ...this.state,
             modalSmallDeleteShow: false
         });
 };
 
 const addSavedModels = (state, action) => {
     return updateObject(state, {
-        ...this.state,
         modelById: [ ...action.timestamps],
         modelByTimestamp: {
             ...action.payload
@@ -95,7 +84,6 @@ const addSavedModels = (state, action) => {
 
 const selectModel = (state, action ) => {
     return updateObject(state, {
-        ...this.state,
         selected : action.payload
       })
 }

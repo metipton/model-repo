@@ -132,7 +132,7 @@ class SavedModelsEditor extends Component {
     }
 
     keyPressHandler = (event ) => {
-      console.log(event.charCode);
+
       if( event.charCode === 13){
           this.props.renameModel(this.state.selected, this.state.changeName);
       }
@@ -202,7 +202,6 @@ class SavedModelsEditor extends Component {
                       input: classes.bootstrapInput,
                     }}/>
             );
-
         }
 
          return (

@@ -2,15 +2,33 @@ import * as actionTypes from '../actions/actionTypes';
 import {updateObject} from '../utility';
 
 const initialState = {
+    firebaseUIWidget: null,
+    inAuthScreen: false,
     idToken: null,
     userId: null,
     accessToken: null,
     expiresAt: 0,
     email: null,
-    fbToken: null,
-    fbExpiry: 0,
     error: null,
 }
+
+const authOpenModal = (state, action) => {
+    return updateObject(state, {
+            inAuthScreen: true
+        });
+};
+
+const authCloseModal = (state, action) => {
+    return updateObject(state, {
+            inAuthScreen: false
+        });
+};
+
+const setFirebaseUIWidget = (state, action) => {
+    return updateObject(state, {
+            firebaseUIWidget: action.firebaseUIWidget
+        });
+};
 
 const authStart = (state, action) => {
     return updateObject(state, {error:null, loading: true});
@@ -19,12 +37,11 @@ const authStart = (state, action) => {
 const authSuccess = (state, action) => {
     return updateObject(state, {
         accessToken: action.accessToken,
+        refreshToken: action.refreshToken,
         userId: action.userId,
         idToken: action.idToken,
         expiresAt: action.expiresAt,
         email: action.email,
-        fbToken: action.fbToken,
-        fbExpiry: action.fbExpiry,
         error: null,
     });
 };
@@ -39,24 +56,11 @@ const authFailed = (state, action) => {
 const authLogout = (state, action) => {
     return updateObject(state, {
             accessToken: null,
+            refreshToken: null,
             userId: null,
             idToken: null,
             expiresAt: 0,
             email: null,
-            fbToken: null,
-            fbExpiry: 0
-        });
-};
-
-const authOpenModal = (state, action) => {
-    return updateObject(state, {
-            inAuthScreen: true
-        });
-};
-
-const authCloseModal = (state, action) => {
-    return updateObject(state, {
-            inAuthScreen: false
         });
 };
 
@@ -68,6 +72,7 @@ const reducer = (state = initialState, action) => {
         case actionTypes.AUTH_LOGOUT: return authLogout(state, action);
         case actionTypes.AUTH_OPEN_MODAL: return authOpenModal(state,action);
         case actionTypes.AUTH_CLOSE_MODAL: return authCloseModal(state,action);
+        case actionTypes.AUTH_SET_FIREBASE_WIDGET: return setFirebaseUIWidget(state,action);
         default:
             return state;
     }

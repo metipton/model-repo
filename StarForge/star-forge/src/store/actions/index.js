@@ -15,9 +15,10 @@ export {
     setCompleteOrderState
 } from './order';
 export {
-    socialAuth,
     authOpenModal,
     authCloseModal,
+    setFirebaseUIWidget,
+    socialAuth,
     logout,
     authCheckState
 } from './auth';
