@@ -18,7 +18,7 @@
     "@material-ui/lab": "^4.0.0-alpha.39",
     "auth0-js": "^9.12.2",
     "autoprefixer": "9.7.4",
-    "axios": "^0.19.1",
+    "axios": "^0.21.1",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "babel-preset-react-app": "^9.1.0",
