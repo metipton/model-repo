@@ -66,7 +66,7 @@
     "styled-components": "^5.0.0",
     "sw-precache-webpack-plugin": "0.11.5",
     "terser-webpack-plugin": "^2.3.2",
-    "three": "^0.112.1",
+    "three": "^0.137.0",
     "three-gltf-exporter": "0.0.1",
     "three-gltf-loader": "^1.111.0",
     "url-loader": "3.0.0",
